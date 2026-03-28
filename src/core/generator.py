@@ -289,13 +289,13 @@ class KeyframeGenerator:
             variant="fp16",
         ).to(self.device)
 
-        print("[Pipeline] Loading IP-Adapter (h94/IP-Adapter, ViT-bigG)...")
+        print("[Pipeline] Loading Multi-IP-Adapter (4 instances)...")
         self.pipe.load_ip_adapter(
             "h94/IP-Adapter",
             subfolder="sdxl_models",
-            weight_name="ip-adapter_sdxl.safetensors",
+            weight_name=["ip-adapter_sdxl.safetensors"] * 4,
         )
-        self.pipe.set_ip_adapter_scale(0.6)
+        self.pipe.set_ip_adapter_scale([0.6] * 4)
         self.pipe.set_progress_bar_config(disable=True)
 
         self.image_encoder = self.pipe.image_encoder
@@ -322,7 +322,7 @@ class KeyframeGenerator:
             img = self.pipe(
                 prompt=prompt,
                 negative_prompt="blurry, low quality, distorted",
-                ip_adapter_image_embeds=[self._zero_ip_embeds()],
+                ip_adapter_image_embeds=self._zero_ip_embeds(),
                 num_inference_steps=4,
                 guidance_scale=0.0,
                 generator=gen,
@@ -348,45 +348,48 @@ class KeyframeGenerator:
         return emb.squeeze(0)
 
     def _zero_ip_embeds(self):
-        return torch.zeros(1, 1, 1280, device=self.device, dtype=self.dtype)
+        """Return list of 4 zero embeddings for 4 IP-Adapters."""
+        z = torch.zeros(1, 1, 1280, device=self.device, dtype=self.dtype)
+        return [z.clone() for _ in range(4)]
 
     def _compose_ip_embeds(self, node):
-        """Return list of individual (1280,) embeddings — one per entity + bg."""
+        """Return list of 4 separate (1,1,1280) tensors for Multi-IP-Adapter.
+        Slots: [entity0, entity1, entity2/pad, bg] — padded to exactly 4."""
         embeds = []
         for ent in sorted(node.entities):
-            embeds.append(self.embedding_cache[ent])  # (1280,)
-        embeds.append(self.embedding_cache[node.bg])  # (1280,)
-        return embeds
-
-    def _stack_ip_embeds(self, embed_list):
-        """Stack embed list into (1, N, 1280) tensor for pipeline."""
-        return torch.stack(embed_list, dim=0).unsqueeze(0)
+            embeds.append(self.embedding_cache[ent].unsqueeze(0).unsqueeze(0))  # (1,1,1280)
+        embeds.append(self.embedding_cache[node.bg].unsqueeze(0).unsqueeze(0))  # (1,1,1280)
+        # Pad to 4 adapters with zero embeddings
+        while len(embeds) < 4:
+            embeds.append(torch.zeros(1, 1, 1280, device=self.device, dtype=self.dtype))
+        return embeds[:4]
 
     def _build_ip_masks(self, node, added_entities, spatial_mask):
-        """Build per-entity IP-Adapter masks for spatial isolation.
-        Returns tensor of shape (1, N, H, W) — one channel per entity + bg."""
+        """Build list of 4 mask tensors, each (1, 1, H, W) for Multi-IP-Adapter.
+        Shape: [batch=1, num_images=1, H, W] per adapter."""
         H, W = 512, 512
-        channels = []
+        masks = []
         for ent in sorted(node.entities):
-            if ent in added_entities:
-                # New entity → left side only
-                m = torch.zeros(H, W, device=self.device, dtype=self.dtype)
-                if spatial_mask == "right":
-                    m[:, :W // 2] = 1.0
+            m = torch.zeros(1, 1, H, W, device=self.device, dtype=self.dtype)
+            if spatial_mask == "right":
+                if ent in added_entities:
+                    m[:, :, :, :W // 2] = 1.0  # new entity → left
                 else:
-                    m[:, W // 2:] = 1.0
+                    m[:, :, :, W // 2:] = 1.0  # parent entity → right
+            elif spatial_mask == "left":
+                if ent in added_entities:
+                    m[:, :, :, W // 2:] = 1.0
+                else:
+                    m[:, :, :, :W // 2] = 1.0
             else:
-                # Existing parent entity → right side only
-                m = torch.zeros(H, W, device=self.device, dtype=self.dtype)
-                if spatial_mask == "right":
-                    m[:, W // 2:] = 1.0
-                else:
-                    m[:, :W // 2] = 1.0
-            channels.append(m)
-        # Background → full image
-        channels.append(torch.ones(H, W, device=self.device, dtype=self.dtype))
-        # Stack to (1, N, H, W) as required by diffusers
-        return torch.stack(channels, dim=0).unsqueeze(0)  # (1, N, H, W)
+                m = torch.ones(1, 1, H, W, device=self.device, dtype=self.dtype)
+            masks.append(m)
+        # BG → full image
+        masks.append(torch.ones(1, 1, H, W, device=self.device, dtype=self.dtype))
+        # Pad to 4 with zero masks
+        while len(masks) < 4:
+            masks.append(torch.zeros(1, 1, H, W, device=self.device, dtype=self.dtype))
+        return masks[:4]
 
     @staticmethod
     def build_prompt(node, entity_prompts, bg_prompts):
@@ -428,7 +431,7 @@ class KeyframeGenerator:
             img = self.pipe(
                 prompt=prompt,
                 negative_prompt="blurry, low quality, distorted, deformed",
-                ip_adapter_image_embeds=[self._stack_ip_embeds(ip_embeds)],
+                ip_adapter_image_embeds=ip_embeds,
                 num_inference_steps=self.num_steps,
                 guidance_scale=0.0,
                 generator=gen,
@@ -460,7 +463,7 @@ class KeyframeGenerator:
             if added and len(parent.entities) == 1 and len(node.entities) >= 2:
                 spatial_mask = "right"
                 ip_masks = self._build_ip_masks(node, added, spatial_mask)
-                cross_attention_kwargs = {"ip_adapter_masks": [ip_masks]}
+                cross_attention_kwargs = {"ip_adapter_masks": ip_masks}
                 print(f"  [Spatial Mask] KV='{spatial_mask}' + IP-Adapter masks ({len(ip_masks)} regions)")
                 print(f"    New({added})→left, Parent({parent.entities})→right, BG→full")
 
@@ -520,7 +523,7 @@ class KeyframeGenerator:
         pipe_kwargs = dict(
             prompt=prompt,
             negative_prompt="blurry, low quality, distorted, deformed",
-            ip_adapter_image_embeds=[self._stack_ip_embeds(ip_embeds)],
+            ip_adapter_image_embeds=ip_embeds,
             num_inference_steps=self.num_steps,
             guidance_scale=0.0,
             generator=gen,
