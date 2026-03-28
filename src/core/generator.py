@@ -51,6 +51,7 @@ class KVStoreAttnProcessor:
         self.kv_bank: dict[int, tuple[torch.Tensor, torch.Tensor]] = {}
         self.current_step: int = 0
         self.blend_ratio: float = 0.0
+        self.spatial_mask_type: str | None = None
 
     def reset(self):
         self.kv_bank.clear()
@@ -101,42 +102,38 @@ class KVStoreAttnProcessor:
                 value.detach().clone(),
             )
 
-        elif self.mode == "inject" and self.blend_ratio > 0.0:
-            stored = self.kv_bank.get(self.current_step)
-            if stored is not None:
-                stored_k, stored_v = stored
-                if stored_k.shape[0] != key.shape[0] and key.shape[0] == 2 * stored_k.shape[0]:
-                    stored_k = stored_k.repeat(2, 1, 1)
-                    stored_v = stored_v.repeat(2, 1, 1)
-                if stored_k.shape == key.shape:
-                    r = self.blend_ratio
-                    key = (1 - r) * key + r * stored_k
-                    value = (1 - r) * value + r * stored_v
+        elif self.mode in ("inject", "store_and_inject"):
+            if self.blend_ratio > 0.0:
+                stored = self.kv_bank.get(self.current_step)
+                if stored is not None:
+                    stored_k, stored_v = stored
+                    if stored_k.shape[0] != key.shape[0] and key.shape[0] == 2 * stored_k.shape[0]:
+                        stored_k = stored_k.repeat(2, 1, 1)
+                        stored_v = stored_v.repeat(2, 1, 1)
+                    if stored_k.shape == key.shape:
+                        r = self.blend_ratio
+                        seq_len = key.shape[1]
+                        size = int(math.sqrt(seq_len))
 
-        elif self.mode == "store_and_inject" and self.blend_ratio > 0.0:
-            # First inject from parent K/V, then store the result
-            stored = self.kv_bank.get(self.current_step)
-            if stored is not None:
-                stored_k, stored_v = stored
-                if stored_k.shape[0] != key.shape[0] and key.shape[0] == 2 * stored_k.shape[0]:
-                    stored_k = stored_k.repeat(2, 1, 1)
-                    stored_v = stored_v.repeat(2, 1, 1)
-                if stored_k.shape == key.shape:
-                    r = self.blend_ratio
-                    key = (1 - r) * key + r * stored_k
-                    value = (1 - r) * value + r * stored_v
-            # Store the (possibly blended) K/V for this node's children
-            self.kv_bank[self.current_step] = (
-                key.detach().clone(),
-                value.detach().clone(),
-            )
+                        if self.spatial_mask_type is not None and size * size == seq_len:
+                            mask = torch.ones((1, seq_len, 1), device=key.device, dtype=key.dtype) * r
+                            mask_2d = mask.view(1, size, size, 1)
+                            if self.spatial_mask_type == "right":
+                                mask_2d[:, :, :size // 2, :] = 0.0
+                            elif self.spatial_mask_type == "left":
+                                mask_2d[:, :, size // 2:, :] = 0.0
+                            mask = mask_2d.view(1, seq_len, 1)
+                            key = (1 - mask) * key + mask * stored_k
+                            value = (1 - mask) * value + mask * stored_v
+                        else:
+                            key = (1 - r) * key + r * stored_k
+                            value = (1 - r) * value + r * stored_v
 
-        elif self.mode == "store_and_inject":
-            # blend_ratio == 0 but still store
-            self.kv_bank[self.current_step] = (
-                key.detach().clone(),
-                value.detach().clone(),
-            )
+            if self.mode == "store_and_inject":
+                self.kv_bank[self.current_step] = (
+                    key.detach().clone(),
+                    value.detach().clone(),
+                )
         # ──────────────────────────────────────────────────────────
 
         inner_dim = key.shape[-1]
@@ -205,6 +202,11 @@ class AttentionControl:
 
         # Cache: shot_id -> {proc_key -> {step -> (K, V)}}
         self._kv_cache: dict[str, dict[str, dict[int, tuple[torch.Tensor, torch.Tensor]]]] = {}
+
+    def set_spatial_mask(self, mask_type: str | None):
+        """Set spatial mask for K/V injection ('left', 'right', or None)."""
+        for p in self.kv_processors.values():
+            p.spatial_mask_type = mask_type
 
     def set_mode_store_and_inject(self):
         """Store K/V while also injecting from previously loaded bank."""
@@ -351,10 +353,10 @@ class KeyframeGenerator:
     def _compose_ip_embeds(self, node):
         embeds = []
         for ent in sorted(node.entities):
-            embeds.append(self.embedding_cache[ent].unsqueeze(0))
-        embeds.append(self.embedding_cache[node.bg].unsqueeze(0))
-        stacked = torch.stack([e.squeeze(0) for e in embeds], dim=0)
-        combined = stacked.mean(dim=0, keepdim=True).unsqueeze(0)
+            embeds.append(self.embedding_cache[ent].unsqueeze(0))  # (1, 1280)
+        embeds.append(self.embedding_cache[node.bg].unsqueeze(0))  # (1, 1280)
+        # Concatenate along sequence dim so each identity is preserved as a separate token
+        combined = torch.cat(embeds, dim=0).unsqueeze(0)  # (1, N, 1280)
         return combined
 
     @staticmethod
@@ -422,6 +424,13 @@ class KeyframeGenerator:
             removed = parent.entities - node.entities
             bg_changed = node.bg != parent.bg
 
+            # Spatial masking: when adding entity to single-entity parent,
+            # confine parent structure to one side, free the other for new entity
+            spatial_mask = None
+            if added and len(parent.entities) == 1 and len(node.entities) >= 2:
+                spatial_mask = "right"
+                print(f"  [Spatial Mask] '{spatial_mask}' — parent({parent.entities}) on right, new({added}) on left")
+
             if added:
                 blend = self.max_blend * 0.35
                 change_type = f"+entity({added})"
@@ -433,10 +442,12 @@ class KeyframeGenerator:
                 change_type = f"bg({parent.bg}→{node.bg})"
 
             print(f"  Mode: DERIVE (D=1, {change_type}, blend={blend:.0%}→0)")
+            self.attn_ctrl.set_spatial_mask(spatial_mask)
             self._generate_with_parent_kv(
                 node, prompt, ip_embeds, keyframes, gen,
                 blend_override=blend,
             )
+            self.attn_ctrl.set_spatial_mask(None)
             img = self._last_generated
 
         else:
