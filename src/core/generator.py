@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import os
 import sys
-import math
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
@@ -51,7 +50,6 @@ class KVStoreAttnProcessor:
         self.kv_bank: dict[int, tuple[torch.Tensor, torch.Tensor]] = {}
         self.current_step: int = 0
         self.blend_ratio: float = 0.0
-        self.spatial_mask_type: str | None = None
 
     def reset(self):
         self.kv_bank.clear()
@@ -112,22 +110,8 @@ class KVStoreAttnProcessor:
                         stored_v = stored_v.repeat(2, 1, 1)
                     if stored_k.shape == key.shape:
                         r = self.blend_ratio
-                        seq_len = key.shape[1]
-                        size = int(math.sqrt(seq_len))
-
-                        if self.spatial_mask_type is not None and size * size == seq_len:
-                            mask = torch.ones((1, seq_len, 1), device=key.device, dtype=key.dtype) * r
-                            mask_2d = mask.view(1, size, size, 1)
-                            if self.spatial_mask_type == "right":
-                                mask_2d[:, :, :size // 2, :] = 0.0
-                            elif self.spatial_mask_type == "left":
-                                mask_2d[:, :, size // 2:, :] = 0.0
-                            mask = mask_2d.view(1, seq_len, 1)
-                            key = (1 - mask) * key + mask * stored_k
-                            value = (1 - mask) * value + mask * stored_v
-                        else:
-                            key = (1 - r) * key + r * stored_k
-                            value = (1 - r) * value + r * stored_v
+                        key = (1 - r) * key + r * stored_k
+                        value = (1 - r) * value + r * stored_v
 
             if self.mode == "store_and_inject":
                 self.kv_bank[self.current_step] = (
@@ -202,11 +186,6 @@ class AttentionControl:
 
         # Cache: shot_id -> {proc_key -> {step -> (K, V)}}
         self._kv_cache: dict[str, dict[str, dict[int, tuple[torch.Tensor, torch.Tensor]]]] = {}
-
-    def set_spatial_mask(self, mask_type: str | None):
-        """Set spatial mask for K/V injection ('left', 'right', or None)."""
-        for p in self.kv_processors.values():
-            p.spatial_mask_type = mask_type
 
     def set_mode_store_and_inject(self):
         """Store K/V while also injecting from previously loaded bank."""
@@ -289,13 +268,13 @@ class KeyframeGenerator:
             variant="fp16",
         ).to(self.device)
 
-        print("[Pipeline] Loading Multi-IP-Adapter (4 instances)...")
+        print("[Pipeline] Loading IP-Adapter...")
         self.pipe.load_ip_adapter(
             "h94/IP-Adapter",
             subfolder="sdxl_models",
-            weight_name=["ip-adapter_sdxl.safetensors"] * 4,
+            weight_name="ip-adapter_sdxl.safetensors",
         )
-        self.pipe.set_ip_adapter_scale([0.6] * 4)
+        self.pipe.set_ip_adapter_scale(0.6)
         self.pipe.set_progress_bar_config(disable=True)
 
         self.image_encoder = self.pipe.image_encoder
@@ -348,48 +327,18 @@ class KeyframeGenerator:
         return emb.squeeze(0)
 
     def _zero_ip_embeds(self):
-        """Return list of 4 zero embeddings for 4 IP-Adapters."""
-        z = torch.zeros(1, 1, 1280, device=self.device, dtype=self.dtype)
-        return [z.clone() for _ in range(4)]
+        """Return single zero embedding for IP-Adapter."""
+        return [torch.zeros(1, 1, 1280, device=self.device, dtype=self.dtype)]
 
     def _compose_ip_embeds(self, node):
-        """Return list of 4 separate (1,1,1280) tensors for Multi-IP-Adapter.
-        Slots: [entity0, entity1, entity2/pad, bg] — padded to exactly 4."""
-        embeds = []
+        """Concatenate all entity + bg embeddings into one token sequence.
+        Returns list with single (1, N, 1280) tensor where N = num_entities + 1."""
+        tokens = []
         for ent in sorted(node.entities):
-            embeds.append(self.embedding_cache[ent].unsqueeze(0).unsqueeze(0))  # (1,1,1280)
-        embeds.append(self.embedding_cache[node.bg].unsqueeze(0).unsqueeze(0))  # (1,1,1280)
-        # Pad to 4 adapters with zero embeddings
-        while len(embeds) < 4:
-            embeds.append(torch.zeros(1, 1, 1280, device=self.device, dtype=self.dtype))
-        return embeds[:4]
-
-    def _build_ip_masks(self, node, added_entities, spatial_mask):
-        """Build list of 4 mask tensors, each (1, 1, H, W) for Multi-IP-Adapter.
-        Shape: [batch=1, num_images=1, H, W] per adapter."""
-        H, W = 512, 512
-        masks = []
-        for ent in sorted(node.entities):
-            m = torch.zeros(1, 1, H, W, device=self.device, dtype=self.dtype)
-            if spatial_mask == "right":
-                if ent in added_entities:
-                    m[:, :, :, :W // 2] = 1.0  # new entity → left
-                else:
-                    m[:, :, :, W // 2:] = 1.0  # parent entity → right
-            elif spatial_mask == "left":
-                if ent in added_entities:
-                    m[:, :, :, W // 2:] = 1.0
-                else:
-                    m[:, :, :, :W // 2] = 1.0
-            else:
-                m = torch.ones(1, 1, H, W, device=self.device, dtype=self.dtype)
-            masks.append(m)
-        # BG → full image
-        masks.append(torch.ones(1, 1, H, W, device=self.device, dtype=self.dtype))
-        # Pad to 4 with zero masks
-        while len(masks) < 4:
-            masks.append(torch.zeros(1, 1, H, W, device=self.device, dtype=self.dtype))
-        return masks[:4]
+            tokens.append(self.embedding_cache[ent].unsqueeze(0).unsqueeze(0))  # (1,1,1280)
+        tokens.append(self.embedding_cache[node.bg].unsqueeze(0).unsqueeze(0))  # (1,1,1280)
+        concat = torch.cat(tokens, dim=1)  # (1, N, 1280)
+        return [concat]
 
     @staticmethod
     def build_prompt(node, entity_prompts, bg_prompts):
@@ -456,35 +405,21 @@ class KeyframeGenerator:
             removed = parent.entities - node.entities
             bg_changed = node.bg != parent.bg
 
-            # Spatial masking: when adding entity to single-entity parent,
-            # confine parent structure to one side, free the other for new entity
-            spatial_mask = None
-            cross_attention_kwargs = None
-            if added and len(parent.entities) == 1 and len(node.entities) >= 2:
-                spatial_mask = "right"
-                ip_masks = self._build_ip_masks(node, added, spatial_mask)
-                cross_attention_kwargs = {"ip_adapter_masks": ip_masks}
-                print(f"  [Spatial Mask] KV='{spatial_mask}' + IP-Adapter masks ({len(ip_masks)} regions)")
-                print(f"    New({added})→left, Parent({parent.entities})→right, BG→full")
-
             if added:
-                blend = self.max_blend * 0.35
+                blend = 0.0  # structural freedom for new entity composition
                 change_type = f"+entity({added})"
             elif removed:
                 blend = self.max_blend * 0.5
                 change_type = f"-entity({removed})"
             else:
-                blend = self.max_blend * 0.6
+                blend = self.max_blend * 0.7
                 change_type = f"bg({parent.bg}→{node.bg})"
 
             print(f"  Mode: DERIVE (D=1, {change_type}, blend={blend:.0%}→0)")
-            self.attn_ctrl.set_spatial_mask(spatial_mask)
             self._generate_with_parent_kv(
                 node, prompt, ip_embeds, keyframes, gen,
                 blend_override=blend,
-                cross_attention_kwargs=cross_attention_kwargs,
             )
-            self.attn_ctrl.set_spatial_mask(None)
             img = self._last_generated
 
         else:
@@ -493,8 +428,7 @@ class KeyframeGenerator:
         return img
 
     def _generate_with_parent_kv(self, node, prompt, ip_embeds, keyframes,
-                                  gen, blend_override=None,
-                                  cross_attention_kwargs=None):
+                                  gen, blend_override=None):
         parent = node.parent_node
 
         # Load parent's cached K/V (from its actual generation)
@@ -520,7 +454,7 @@ class KeyframeGenerator:
             step_log.append((step, ratio))
             return cbk
 
-        pipe_kwargs = dict(
+        self._last_generated = self.pipe(
             prompt=prompt,
             negative_prompt="blurry, low quality, distorted, deformed",
             ip_adapter_image_embeds=ip_embeds,
@@ -529,11 +463,7 @@ class KeyframeGenerator:
             generator=gen,
             width=512, height=512,
             callback_on_step_end=callback,
-        )
-        if cross_attention_kwargs is not None:
-            pipe_kwargs["cross_attention_kwargs"] = cross_attention_kwargs
-
-        self._last_generated = self.pipe(**pipe_kwargs).images[0]
+        ).images[0]
 
         # Cache this node's K/V for its children
         self.attn_ctrl.save_kv_to_cache(node.shot_id)
