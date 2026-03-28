@@ -18,9 +18,10 @@ from pathlib import Path
 from typing import Optional
 
 import hashlib
+import numpy as np
 import torch
 import torch.nn.functional as F
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter, ImageChops
 
 
 def _stable_hash(s: str) -> int:
@@ -257,6 +258,7 @@ class KeyframeGenerator:
         self.image_encoder = None
         self.clip_processor = None
         self.embedding_cache: dict[str, torch.Tensor] = {}
+        self.anchor_images: dict[str, Image.Image] = {}
 
     def load_pipeline(self):
         from diffusers import AutoPipelineForText2Image, AutoPipelineForImage2Image
@@ -312,6 +314,7 @@ class KeyframeGenerator:
                 width=512, height=512,
             ).images[0]
             anchor_images[symbol] = img
+            self.anchor_images[symbol] = img.copy()
             img.save(out_dir / f"anchor_{symbol}.png")
             print(f"  Anchor {symbol}: saved")
 
@@ -344,68 +347,42 @@ class KeyframeGenerator:
         concat = torch.cat(tokens, dim=1)  # (1, N, 1280)
         return [concat]
 
-    def _ip_embeds_for(self, entities, bg):
-        """Build IP-Adapter embeds for an arbitrary entity set + bg."""
-        tokens = []
-        for ent in sorted(entities):
-            tokens.append(self.embedding_cache[ent].unsqueeze(0).unsqueeze(0))
-        tokens.append(self.embedding_cache[bg].unsqueeze(0).unsqueeze(0))
-        return [torch.cat(tokens, dim=1)]
+    def _collage_anchor_onto_parent(self, parent_img, added_entity,
+                                     x_offset=-128):
+        """Alpha-composite the unconditional anchor onto the parent image.
 
-    def _generate_missing_component(self, added_entities, bg,
-                                     entity_prompts, bg_prompts):
-        """Generate a temporary frame for the missing entity in the target bg."""
-        parts = [entity_prompts[e].split(",")[0] for e in sorted(added_entities)]
-        bg_desc = bg_prompts[bg].split(",")[0]
-        temp_prompt = (f"{', '.join(parts)}, in {bg_desc}, "
-                       f"standing, cinematic still frame, high quality, detailed")
-        temp_ip = self._ip_embeds_for(added_entities, bg)
+        Distributive Property: Parent(C,F) + Anchor(A,white) → Collage(A,C,F)
+        Forces effective D=0 without generating a new background.
 
-        seed_offset = sum(ord(c) for c in "".join(sorted(added_entities)))
-        temp_gen = torch.Generator(device=self.device).manual_seed(
-            self.seed + seed_offset
-        )
-
-        self.attn_ctrl.set_mode_bypass()
-        img = self.pipe(
-            prompt=temp_prompt,
-            negative_prompt="blurry, low quality, distorted, deformed",
-            ip_adapter_image_embeds=temp_ip,
-            num_inference_steps=4,
-            guidance_scale=0.0,
-            generator=temp_gen,
-            width=512, height=512,
-        ).images[0]
-        return img
-
-    def _stitch_and_smooth(self, left_img, right_img, prompt, ip_embeds,
-                            gen, out_dir=None, debug_name=None):
-        """Stitch left/right halves and smooth the seam via low-strength img2img.
-
-        Compositional Generation: forces D=0 by spatial composition,
-        then smooths the seam boundary with a gentle img2img pass.
+        Steps:
+          1. Shift the anchor entity to avoid overlap with parent entity
+          2. Extract foreground mask (non-white pixels)
+          3. Blur mask edges for smooth blending
+          4. Protect the parent's right side (existing entity)
+          5. Paste the anchor foreground onto the parent
         """
-        # Stitch: left half from left_img, right half from right_img
-        composite = Image.new("RGB", (512, 512))
-        composite.paste(left_img.crop((0, 0, 256, 512)), (0, 0))
-        composite.paste(right_img.crop((256, 0, 512, 512)), (256, 0))
+        anchor = self.anchor_images[added_entity].copy()
 
-        if out_dir and debug_name:
-            composite.save(out_dir / f"debug_composite_{debug_name}.png")
+        # Shift anchor left so it doesn't overlap with parent entity (right side)
+        anchor_shifted = ImageChops.offset(anchor, x_offset, 0)
 
-        # Smooth: low-strength img2img blends the seam naturally
-        self.attn_ctrl.set_mode_bypass()
-        smoothed = self.pipe_i2i(
-            prompt=prompt,
-            negative_prompt="blurry, low quality, distorted, deformed, visible seam",
-            image=composite,
-            ip_adapter_image_embeds=ip_embeds,
-            strength=0.25,
-            num_inference_steps=4,
-            guidance_scale=0.0,
-            generator=gen,
-        ).images[0]
-        return smoothed
+        # Create foreground mask: non-white pixels = entity
+        arr = np.array(anchor_shifted)
+        is_foreground = np.any(arr < 240, axis=-1)
+        mask = (is_foreground * 255).astype(np.uint8)
+        mask_img = Image.fromarray(mask, mode="L")
+
+        # Soften edges for natural blending
+        mask_img = mask_img.filter(ImageFilter.GaussianBlur(radius=3))
+
+        # Protect right half (where parent entity lives)
+        draw = ImageDraw.Draw(mask_img)
+        draw.rectangle([256, 0, 512, 512], fill=0)
+
+        # Composite: paste anchor foreground onto parent using alpha mask
+        collage = parent_img.copy()
+        collage.paste(anchor_shifted, (0, 0), mask_img)
+        return collage
 
     @staticmethod
     def build_prompt(node, entity_prompts, bg_prompts):
@@ -472,35 +449,35 @@ class KeyframeGenerator:
             removed = parent.entities - node.entities
 
             if added:
-                # ── Compositional Stitching (Divide & Conquer) ──
-                # Instead of forcing UNet to resolve D=1 in one pass,
-                # generate the missing component separately, stitch
-                # spatially to form D=0 composite, then smooth the seam.
-                print(f"  Mode: COMPOSITIONAL STITCH (+entity({added}), forcing D→0)")
+                # ── Compositional Collage (Distributive Property) ──
+                # Parent(existing entities, BG) + Anchor(added entity, white)
+                # = Collage with all entities in BG → effective D=0
+                # Then harmonize with img2img to blend lighting/shadows.
+                added_ent = sorted(added)[0]
+                print(f"  Mode: COLLAGE+HARMONIZE (+entity({added}), forcing D→0)")
+                print(f"    Parent: {parent.shot_id} (E={sorted(parent.entities)})")
+                print(f"    Anchor: {added_ent} (unconditional, white bg)")
 
-                # 1. Parent image = right half (existing entities in bg)
                 parent_img = keyframes[parent.shot_id]
-                print(f"    Right half: parent {parent.shot_id} "
-                      f"(E={sorted(parent.entities)}, BG={parent.bg})")
 
-                # 2. Generate missing component = left half (added entities in bg)
-                print(f"    Left half: generating {sorted(added)} in BG={node.bg}...")
-                missing_img = self._generate_missing_component(
-                    added, node.bg,
-                    self._entity_prompts, self._bg_prompts,
-                )
+                # 1. Alpha-composite anchor onto parent
+                collage = self._collage_anchor_onto_parent(parent_img, added_ent)
 
-                # 3. Stitch + Smooth → D=0 composite
-                print(f"    Stitching + smoothing (strength=0.25)...")
-                img = self._stitch_and_smooth(
-                    left_img=missing_img,
-                    right_img=parent_img,
+                # 2. Harmonize: blend lighting, shadows, remove white artifacts
+                print(f"    Harmonizing collage (strength=0.45)...")
+                self.attn_ctrl.set_mode_bypass()
+                img = self.pipe_i2i(
                     prompt=prompt,
-                    ip_embeds=ip_embeds,
-                    gen=gen,
-                )
+                    negative_prompt="blurry, low quality, mismatched lighting, visible seam",
+                    image=collage,
+                    ip_adapter_image_embeds=ip_embeds,
+                    strength=0.45,
+                    num_inference_steps=self.num_steps,
+                    guidance_scale=0.0,
+                    generator=gen,
+                ).images[0]
 
-                # 4. Cache K/V from the smoothed result for children
+                # 3. Cache K/V for children
                 self.attn_ctrl.set_mode_store()
                 gen2 = torch.Generator(device=self.device).manual_seed(
                     self.seed + _stable_hash(node.shot_id) + 1
