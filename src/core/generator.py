@@ -460,7 +460,12 @@ class KeyframeGenerator:
                 )
                 img = self._last_generated
             else:
-                blend = self.max_blend * 0.7
+                if len(node.entities) >= 2:
+                    # Multi-entity bg change: lower blend to let spatial prompt
+                    # anchoring guide both entities freely
+                    blend = self.max_blend * 0.4
+                else:
+                    blend = self.max_blend * 0.7
                 print(f"  Mode: DERIVE (D=1, bg({parent.bg}→{node.bg}), blend={blend:.0%}→0)")
                 self._generate_with_parent_kv(
                     node, prompt, ip_embeds, keyframes, gen,
