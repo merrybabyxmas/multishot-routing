@@ -4,11 +4,8 @@ StoryDiffusion Baseline Wrapper for MSR-50 Benchmark.
 Wraps HVision-NKU/StoryDiffusion's consistent self-attention
 mechanism as a multi-shot generation baseline.
 
-StoryDiffusion uses:
-  - SDXL backbone
-  - Consistent self-attention on up_blocks (id_bank stores features)
-  - Reference frames (write=True) + generation frames (write=False)
-  - Stochastic attention masking for diversity
+Uses the original SpatialAttnProcessor2_0 from predict.py (embedded here
+to avoid cog/gradio import chain).
 
 Reference:
   Zhou et al., "StoryDiffusion: Consistent Self-Attention for
@@ -21,28 +18,30 @@ import copy
 import json
 import random
 import sys
+import types as _types
 from pathlib import Path
 
 import numpy as np
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 from PIL import Image, ImageDraw, ImageFont
 
-# Add StoryDiffusion to path
+# Add StoryDiffusion to path and mock gradio
 STORYDIFF_ROOT = Path("/home/dongwoo44/papers/paper_DIRECTOR/related_papers/StoryDiffusion")
 sys.path.insert(0, str(STORYDIFF_ROOT))
 
+if "gradio" not in sys.modules:
+    sys.modules["gradio"] = _types.ModuleType("gradio")
+
 from diffusers import StableDiffusionXLPipeline, DDIMScheduler
 
-# Import StoryDiffusion attention utilities
-from utils.gradio_utils import (
-    AttnProcessor2_0 as SDAttnProcessor,
-    cal_attn_mask_xl,
-)
+# Import mask computation from gradio_utils (no cog dependency)
+from utils.gradio_utils import cal_attn_mask_xl
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# Global state (StoryDiffusion uses globals for attention coordination)
+# Global state (StoryDiffusion uses module-level globals)
 # ═══════════════════════════════════════════════════════════════════════
 
 total_count = 0
@@ -58,16 +57,72 @@ width = 512
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# Consistent Self-Attention Processor (adapted from predict.py)
+# Attention Processors (copied from StoryDiffusion predict.py)
 # ═══════════════════════════════════════════════════════════════════════
 
-class ConsistentAttnProcessor(torch.nn.Module):
-    """StoryDiffusion's consistent self-attention processor."""
+class AttnProcessor(nn.Module):
+    """Standard attention processor (for non-consistent layers)."""
+    def __init__(self):
+        super().__init__()
 
-    def __init__(self, id_length=4, device="cuda", dtype=torch.float16):
+    def __call__(self, attn, hidden_states, encoder_hidden_states=None,
+                 attention_mask=None, temb=None):
+        residual = hidden_states
+        if attn.spatial_norm is not None:
+            hidden_states = attn.spatial_norm(hidden_states, temb)
+        input_ndim = hidden_states.ndim
+        if input_ndim == 4:
+            batch_size, channel, h, w = hidden_states.shape
+            hidden_states = hidden_states.view(batch_size, channel, h * w).transpose(1, 2)
+
+        batch_size, sequence_length, _ = (
+            hidden_states.shape if encoder_hidden_states is None else encoder_hidden_states.shape
+        )
+        attention_mask = attn.prepare_attention_mask(attention_mask, sequence_length, batch_size)
+        if attn.group_norm is not None:
+            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(1, 2)
+
+        query = attn.to_q(hidden_states)
+        if encoder_hidden_states is None:
+            encoder_hidden_states = hidden_states
+        elif attn.norm_cross:
+            encoder_hidden_states = attn.norm_encoder_hidden_states(encoder_hidden_states)
+
+        key = attn.to_k(encoder_hidden_states)
+        value = attn.to_v(encoder_hidden_states)
+
+        query = attn.head_to_batch_dim(query)
+        key = attn.head_to_batch_dim(key)
+        value = attn.head_to_batch_dim(value)
+
+        attention_probs = attn.get_attention_scores(query, key, attention_mask)
+        hidden_states = torch.bmm(attention_probs, value)
+        hidden_states = attn.batch_to_head_dim(hidden_states)
+
+        hidden_states = attn.to_out[0](hidden_states)
+        hidden_states = attn.to_out[1](hidden_states)
+        if input_ndim == 4:
+            hidden_states = hidden_states.transpose(-1, -2).reshape(batch_size, channel, h, w)
+        if attn.residual_connection:
+            hidden_states = hidden_states + residual
+        hidden_states = hidden_states / attn.rescale_output_factor
+        return hidden_states
+
+
+class SpatialAttnProcessor2_0(torch.nn.Module):
+    """StoryDiffusion's consistent self-attention processor.
+
+    Copied verbatim from predict.py to avoid cog import chain.
+    Uses module-level globals for cross-processor coordination.
+    """
+
+    def __init__(self, hidden_size=None, cross_attention_dim=None,
+                 id_length=4, device="cuda", dtype=torch.float16):
         super().__init__()
         self.device = device
         self.dtype = dtype
+        self.hidden_size = hidden_size
+        self.cross_attention_dim = cross_attention_dim
         self.total_length = id_length + 1
         self.id_length = id_length
         self.id_bank = {}
@@ -91,17 +146,15 @@ class ConsistentAttnProcessor(torch.nn.Module):
             ))
 
         if cur_step < 5:
-            hidden_states = self._standard_attn(
+            hidden_states = self.__call2__(
                 attn, hidden_states, encoder_hidden_states, attention_mask, temb
             )
         else:
             random_number = random.random()
             rand_num = 0.3 if cur_step < 20 else 0.1
-
             if random_number > rand_num:
-                nums_1024 = (height // 32) * (width // 32)
                 if not write:
-                    if hidden_states.shape[1] == nums_1024:
+                    if hidden_states.shape[1] == (height // 32) * (width // 32):
                         attention_mask = mask1024[
                             mask1024.shape[0] // self.total_length * self.id_length:
                         ]
@@ -110,7 +163,7 @@ class ConsistentAttnProcessor(torch.nn.Module):
                             mask4096.shape[0] // self.total_length * self.id_length:
                         ]
                 else:
-                    if hidden_states.shape[1] == nums_1024:
+                    if hidden_states.shape[1] == (height // 32) * (width // 32):
                         attention_mask = mask1024[
                             :mask1024.shape[0] // self.total_length * self.id_length,
                             :mask1024.shape[0] // self.total_length * self.id_length,
@@ -120,11 +173,11 @@ class ConsistentAttnProcessor(torch.nn.Module):
                             :mask4096.shape[0] // self.total_length * self.id_length,
                             :mask4096.shape[0] // self.total_length * self.id_length,
                         ]
-                hidden_states = self._paired_attn(
+                hidden_states = self.__call1__(
                     attn, hidden_states, encoder_hidden_states, attention_mask, temb
                 )
             else:
-                hidden_states = self._standard_attn(
+                hidden_states = self.__call2__(
                     attn, hidden_states, None, attention_mask, temb
                 )
 
@@ -140,8 +193,8 @@ class ConsistentAttnProcessor(torch.nn.Module):
 
         return hidden_states
 
-    def _paired_attn(self, attn, hidden_states, encoder_hidden_states=None,
-                     attention_mask=None, temb=None):
+    def __call1__(self, attn, hidden_states, encoder_hidden_states=None,
+                  attention_mask=None, temb=None):
         """Paired attention with cross-image feature mixing."""
         residual = hidden_states
         if attn.spatial_norm is not None:
@@ -149,17 +202,22 @@ class ConsistentAttnProcessor(torch.nn.Module):
         input_ndim = hidden_states.ndim
 
         if input_ndim == 4:
-            total_batch_size, channel, h, w = hidden_states.shape
-            hidden_states = hidden_states.view(total_batch_size, channel, h * w).transpose(1, 2)
+            total_batch_size, channel, height, width = hidden_states.shape
+            hidden_states = hidden_states.view(
+                total_batch_size, channel, height * width
+            ).transpose(1, 2)
         total_batch_size, nums_token, channel = hidden_states.shape
         img_nums = total_batch_size // 2
-        hidden_states = hidden_states.view(-1, img_nums, nums_token, channel).reshape(
-            -1, img_nums * nums_token, channel
-        )
+        hidden_states = hidden_states.view(
+            -1, img_nums, nums_token, channel
+        ).reshape(-1, img_nums * nums_token, channel)
+
         batch_size, sequence_length, _ = hidden_states.shape
 
         if attn.group_norm is not None:
-            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(1, 2)
+            hidden_states = attn.group_norm(
+                hidden_states.transpose(1, 2)
+            ).transpose(1, 2)
 
         query = attn.to_q(hidden_states)
         if encoder_hidden_states is None:
@@ -190,55 +248,73 @@ class ConsistentAttnProcessor(torch.nn.Module):
 
         if input_ndim == 4:
             hidden_states = hidden_states.transpose(-1, -2).reshape(
-                total_batch_size, channel, h, w
+                total_batch_size, channel, height, width
             )
         if attn.residual_connection:
             hidden_states = hidden_states + residual
         hidden_states = hidden_states / attn.rescale_output_factor
         return hidden_states
 
-    def _standard_attn(self, attn, hidden_states, encoder_hidden_states=None,
-                       attention_mask=None, temb=None):
-        """Standard self-attention (no cross-image mixing)."""
+    def __call2__(self, attn, hidden_states, encoder_hidden_states=None,
+                  attention_mask=None, temb=None):
+        """Standard attention with optional cross-image KV."""
         residual = hidden_states
         if attn.spatial_norm is not None:
             hidden_states = attn.spatial_norm(hidden_states, temb)
         input_ndim = hidden_states.ndim
 
         if input_ndim == 4:
-            batch_size, channel, h, w = hidden_states.shape
-            hidden_states = hidden_states.view(batch_size, channel, h * w).transpose(1, 2)
+            batch_size, channel, height, width = hidden_states.shape
+            hidden_states = hidden_states.view(
+                batch_size, channel, height * width
+            ).transpose(1, 2)
 
-        batch_size, sequence_length, _ = (
-            hidden_states.shape if encoder_hidden_states is None else encoder_hidden_states.shape
-        )
-        attention_mask = attn.prepare_attention_mask(attention_mask, sequence_length, batch_size)
+        batch_size, sequence_length, channel = hidden_states.shape
+
+        if attention_mask is not None:
+            attention_mask = attn.prepare_attention_mask(
+                attention_mask, sequence_length, batch_size
+            )
+            attention_mask = attention_mask.view(
+                batch_size, attn.heads, -1, attention_mask.shape[-1]
+            )
 
         if attn.group_norm is not None:
-            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(1, 2)
+            hidden_states = attn.group_norm(
+                hidden_states.transpose(1, 2)
+            ).transpose(1, 2)
 
         query = attn.to_q(hidden_states)
         if encoder_hidden_states is None:
             encoder_hidden_states = hidden_states
-        elif attn.norm_cross:
-            encoder_hidden_states = attn.norm_encoder_hidden_states(encoder_hidden_states)
+        else:
+            encoder_hidden_states = encoder_hidden_states.view(
+                -1, self.id_length + 1, sequence_length, channel
+            ).reshape(-1, (self.id_length + 1) * sequence_length, channel)
 
         key = attn.to_k(encoder_hidden_states)
         value = attn.to_v(encoder_hidden_states)
+        inner_dim = key.shape[-1]
+        head_dim = inner_dim // attn.heads
 
-        query = attn.head_to_batch_dim(query)
-        key = attn.head_to_batch_dim(key)
-        value = attn.head_to_batch_dim(value)
+        query = query.view(batch_size, -1, attn.heads, head_dim).transpose(1, 2)
+        key = key.view(batch_size, -1, attn.heads, head_dim).transpose(1, 2)
+        value = value.view(batch_size, -1, attn.heads, head_dim).transpose(1, 2)
 
-        attention_probs = attn.get_attention_scores(query, key, attention_mask)
-        hidden_states = torch.bmm(attention_probs, value)
-        hidden_states = attn.batch_to_head_dim(hidden_states)
-
+        hidden_states = F.scaled_dot_product_attention(
+            query, key, value, attn_mask=attention_mask, dropout_p=0.0, is_causal=False
+        )
+        hidden_states = hidden_states.transpose(1, 2).reshape(
+            batch_size, -1, attn.heads * head_dim
+        )
+        hidden_states = hidden_states.to(query.dtype)
         hidden_states = attn.to_out[0](hidden_states)
         hidden_states = attn.to_out[1](hidden_states)
 
         if input_ndim == 4:
-            hidden_states = hidden_states.transpose(-1, -2).reshape(batch_size, channel, h, w)
+            hidden_states = hidden_states.transpose(-1, -2).reshape(
+                batch_size, channel, height, width
+            )
         if attn.residual_connection:
             hidden_states = hidden_states + residual
         hidden_states = hidden_states / attn.rescale_output_factor
@@ -250,7 +326,7 @@ class ConsistentAttnProcessor(torch.nn.Module):
 # ═══════════════════════════════════════════════════════════════════════
 
 def setup_consistent_attention(unet, id_length, device="cuda"):
-    """Patch UNet with StoryDiffusion's consistent self-attention."""
+    """Patch UNet self-attention on up_blocks with consistent processors."""
     global total_count
     total_count = 0
     attn_procs = {}
@@ -261,12 +337,12 @@ def setup_consistent_attention(unet, id_length, device="cuda"):
             else unet.config.cross_attention_dim
         )
         if cross_attention_dim is None and name.startswith("up_blocks"):
-            attn_procs[name] = ConsistentAttnProcessor(
+            attn_procs[name] = SpatialAttnProcessor2_0(
                 id_length=id_length, device=device, dtype=torch.float16,
             )
             total_count += 1
         else:
-            attn_procs[name] = SDAttnProcessor()
+            attn_procs[name] = AttnProcessor()
 
     unet.set_attn_processor(copy.deepcopy(attn_procs))
     print(f"  [StoryDiff] Consistent self-attention: {total_count} processors")
@@ -301,23 +377,24 @@ class StoryDiffusionGenerator:
         self.pipe = None
 
     def load_pipeline(self):
-        """Load SDXL pipeline with consistent self-attention."""
+        """Load SDXL pipeline."""
+        if self.pipe is not None:
+            print("[StoryDiff] Pipeline already loaded, reusing.")
+            return
         print("[StoryDiff] Loading SDXL pipeline...")
         self.pipe = StableDiffusionXLPipeline.from_pretrained(
             "stabilityai/stable-diffusion-xl-base-1.0",
             torch_dtype=torch.float16,
             variant="fp16",
         ).to(self.device)
-
         self.pipe.scheduler = DDIMScheduler.from_config(
             self.pipe.scheduler.config
         )
         self.pipe.enable_vae_slicing()
-
         print("[StoryDiff] Pipeline loaded.")
 
     def _setup_globals(self):
-        """Set global state for StoryDiffusion attention."""
+        """Set module-level globals for attention processors."""
         global sa32, sa64, height, width, attn_count, cur_step
         sa32 = self.sa32_strength
         sa64 = self.sa64_strength
@@ -326,8 +403,8 @@ class StoryDiffusionGenerator:
         attn_count = 0
         cur_step = 0
 
-    def _reset_attn_state(self):
-        """Reset attention state for new generation batch."""
+    def _reset_step_state(self):
+        """Reset per-generation attention state."""
         global attn_count, cur_step, mask1024, mask4096
         attn_count = 0
         cur_step = 0
@@ -343,12 +420,7 @@ class StoryDiffusionGenerator:
         scenario: dict,
         out_dir: Path,
     ) -> dict[str, Image.Image]:
-        """Generate all 10 shots for a scenario using StoryDiffusion.
-
-        Strategy:
-          - First `num_ids` shots = reference frames (write=True)
-          - Remaining shots = consistent generation (write=False)
-        """
+        """Generate all 10 shots for a scenario using StoryDiffusion."""
         global write
 
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -358,7 +430,7 @@ class StoryDiffusionGenerator:
 
         self._setup_globals()
 
-        # Setup consistent attention
+        # Install consistent attention processors
         setup_consistent_attention(
             self.pipe.unet, self.num_ids, device=self.device
         )
@@ -369,7 +441,7 @@ class StoryDiffusionGenerator:
         # Phase 1: Generate reference frames (write=True)
         print(f"\n  [StoryDiff] Phase 1: Generating {self.num_ids} reference frames...")
         write = True
-        self._reset_attn_state()
+        self._reset_step_state()
 
         ref_prompts = [shots[i]["keyframe_prompt"] for i in range(self.num_ids)]
 
@@ -397,11 +469,12 @@ class StoryDiffusionGenerator:
             print(f"    {sid}: saved (reference frame)")
 
         # Phase 2: Generate remaining frames one-by-one (write=False)
-        print(f"\n  [StoryDiff] Phase 2: Generating {10 - self.num_ids} consistent frames...")
+        # id_bank from Phase 1 provides identity features.
+        print(f"\n  [StoryDiff] Phase 2: Generating {len(shots) - self.num_ids} consistent frames...")
 
         for i in range(self.num_ids, len(shots)):
             write = False
-            self._reset_attn_state()
+            self._reset_step_state()
 
             prompt = shots[i]["keyframe_prompt"]
             sid = shots[i]["shot_id"]
@@ -480,7 +553,6 @@ def run_storydiff_on_msr50(
     dataset_dir = Path(dataset_dir)
     output_dir = Path(output_dir)
 
-    # Load combined dataset
     combined = dataset_dir / "MSR-50.json"
     with open(combined) as f:
         data = json.load(f)
@@ -503,7 +575,6 @@ def run_storydiff_on_msr50(
         domain = scenario["domain"]
         s_out = output_dir / sid
 
-        # Resume check
         if (s_out / "shot_S10.png").exists():
             print(f"\n  [{i+1}/{len(scenarios)}] {sid} ({domain}) — already done, skipping")
             continue
@@ -522,10 +593,6 @@ def run_storydiff_on_msr50(
     print(f"StoryDiffusion baseline complete -> {output_dir.resolve()}")
     print(f"{'=' * 70}")
 
-
-# ═══════════════════════════════════════════════════════════════════════
-# CLI
-# ═══════════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
     import argparse

@@ -201,6 +201,12 @@ class AttentionControl:
         # Cache: shot_id -> {proc_key -> {step -> (K, V)}}
         self._kv_cache: dict[str, dict[str, dict[int, tuple[torch.Tensor, torch.Tensor]]]] = {}
 
+    def clear_all_caches(self):
+        """Clear all K/V caches and banks. Call between scenarios."""
+        self._kv_cache.clear()
+        for p in self.kv_processors.values():
+            p.kv_bank.clear()
+
     def set_mode_store_and_inject(self):
         """Store K/V while also injecting from previously loaded bank."""
         for p in self.kv_processors.values():
@@ -280,6 +286,9 @@ class KeyframeGenerator:
         self.anchor_images: dict[str, Image.Image] = {}
 
     def load_pipeline(self):
+        if hasattr(self, "pipe") and self.pipe is not None:
+            print("[Pipeline] SDXL-Turbo already loaded, reusing.")
+            return
         from diffusers import AutoPipelineForText2Image, AutoPipelineForImage2Image
 
         print("[Pipeline] Loading SDXL-Turbo...")
@@ -549,6 +558,9 @@ class KeyframeGenerator:
         print(f"\nGeneration order: {' -> '.join(n.shot_id for n in gen_order)}")
 
         self.load_pipeline()
+        # Clear K/V caches from any previous scenario
+        if hasattr(self, "attn_ctrl"):
+            self.attn_ctrl.clear_all_caches()
         self._entity_prompts = entity_prompts
         self._bg_prompts = bg_prompts
         anchor_images = self.build_anchor_cache(entity_prompts, bg_prompts, out_dir)
