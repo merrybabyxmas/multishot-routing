@@ -1,0 +1,71 @@
+# 1. Idea Definition: Non-Markovian Graph Routing for Video Generation
+
+**1.1. The Core Problem:**
+Standard autoregressive video generation assumes a Markov chain where $S_t$ depends solely on $S_{t-1}$. In multi-shot, multi-entity scenarios, this linear approach causes severe "Error Accumulation" and "Identity Drift" when drastic scene changes occur (e.g., character exits, background shifts). 
+
+**1.2. The Mathematical Formulation of "State":**
+Let each shot be a state $S_i = (E_i, B_i)$, where:
+* $E_i$ is a mathematical Set of entities present in the shot (e.g., $\{A, B\}$).
+* $B_i$ is a discrete categorical variable representing the background (e.g., $D$).
+
+**1.3. The Distance Metric ($D$):**
+To determine the optimal reference frame, we calculate the State Distance $D$ between a target shot $S_t$ and a past shot $S_k$ ($k < t$):
+$$D(S_t, S_k) = |E_t \Delta E_k| + \mathbb{I}(B_t \neq B_k)$$
+* $|E_t \Delta E_k|$: The cardinality of the symmetric difference of the entity sets (number of entities added or removed).
+* $\mathbb{I}(B_t \neq B_k)$: Indicator function returning 1 if the background changes, 0 otherwise.
+
+**1.4. The Non-Markovian Routing Logic:**
+Instead of conditioning $S_t$ on $S_{t-1}$, the system searches the history for an optimal anchor $S_{ref}$ such that $S_{ref} = \text{argmin}_{k < t} D(S_t, S_k)$.
+* **Rule A (Optimal Reuse):** If $\min D = 0$, strictly reuse the latent/image of $S_{ref}$. Only apply new motion conditioning.
+* **Rule B (Direct Derivation):** If $\min D = 1$, use $S_{ref}$ as the direct structural and semantic condition for generating $S_t$.
+* **Rule C (Bridge Injection):** If $\min D \ge 2$, the gap is too large for the diffusion model to handle without hallucination. The system MUST dynamically inject $n-1$ hidden "Bridge Shots" (where $n = D$) to ensure the distance between any two connected nodes in the generation graph is strictly $\le 1$.
+    * *Bridge Construction Strategy:* Always resolve entity subtractions first, then entity additions, then background changes.
+
+---
+
+# 2. Implementation Pipeline (End-to-End Architecture)
+
+This pipeline must be built using PyTorch and the Hugging Face `diffusers` library. The architecture heavily relies on Latent Manipulation and Attention Injection to achieve "Training-Free" consistency.
+
+**Phase 1: Global Anchor Initialization (Identity Caching)**
+* **Objective:** Establish definitive visual anchors for all discrete elements in the prompt legend.
+* **Mechanism:**
+    1.  Parse the Global Legend to find all unique $E$ and $B$.
+    2.  Use SDXL (Stable Diffusion XL) to generate one base image per entity (on a neutral background) and one per background.
+    3.  Pass these images through a CLIP Vision Model (`CLIPVisionModelWithProjection`) to extract `image_embeddings`.
+    4.  Initialize a globally accessible `GlobalEmbeddingsCache` dictionary mapping each symbol (e.g., "A", "B", "D") to its corresponding visual embedding.
+
+**Phase 2: Graph Construction & Bridge Routing (The DAG Builder)**
+* **Objective:** Convert the linear sequence of shots into a Directed Acyclic Graph (DAG) representing generation dependencies.
+* **Data Structures Required:**
+    * `class ShotNode`: Contains `shot_id`, `entities` (Set), `bg` (String), `action` (String), and `parent_node` (Pointer).
+    * `class RoutingGraph`: Manages the list of nodes and executes the routing algorithm.
+* **Execution Logic:**
+    1.  Iterate through the `scenario_8_shots` list.
+    2.  For $S_t$, compute $D$ against all $S_k$ in the graph. Find $S_{ref}$ with the minimum $D$.
+    3.  If $D \ge 2$ (e.g., $S_{ref}$ has $\{A, B\}, D$ and $S_t$ has $\{B\}, E$ where $D=2$):
+        * Instantiate `BridgeNode_1`: Set to $\{B\}, D$. Parent = $S_{ref}$.
+        * Set $S_t$ Parent = `BridgeNode_1`.
+    4.  Output a definitive topological sort of the graph detailing the exact generation order.
+
+**Phase 3: Conditioned Keyframe Generation (Mutual Self-Attention Injection)**
+* **Objective:** Generate the first frame (Keyframe) of each node ensuring spatial and semantic consistency with its `parent_node`.
+* **Mechanism (The "Training-Free" core):**
+    1.  Load SDXL with `IP-Adapter` for identity conditioning.
+    2.  **IP-Adapter Injection:** Feed the target node's required entities from the `GlobalEmbeddingsCache` into the cross-attention layers via IP-Adapter.
+    3.  **Latent/Attention Routing ($D=1$ logic):**
+        * When generating node $N$, retrieve the Unet's Self-Attention Keys ($K$) and Values ($V$) from the generation process of its `parent_node`.
+        * Implement a custom `AttentionStore` class that hooks into the SDXL UNet's `Attention` blocks.
+        * During the denoising steps of node $N$, dynamically replace $60\% \sim 80\%$ of its self-attention $K$ and $V$ tensors with the cached $K$ and $V$ tensors of the `parent_node`.
+    4.  **Masked Inpainting (For Entity Addition/Removal):**
+        * If adding an entity (+1), generate a bounding box mask for the new entity. Keep the unmasked latent area identical to the `parent_node`'s latent to preserve the background and existing entities perfectly.
+
+**Phase 4: Video Generation (I2V) & Temporal Smoothing**
+* **Objective:** Animate the generated Keyframes according to the `action` metadata.
+* **Mechanism:**
+    1.  Load Stable Video Diffusion (`stable-video-diffusion-img2vid-xt`).
+    2.  Pass the completed Keyframe image from Phase 3 as the `cond_image` (conditioning image) into SVD.
+    3.  **Motion Control:**
+        * Map string actions to numerical parameters. For "zoom in", adjust the `motion_bucket_id` or utilize a dedicated Camera Control LoRA (if integrated via `peft` into the video model).
+        * For entity movements ("b enters"), utilize motion masks during the I2V latent steps if supported by the chosen video pipeline.
+    4.  **Concatenation:** Assemble the generated latent clips into a single video tensor and export to `.mp4`. (Exclude generated clips of Bridge Nodes from the final concatenation).
