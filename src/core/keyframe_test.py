@@ -5,10 +5,8 @@ Pipeline:
   1. Global Anchor Init: SDXL-Turbo generates base images per entity/bg
   2. CLIP caches visual embeddings for each symbol
   3. Routing graph drives generation order
-  4. Each shot keyframe is generated conditioned on its parent via:
-     - D=0: img2img (light reuse)
-     - D=1, +entity: MASKED INPAINTING (protect parent, draw new entity)
-     - D=1, -entity/bg: img2img (moderate)
+  4. Each shot keyframe is generated conditioned on its parent via
+     IP-Adapter (identity) + latent blending (structural consistency)
 
 No video — frames only.
 """
@@ -77,21 +75,21 @@ def build_shot_prompt(node: ShotNode) -> str:
 
 def main():
     print("=" * 70)
-    print("PHASE 3 QUICK TEST — Keyframe Generation (with Inpainting)")
+    print("PHASE 3 QUICK TEST — Keyframe Generation (Pure K/V Injection)")
     print(f"Device: {DEVICE}")
     print("=" * 70)
 
     # ── Step 1: Build Routing Graph ────────────────────────────────────
-    print("\n[1/5] Building routing graph...")
+    print("\n[1/4] Building routing graph...")
     graph = RoutingGraph()
     graph.build_from_shots(SCENARIO)
     graph.print_routing_table()
     gen_order = graph.topological_order()
     print(f"\nGeneration order: {' -> '.join(n.shot_id for n in gen_order)}")
 
-    # ── Step 2: Load Pipelines ────────────────────────────────────────
-    print("\n[2/5] Loading SDXL-Turbo pipelines...")
-    from diffusers import AutoPipelineForText2Image, AutoPipelineForImage2Image, AutoPipelineForInpainting
+    # ── Step 2: Load SDXL-Turbo ────────────────────────────────────────
+    print("\n[2/4] Loading SDXL-Turbo pipeline...")
+    from diffusers import AutoPipelineForText2Image, AutoPipelineForImage2Image
 
     pipe_t2i = AutoPipelineForText2Image.from_pretrained(
         "stabilityai/sdxl-turbo",
@@ -100,15 +98,12 @@ def main():
     ).to(DEVICE)
     pipe_t2i.set_progress_bar_config(disable=True)
 
-    # Share components for img2img and inpainting
+    # Share components for img2img
     pipe_i2i = AutoPipelineForImage2Image.from_pipe(pipe_t2i)
     pipe_i2i.set_progress_bar_config(disable=True)
 
-    pipe_inpaint = AutoPipelineForInpainting.from_pipe(pipe_t2i)
-    pipe_inpaint.set_progress_bar_config(disable=True)
-
     # ── Step 3: Generate Global Anchors ────────────────────────────────
-    print("\n[3/5] Generating global anchors (entities + backgrounds)...")
+    print("\n[3/4] Generating global anchors (entities + backgrounds)...")
     anchor_images: dict[str, Image.Image] = {}
 
     gen = torch.Generator(device=DEVICE).manual_seed(SEED)
@@ -128,7 +123,7 @@ def main():
         print(f"  Anchor {symbol}: saved -> {path}")
 
     # ── Step 4: Load CLIP for embeddings cache ─────────────────────────
-    print("\n[4/5] Building CLIP embedding cache...")
+    print("\n[3.5/4] Building CLIP embedding cache...")
     from transformers import CLIPVisionModelWithProjection, CLIPImageProcessor
 
     clip_model = CLIPVisionModelWithProjection.from_pretrained(
@@ -152,8 +147,10 @@ def main():
     torch.cuda.empty_cache()
 
     # ── Step 5: Generate Keyframes via Routing ─────────────────────────
-    print("\n[5/5] Generating keyframes in topological order...")
+    print("\n[4/4] Generating keyframes in topological order...")
     keyframes: dict[str, Image.Image] = {}
+
+    MAX_BLEND = 0.7
 
     for node in gen_order:
         prompt = build_shot_prompt(node)
@@ -198,53 +195,26 @@ def main():
             removed = parent.entities - node.entities
 
             if added:
-                # ── MASKED INPAINTING: protect parent, draw new entity ──
-                added_ent = sorted(added)[0]
-
-                mask = Image.new("L", (512, 512), 0)
-                mask_draw = ImageDraw.Draw(mask)
-                mask_draw.rectangle([0, 0, 255, 511], fill=255)  # left half = redraw
-
-                # Only the added entity's embedding
-                ip_embed = embedding_cache[added_ent].unsqueeze(0).unsqueeze(0).to(DEVICE)
-
-                print(f"      Mode: INPAINT (+entity, added={added_ent} on LEFT)")
-                img = pipe_inpaint(
-                    prompt=prompt,
-                    negative_prompt="blurry, low quality, distorted",
-                    image=parent_img,
-                    mask_image=mask,
-                    num_inference_steps=8,
-                    guidance_scale=0.0,
-                    strength=0.8,
-                    generator=gen,
-                ).images[0]
-
+                # Soft Layout Reset: low strength gives model freedom
+                # to compose 2 people instead of forcing 1-person layout
+                strength = 0.15
+                print(f"      Mode: IMG2IMG (+entity({added}), strength={strength})")
             elif removed:
-                # -entity: moderate img2img
-                print(f"      Mode: IMG2IMG (-entity({removed}), strength=0.45)")
-                img = pipe_i2i(
-                    prompt=prompt,
-                    negative_prompt="blurry, low quality, distorted",
-                    image=parent_img,
-                    strength=0.45,
-                    num_inference_steps=4,
-                    guidance_scale=0.0,
-                    generator=gen,
-                ).images[0]
-
+                strength = 0.45
+                print(f"      Mode: IMG2IMG (-entity({removed}), strength={strength})")
             else:
-                # bg change: moderate img2img
-                print(f"      Mode: IMG2IMG (bg change, strength=0.45)")
-                img = pipe_i2i(
-                    prompt=prompt,
-                    negative_prompt="blurry, low quality, distorted",
-                    image=parent_img,
-                    strength=0.45,
-                    num_inference_steps=4,
-                    guidance_scale=0.0,
-                    generator=gen,
-                ).images[0]
+                strength = 0.45
+                print(f"      Mode: IMG2IMG (bg change, strength={strength})")
+
+            img = pipe_i2i(
+                prompt=prompt,
+                negative_prompt="blurry, low quality, distorted",
+                image=parent_img,
+                strength=strength,
+                num_inference_steps=4,
+                guidance_scale=0.0,
+                generator=gen,
+            ).images[0]
 
         else:
             raise RuntimeError(f"D={d} for {node.shot_id} — bridge injection failed!")

@@ -259,7 +259,7 @@ class KeyframeGenerator:
         self.embedding_cache: dict[str, torch.Tensor] = {}
 
     def load_pipeline(self):
-        from diffusers import AutoPipelineForText2Image, AutoPipelineForInpainting
+        from diffusers import AutoPipelineForText2Image
 
         print("[Pipeline] Loading SDXL-Turbo...")
         self.pipe = AutoPipelineForText2Image.from_pretrained(
@@ -276,10 +276,6 @@ class KeyframeGenerator:
         )
         self.pipe.set_ip_adapter_scale(0.6)
         self.pipe.set_progress_bar_config(disable=True)
-
-        print("[Pipeline] Creating Inpainting pipeline (shared components)...")
-        self.pipe_inpaint = AutoPipelineForInpainting.from_pipe(self.pipe)
-        self.pipe_inpaint.set_progress_bar_config(disable=True)
 
         self.image_encoder = self.pipe.image_encoder
         self.clip_processor = self.pipe.feature_extractor
@@ -343,10 +339,6 @@ class KeyframeGenerator:
         tokens.append(self.embedding_cache[node.bg].unsqueeze(0).unsqueeze(0))  # (1,1,1280)
         concat = torch.cat(tokens, dim=1)  # (1, N, 1280)
         return [concat]
-
-    def _single_ip_embed(self, symbol):
-        """Return IP embed for a single entity/bg symbol: list with (1,1,1280)."""
-        return [self.embedding_cache[symbol].unsqueeze(0).unsqueeze(0)]
 
     @staticmethod
     def build_prompt(node, entity_prompts, bg_prompts):
@@ -413,72 +405,24 @@ class KeyframeGenerator:
             removed = parent.entities - node.entities
 
             if added:
-                # ── MASKED INPAINTING: protect parent, draw new entity ──
-                parent_img = keyframes[parent.shot_id]
-                added_ent = sorted(added)[0]
-
-                # Mask: white (255) = redraw zone for new entity (left half)
-                mask = Image.new("L", (512, 512), 0)
-                mask_draw = ImageDraw.Draw(mask)
-                mask_draw.rectangle([0, 0, 255, 511], fill=255)
-
-                # Only feed the ADDED entity's embedding — no chimera possible
-                ip_embed_added = self._single_ip_embed(added_ent)
-
-                print(f"  Mode: INPAINT (+entity({added}), added={added_ent} on LEFT)")
-                print(f"  Parent {parent.shot_id} protected on RIGHT")
-
-                self.attn_ctrl.set_mode_bypass()
-                img = self.pipe_inpaint(
-                    prompt=prompt,
-                    negative_prompt="blurry, low quality, distorted, deformed",
-                    image=parent_img,
-                    mask_image=mask,
-                    ip_adapter_image_embeds=ip_embed_added,
-                    num_inference_steps=self.num_steps,
-                    guidance_scale=0.0,
-                    strength=0.8,
-                    generator=gen,
-                ).images[0]
-
-                # Cache K/V for potential children
-                self.attn_ctrl.set_mode_store()
-                # Re-run a quick store pass so children can inherit
-                gen2 = torch.Generator(device=self.device).manual_seed(
-                    self.seed + _stable_hash(node.shot_id) + 1
-                )
-                _ = self.pipe(
-                    prompt=prompt,
-                    negative_prompt="blurry, low quality, distorted, deformed",
-                    ip_adapter_image_embeds=ip_embeds,
-                    num_inference_steps=self.num_steps,
-                    guidance_scale=0.0,
-                    generator=gen2,
-                    width=512, height=512,
-                    callback_on_step_end=lambda p, s, t, c: (
-                        self.attn_ctrl.update_step(s), c
-                    )[-1],
-                )
-                self.attn_ctrl.save_kv_to_cache(node.shot_id)
-                self.attn_ctrl.set_mode_bypass()
-
+                # Soft Layout Reset: very low blend gives UNet freedom to
+                # expand from 1-person to 2-person layout without chimera,
+                # while still inheriting the parent's ambient vibe.
+                blend = self.max_blend * 0.1
+                change_type = f"+entity({added})"
             elif removed:
                 blend = self.max_blend * 0.5
-                print(f"  Mode: DERIVE (D=1, -entity({removed}), blend={blend:.0%}→0)")
-                self._generate_with_parent_kv(
-                    node, prompt, ip_embeds, keyframes, gen,
-                    blend_override=blend,
-                )
-                img = self._last_generated
-
+                change_type = f"-entity({removed})"
             else:
                 blend = self.max_blend * 0.7
-                print(f"  Mode: DERIVE (D=1, bg({parent.bg}→{node.bg}), blend={blend:.0%}→0)")
-                self._generate_with_parent_kv(
-                    node, prompt, ip_embeds, keyframes, gen,
-                    blend_override=blend,
-                )
-                img = self._last_generated
+                change_type = f"bg({parent.bg}→{node.bg})"
+
+            print(f"  Mode: DERIVE (D=1, {change_type}, blend={blend:.0%}→0)")
+            self._generate_with_parent_kv(
+                node, prompt, ip_embeds, keyframes, gen,
+                blend_override=blend,
+            )
+            img = self._last_generated
 
         else:
             raise RuntimeError(f"D={d} — bridge injection failed!")
