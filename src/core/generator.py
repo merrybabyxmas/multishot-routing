@@ -220,21 +220,22 @@ class AttentionControl:
             p.mode = "bypass"
 
     def save_kv_to_cache(self, shot_id: str):
-        """Snapshot current K/V banks from all processors into cache."""
+        """Snapshot current K/V banks from all processors into CPU cache."""
         self._kv_cache[shot_id] = {}
         for key, proc in self.kv_processors.items():
             self._kv_cache[shot_id][key] = {
-                step: (k.clone(), v.clone())
+                step: (k.cpu().clone(), v.cpu().clone())
                 for step, (k, v) in proc.kv_bank.items()
             }
 
     def load_kv_from_cache(self, shot_id: str) -> bool:
-        """Load cached K/V banks into processors. Returns False if not found."""
+        """Load cached K/V banks from CPU cache into GPU processors."""
         if shot_id not in self._kv_cache:
             return False
+        device = next(self.unet.parameters()).device
         for key, proc in self.kv_processors.items():
             proc.kv_bank = {
-                step: (k.clone(), v.clone())
+                step: (k.clone().to(device), v.clone().to(device))
                 for step, (k, v) in self._kv_cache[shot_id][key].items()
             }
         return True
@@ -421,6 +422,8 @@ class KeyframeGenerator:
                 callback_on_step_end=root_callback,
             ).images[0]
             self.attn_ctrl.save_kv_to_cache(node.shot_id)
+            for p in self.attn_ctrl.kv_processors.values():
+                p.kv_bank.clear()
             self.attn_ctrl.set_mode_bypass()
             print(f"  Cached K/V for {len(step_log)} steps")
 
@@ -516,8 +519,10 @@ class KeyframeGenerator:
             callback_on_step_end=callback,
         ).images[0]
 
-        # Cache this node's K/V for its children
+        # Cache this node's K/V to CPU for its children, then clear GPU banks
         self.attn_ctrl.save_kv_to_cache(node.shot_id)
+        for p in self.attn_ctrl.kv_processors.values():
+            p.kv_bank.clear()
 
         for step, ratio in step_log:
             bar = "█" * int(ratio * 20) + "░" * (20 - int(ratio * 20))
