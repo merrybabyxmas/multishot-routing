@@ -21,7 +21,7 @@ import hashlib
 import numpy as np
 import torch
 import torch.nn.functional as F
-from PIL import Image, ImageDraw, ImageFilter, ImageChops
+from PIL import Image, ImageDraw
 
 
 def _stable_hash(s: str) -> int:
@@ -51,12 +51,14 @@ class KVStoreAttnProcessor:
         self.kv_bank: dict[int, tuple[torch.Tensor, torch.Tensor]] = {}
         self.current_step: int = 0
         self.blend_ratio: float = 0.0
+        self.spatial_mask_type: str = "none"  # "none" | "gradient"
 
     def reset(self):
         self.kv_bank.clear()
         self.mode = "bypass"
         self.current_step = 0
         self.blend_ratio = 0.0
+        self.spatial_mask_type = "none"
 
     def __call__(
         self,
@@ -111,8 +113,19 @@ class KVStoreAttnProcessor:
                         stored_v = stored_v.repeat(2, 1, 1)
                     if stored_k.shape == key.shape:
                         r = self.blend_ratio
-                        key = (1 - r) * key + r * stored_k
-                        value = (1 - r) * value + r * stored_v
+
+                        if self.spatial_mask_type == "gradient":
+                            # Gradient mask: left=0 (free for new entity), right=1 (parent K/V)
+                            seq_len = key.shape[1]
+                            size = int(seq_len ** 0.5)
+                            grad_1d = torch.linspace(0.0, 1.0, size, device=key.device, dtype=key.dtype)
+                            grad_2d = grad_1d.unsqueeze(0).expand(size, -1)  # (H, W)
+                            spatial_r = (grad_2d.reshape(1, seq_len, 1)) * r
+                            key = (1 - spatial_r) * key + spatial_r * stored_k
+                            value = (1 - spatial_r) * value + spatial_r * stored_v
+                        else:
+                            key = (1 - r) * key + r * stored_k
+                            value = (1 - r) * value + r * stored_v
 
             if self.mode == "store_and_inject":
                 self.kv_bank[self.current_step] = (
@@ -225,6 +238,11 @@ class AttentionControl:
                 for step, (k, v) in self._kv_cache[shot_id][key].items()
             }
         return True
+
+    def set_spatial_mask(self, mask_type: str = "none"):
+        """Set spatial mask type on all KV processors. 'gradient' or 'none'."""
+        for p in self.kv_processors.values():
+            p.spatial_mask_type = mask_type
 
     def update_step(self, step: int):
         inject_steps = int(self.num_steps * self.inject_until_pct)
@@ -347,49 +365,20 @@ class KeyframeGenerator:
         concat = torch.cat(tokens, dim=1)  # (1, N, 1280)
         return [concat]
 
-    def _collage_anchor_onto_parent(self, parent_img, added_entity,
-                                     x_offset=-128):
-        """Alpha-composite the unconditional anchor onto the parent image.
-
-        Distributive Property: Parent(C,F) + Anchor(A,white) → Collage(A,C,F)
-        Forces effective D=0 without generating a new background.
-
-        Steps:
-          1. Shift the anchor entity to avoid overlap with parent entity
-          2. Extract foreground mask (non-white pixels)
-          3. Blur mask edges for smooth blending
-          4. Protect the parent's right side (existing entity)
-          5. Paste the anchor foreground onto the parent
-        """
-        anchor = self.anchor_images[added_entity].copy()
-
-        # Shift anchor left so it doesn't overlap with parent entity (right side)
-        anchor_shifted = ImageChops.offset(anchor, x_offset, 0)
-
-        # Create foreground mask: non-white pixels = entity
-        arr = np.array(anchor_shifted)
-        is_foreground = np.any(arr < 240, axis=-1)
-        mask = (is_foreground * 255).astype(np.uint8)
-        mask_img = Image.fromarray(mask, mode="L")
-
-        # Soften edges for natural blending
-        mask_img = mask_img.filter(ImageFilter.GaussianBlur(radius=3))
-
-        # Protect right half (where parent entity lives)
-        draw = ImageDraw.Draw(mask_img)
-        draw.rectangle([256, 0, 512, 512], fill=0)
-
-        # Composite: paste anchor foreground onto parent using alpha mask
-        collage = parent_img.copy()
-        collage.paste(anchor_shifted, (0, 0), mask_img)
-        return collage
-
     @staticmethod
     def build_prompt(node, entity_prompts, bg_prompts):
+        entities_sorted = sorted(node.entities)
         parts = []
-        for ent in sorted(node.entities):
-            desc = entity_prompts[ent].split(",")[0]
-            parts.append(desc)
+        if len(entities_sorted) == 2:
+            # Spatial anchoring: first entity left, second entity right
+            desc0 = entity_prompts[entities_sorted[0]].split(",")[0]
+            desc1 = entity_prompts[entities_sorted[1]].split(",")[0]
+            parts.append(f"{desc0} standing on the left")
+            parts.append(f"{desc1} standing on the right")
+        else:
+            for ent in entities_sorted:
+                desc = entity_prompts[ent].split(",")[0]
+                parts.append(desc)
         bg_desc = bg_prompts[node.bg].split(",")[0]
         return (f"{', '.join(parts)}, in {bg_desc}, {node.action}, "
                 f"cinematic still frame, high quality, detailed")
@@ -449,54 +438,18 @@ class KeyframeGenerator:
             removed = parent.entities - node.entities
 
             if added:
-                # ── Compositional Collage (Distributive Property) ──
-                # Parent(existing entities, BG) + Anchor(added entity, white)
-                # = Collage with all entities in BG → effective D=0
-                # Then harmonize with img2img to blend lighting/shadows.
-                added_ent = sorted(added)[0]
-                print(f"  Mode: COLLAGE+HARMONIZE (+entity({added}), forcing D→0)")
-                print(f"    Parent: {parent.shot_id} (E={sorted(parent.entities)})")
-                print(f"    Anchor: {added_ent} (unconditional, white bg)")
-
-                parent_img = keyframes[parent.shot_id]
-
-                # 1. Alpha-composite anchor onto parent
-                collage = self._collage_anchor_onto_parent(parent_img, added_ent)
-
-                # 2. Harmonize: blend lighting, shadows, remove white artifacts
-                print(f"    Harmonizing collage (strength=0.45)...")
-                self.attn_ctrl.set_mode_bypass()
-                img = self.pipe_i2i(
-                    prompt=prompt,
-                    negative_prompt="blurry, low quality, mismatched lighting, visible seam",
-                    image=collage,
-                    ip_adapter_image_embeds=ip_embeds,
-                    strength=0.45,
-                    num_inference_steps=self.num_steps,
-                    guidance_scale=0.0,
-                    generator=gen,
-                ).images[0]
-
-                # 3. Cache K/V for children
-                self.attn_ctrl.set_mode_store()
-                gen2 = torch.Generator(device=self.device).manual_seed(
-                    self.seed + _stable_hash(node.shot_id) + 1
+                # ── Gradient K/V Injection (+entity) ──
+                # Left side: free for new entity (low parent K/V blend)
+                # Right side: high parent K/V blend (preserve existing entity)
+                blend = self.max_blend * 0.4
+                print(f"  Mode: GRADIENT K/V (+entity({added}), blend={blend:.0%} with gradient)")
+                self.attn_ctrl.set_spatial_mask("gradient")
+                self._generate_with_parent_kv(
+                    node, prompt, ip_embeds, keyframes, gen,
+                    blend_override=blend,
                 )
-                def store_cb(pipe, step, timestep, cbk):
-                    self.attn_ctrl.update_step(step)
-                    return cbk
-                _ = self.pipe(
-                    prompt=prompt,
-                    negative_prompt="blurry, low quality, distorted, deformed",
-                    ip_adapter_image_embeds=ip_embeds,
-                    num_inference_steps=self.num_steps,
-                    guidance_scale=0.0,
-                    generator=gen2,
-                    width=512, height=512,
-                    callback_on_step_end=store_cb,
-                )
-                self.attn_ctrl.save_kv_to_cache(node.shot_id)
-                self.attn_ctrl.set_mode_bypass()
+                self.attn_ctrl.set_spatial_mask("none")
+                img = self._last_generated
 
             elif removed:
                 blend = self.max_blend * 0.5
