@@ -1,13 +1,19 @@
 """
-Ablation Study — 5-Shot "Killer Scenario" for maximum baseline failure.
+Ablation Study — "Killer Scenarios" designed so every baseline fails visibly.
 
-Designed to stress-test all 3 core ideas simultaneously:
-  S1 → S2: +entity (knight + mage)
-  S2 → S3: entity swap (D=3: remove A,B + add C = catastrophic for Markovian)
-  S3 → S4: non-Markovian jump back to S2's entities + bg change (D=3 without routing)
-  S4 → S5: -entity + bg change (D=2: needs bridge)
+Scenario A (Fantasy 5-shot): Entity swap forces Markovian + Global Inject failure.
+Scenario B (Bridge Killer 6-shot): Every shot after S1 has D≥2 from all real shots,
+  so bridge nodes are the ONLY way to achieve D=1 transitions.
 
-Each baseline should fail visibly on at least one transition.
+Routing analysis for Scenario B:
+  S1:{A} D → S2:{B} E  (D=3 from S1, needs 2 bridges)
+  S1:{A} D → S3:{C} F  (D=3 from all, needs 1 bridge via B3)
+  S2:{B} E → S4:{A,B} F (D=2 from S2, needs 1 bridge)
+  B2:{B} D → S5:{B,C} D (D=1 from bridge B2! No Bridge: D=2)
+  S3:{C} F → S6:{A,C} E (D=2 from S3, needs 1 bridge)
+
+  Markovian: EVERY transition after S1 is D=3 (catastrophic).
+  No Bridge: S2,S3 jump at D=3; S4,S5,S6 jump at D=2.
 """
 
 from __future__ import annotations
@@ -31,44 +37,155 @@ from src.core.ablation import (
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# Killer Scenario — Entities & Backgrounds
+# Scenario A — Fantasy 5-Shot (Markovian + Global Inject killer)
 # ═══════════════════════════════════════════════════════════════════════
 
-KILLER_ENTITY_PROMPTS = {
+FANTASY_ENTITIES = {
     "A": "a silver-armored knight with a longsword, heroic, full body, standing, white background",
     "B": "a robed mage with a glowing staff, wise, full body, standing, white background",
     "C": "a giant fire dragon with red scales, menacing, full body, white background",
 }
 
-KILLER_BG_PROMPTS = {
+FANTASY_BGS = {
     "D": "a peaceful royal castle with towers and banners at sunset, cinematic, no people",
     "E": "a dark ice cave with frozen stalactites and blue glow, cinematic, no people",
 }
 
 
-def _killer_scenario():
+def _fantasy_scenario():
     return [
-        ShotNode(
-            shot_id="S1", entities={"A"}, bg="D",
-            action="knight stands guard in front of the castle",
-        ),
-        ShotNode(
-            shot_id="S2", entities={"A", "B"}, bg="D",
-            action="mage joins the knight for conversation at the castle",
-        ),
-        ShotNode(
-            shot_id="S3", entities={"C"}, bg="D",
-            action="a giant fire dragon descends in front of the castle",
-        ),
-        ShotNode(
-            shot_id="S4", entities={"A", "B"}, bg="E",
-            action="knight and mage hiding inside the dark ice cave after fleeing",
-        ),
-        ShotNode(
-            shot_id="S5", entities={"A"}, bg="D",
-            action="knight returns alone to the peaceful castle",
-        ),
+        ShotNode(shot_id="S1", entities={"A"}, bg="D",
+                 action="knight stands guard in front of the castle"),
+        ShotNode(shot_id="S2", entities={"A", "B"}, bg="D",
+                 action="mage joins the knight for conversation at the castle"),
+        ShotNode(shot_id="S3", entities={"C"}, bg="D",
+                 action="a giant fire dragon descends in front of the castle"),
+        ShotNode(shot_id="S4", entities={"A", "B"}, bg="E",
+                 action="knight and mage hiding inside the dark ice cave after fleeing"),
+        ShotNode(shot_id="S5", entities={"A"}, bg="D",
+                 action="knight returns alone to the peaceful castle"),
     ]
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# Scenario B — Bridge Killer 6-Shot (ALL baselines fail)
+#
+# Key design: 3 entities × 3 backgrounds, every pair of real shots
+# has D≥2, so bridges are the ONLY way to get D=1 transitions.
+# ═══════════════════════════════════════════════════════════════════════
+
+BRIDGE_ENTITIES = {
+    "A": "a silver-armored knight with a longsword, heroic, full body, standing, white background",
+    "B": "a robed mage with a glowing staff, wise, full body, standing, white background",
+    "C": "a giant fire dragon with red scales, menacing, full body, white background",
+}
+
+BRIDGE_BGS = {
+    "D": "a peaceful royal castle with towers and banners at sunset, cinematic, no people",
+    "E": "a dark ice cave with frozen stalactites and blue glow, cinematic, no people",
+    "F": "a dense enchanted forest with sunlight filtering through, cinematic, no people",
+}
+
+
+def _bridge_scenario():
+    """Every consecutive pair of real shots has D≥2.
+    Without bridge nodes, every transition is a destructive jump.
+    """
+    return [
+        ShotNode(shot_id="S1", entities={"A"}, bg="D",
+                 action="knight guards the castle gate alone"),
+        ShotNode(shot_id="S2", entities={"B"}, bg="E",
+                 action="mage explores the dark ice cave alone"),
+        ShotNode(shot_id="S3", entities={"C"}, bg="F",
+                 action="dragon lurks in the enchanted forest"),
+        ShotNode(shot_id="S4", entities={"A", "B"}, bg="F",
+                 action="knight and mage regroup in the forest"),
+        ShotNode(shot_id="S5", entities={"B", "C"}, bg="D",
+                 action="mage confronts dragon at the castle"),
+        ShotNode(shot_id="S6", entities={"A", "C"}, bg="E",
+                 action="knight battles dragon in the ice cave"),
+    ]
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# Runner — execute one scenario across all 4 conditions
+# ═══════════════════════════════════════════════════════════════════════
+
+def run_scenario(
+    name: str,
+    scenario_fn,
+    entity_prompts: dict,
+    bg_prompts: dict,
+    base_dir: Path,
+    shot_ids: list[str],
+):
+    """Run Ours + 3 ablation baselines for a given scenario."""
+    out = base_dir / name
+    out.mkdir(parents=True, exist_ok=True)
+
+    all_results: dict[str, dict[str, Image.Image]] = {}
+
+    configs = [
+        ("Ours",           KeyframeGenerator,    out / "ours"),
+        ("Markovian",      MarkovianGenerator,   out / "exp1_markovian"),
+        ("No Bridge",      NoBridgeGenerator,    out / "exp2_no_bridge"),
+        ("Global Inject",  GlobalInjectGenerator, out / "exp3_global_inject"),
+    ]
+
+    for label, GenClass, exp_dir in configs:
+        print("\n" + "█" * 70)
+        print(f"  {name.upper()} — {label}")
+        print("█" * 70 + "\n")
+
+        gen = GenClass(device="cuda:3", num_steps=8, max_blend=0.7, inject_pct=0.6)
+        gen.run(
+            scenario=scenario_fn(),
+            entity_prompts=entity_prompts,
+            bg_prompts=bg_prompts,
+            out_dir=exp_dir,
+        )
+
+        kf = {}
+        for sid in shot_ids:
+            p = exp_dir / f"shot_{sid}.png"
+            if p.exists():
+                kf[sid] = Image.open(p)
+        all_results[label] = kf
+
+        del gen
+        torch.cuda.empty_cache()
+
+    # ── Comparison sheets ─────────────────────────────────────────
+    print("\n" + "=" * 70)
+    print(f"COMPARISON SHEETS — {name}")
+    print("=" * 70)
+
+    make_comparison_sheet(
+        all_results, shot_ids,
+        out / "comparison_full.png",
+    )
+
+    # Per-experiment focused comparisons
+    ours = all_results["Ours"]
+
+    make_comparison_sheet(
+        {"Ours": ours, "Markovian": all_results["Markovian"]},
+        shot_ids,
+        out / "comparison_vs_markovian.png",
+    )
+    make_comparison_sheet(
+        {"Ours": ours, "No Bridge": all_results["No Bridge"]},
+        shot_ids,
+        out / "comparison_vs_no_bridge.png",
+    )
+    make_comparison_sheet(
+        {"Ours": ours, "Global Inject": all_results["Global Inject"]},
+        shot_ids,
+        out / "comparison_vs_global_inject.png",
+    )
+
+    print(f"\n{name} complete -> {out.resolve()}")
+    return all_results
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -77,126 +194,29 @@ def _killer_scenario():
 
 def main():
     base_dir = Path("outputs/ablation_killer")
-    base_dir.mkdir(parents=True, exist_ok=True)
-    shot_ids = ["S1", "S2", "S3", "S4", "S5"]
 
-    all_results: dict[str, dict[str, Image.Image]] = {}
-
-    # ── Ours ───────────────────────────────────────────────────────
-    print("\n" + "█" * 70)
-    print("  KILLER SCENARIO: Ours (Full Pipeline)")
-    print("█" * 70 + "\n")
-    ours_dir = base_dir / "ours"
-    gen = KeyframeGenerator(device="cuda:3", num_steps=8, max_blend=0.7, inject_pct=0.6)
-    gen.run(
-        scenario=_killer_scenario(),
-        entity_prompts=KILLER_ENTITY_PROMPTS,
-        bg_prompts=KILLER_BG_PROMPTS,
-        out_dir=ours_dir,
-    )
-    ours_kf = {}
-    for sid in shot_ids:
-        p = ours_dir / f"shot_{sid}.png"
-        if p.exists():
-            ours_kf[sid] = Image.open(p)
-    all_results["Ours"] = ours_kf
-    del gen; torch.cuda.empty_cache()
-
-    # ── Exp 1: Markovian ───────────────────────────────────────────
-    print("\n" + "█" * 70)
-    print("  KILLER SCENARIO: Exp 1 — Markovian Baseline")
-    print("█" * 70 + "\n")
-    exp1_dir = base_dir / "exp1_markovian"
-    gen1 = MarkovianGenerator(device="cuda:3", num_steps=8, max_blend=0.7, inject_pct=0.6)
-    gen1.run(
-        scenario=_killer_scenario(),
-        entity_prompts=KILLER_ENTITY_PROMPTS,
-        bg_prompts=KILLER_BG_PROMPTS,
-        out_dir=exp1_dir,
-    )
-    exp1_kf = {}
-    for sid in shot_ids:
-        p = exp1_dir / f"shot_{sid}.png"
-        if p.exists():
-            exp1_kf[sid] = Image.open(p)
-    all_results["Markovian"] = exp1_kf
-    del gen1; torch.cuda.empty_cache()
-
-    # ── Exp 2: No Bridge ──────────────────────────────────────────
-    print("\n" + "█" * 70)
-    print("  KILLER SCENARIO: Exp 2 — No Bridge")
-    print("█" * 70 + "\n")
-    exp2_dir = base_dir / "exp2_no_bridge"
-    gen2 = NoBridgeGenerator(device="cuda:3", num_steps=8, max_blend=0.7, inject_pct=0.6)
-    gen2.run(
-        scenario=_killer_scenario(),
-        entity_prompts=KILLER_ENTITY_PROMPTS,
-        bg_prompts=KILLER_BG_PROMPTS,
-        out_dir=exp2_dir,
-    )
-    exp2_kf = {}
-    for sid in shot_ids:
-        p = exp2_dir / f"shot_{sid}.png"
-        if p.exists():
-            exp2_kf[sid] = Image.open(p)
-    all_results["No Bridge"] = exp2_kf
-    del gen2; torch.cuda.empty_cache()
-
-    # ── Exp 3: Global Injection ───────────────────────────────────
-    print("\n" + "█" * 70)
-    print("  KILLER SCENARIO: Exp 3 — Global Injection")
-    print("█" * 70 + "\n")
-    exp3_dir = base_dir / "exp3_global_inject"
-    gen3 = GlobalInjectGenerator(device="cuda:3", num_steps=8, max_blend=0.7, inject_pct=0.6)
-    gen3.run(
-        scenario=_killer_scenario(),
-        entity_prompts=KILLER_ENTITY_PROMPTS,
-        bg_prompts=KILLER_BG_PROMPTS,
-        out_dir=exp3_dir,
-    )
-    exp3_kf = {}
-    for sid in shot_ids:
-        p = exp3_dir / f"shot_{sid}.png"
-        if p.exists():
-            exp3_kf[sid] = Image.open(p)
-    all_results["Global Inject"] = exp3_kf
-    del gen3; torch.cuda.empty_cache()
-
-    # ── Comparison Sheets ─────────────────────────────────────────
-    print("\n" + "=" * 70)
-    print("GENERATING KILLER COMPARISON SHEETS")
-    print("=" * 70)
-
-    # Full 4×5 comparison
-    make_comparison_sheet(
-        all_results, shot_ids,
-        base_dir / "comparison_full.png",
+    # ── Scenario A: Fantasy (5-shot) ──────────────────────────────
+    run_scenario(
+        name="fantasy",
+        scenario_fn=_fantasy_scenario,
+        entity_prompts=FANTASY_ENTITIES,
+        bg_prompts=FANTASY_BGS,
+        base_dir=base_dir,
+        shot_ids=["S1", "S2", "S3", "S4", "S5"],
     )
 
-    # Per-experiment focused views
-    # Exp 1: S3→S4 is the killer — Markovian uses dragon K/V for knight+mage
-    make_comparison_sheet(
-        {"Ours": ours_kf, "Markovian": exp1_kf},
-        ["S2", "S3", "S4", "S5"],
-        base_dir / "comparison_exp1_routing.png",
-    )
-
-    # Exp 2: S3→S4 has D=3 (no bridge = catastrophic jump)
-    make_comparison_sheet(
-        {"Ours": ours_kf, "No Bridge": exp2_kf},
-        ["S2", "S3", "S4", "S5"],
-        base_dir / "comparison_exp2_bridge.png",
-    )
-
-    # Exp 3: S2 and S4 are +entity shots — chimera expected
-    make_comparison_sheet(
-        {"Ours": ours_kf, "Global Inject": exp3_kf},
-        ["S1", "S2", "S4", "S5"],
-        base_dir / "comparison_exp3_chimera.png",
+    # ── Scenario B: Bridge Killer (6-shot) ────────────────────────
+    run_scenario(
+        name="bridge_killer",
+        scenario_fn=_bridge_scenario,
+        entity_prompts=BRIDGE_ENTITIES,
+        bg_prompts=BRIDGE_BGS,
+        base_dir=base_dir,
+        shot_ids=["S1", "S2", "S3", "S4", "S5", "S6"],
     )
 
     print("\n" + "=" * 70)
-    print("KILLER ABLATION COMPLETE")
+    print("ALL KILLER ABLATIONS COMPLETE")
     print(f"Results: {base_dir.resolve()}")
     print("=" * 70)
 
