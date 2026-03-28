@@ -5,18 +5,21 @@ Pipeline:
   1. Global Anchor Init: SDXL-Turbo generates base images per entity/bg
   2. CLIP caches visual embeddings for each symbol
   3. Routing graph drives generation order
-  4. Each shot keyframe is generated conditioned on its parent via
-     IP-Adapter (identity) + latent blending (structural consistency)
+  4. Each shot keyframe is generated conditioned on its parent via:
+     - D=0: img2img (light reuse)
+     - D=1, +entity: MASKED INPAINTING (protect parent, draw new entity)
+     - D=1, -entity/bg: img2img (moderate)
 
 No video — frames only.
 """
 
 import os
 import sys
+import hashlib
 import torch
 import numpy as np
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageDraw
 
 # Make src importable
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
@@ -30,6 +33,11 @@ OUT_DIR = Path("outputs/keyframe_test")
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 SEED = 42
+
+
+def _stable_hash(s: str) -> int:
+    return int(hashlib.sha256(s.encode()).hexdigest(), 16) % 10000
+
 
 # ── Global Legend ──────────────────────────────────────────────────────
 ENTITY_PROMPTS = {
@@ -61,7 +69,6 @@ def build_shot_prompt(node: ShotNode) -> str:
     """Compose a generation prompt from entities + bg + action."""
     entity_parts = []
     for ent in sorted(node.entities):
-        # Extract key description from entity prompt
         desc = ENTITY_PROMPTS[ent].split(",")[0]
         entity_parts.append(desc)
     bg_desc = BG_PROMPTS[node.bg].split(",")[0]
@@ -70,21 +77,21 @@ def build_shot_prompt(node: ShotNode) -> str:
 
 def main():
     print("=" * 70)
-    print("PHASE 3 QUICK TEST — Keyframe Generation")
+    print("PHASE 3 QUICK TEST — Keyframe Generation (with Inpainting)")
     print(f"Device: {DEVICE}")
     print("=" * 70)
 
     # ── Step 1: Build Routing Graph ────────────────────────────────────
-    print("\n[1/4] Building routing graph...")
+    print("\n[1/5] Building routing graph...")
     graph = RoutingGraph()
     graph.build_from_shots(SCENARIO)
     graph.print_routing_table()
     gen_order = graph.topological_order()
     print(f"\nGeneration order: {' -> '.join(n.shot_id for n in gen_order)}")
 
-    # ── Step 2: Load SDXL-Turbo ────────────────────────────────────────
-    print("\n[2/4] Loading SDXL-Turbo pipeline...")
-    from diffusers import AutoPipelineForText2Image, AutoPipelineForImage2Image
+    # ── Step 2: Load Pipelines ────────────────────────────────────────
+    print("\n[2/5] Loading SDXL-Turbo pipelines...")
+    from diffusers import AutoPipelineForText2Image, AutoPipelineForImage2Image, AutoPipelineForInpainting
 
     pipe_t2i = AutoPipelineForText2Image.from_pretrained(
         "stabilityai/sdxl-turbo",
@@ -93,12 +100,15 @@ def main():
     ).to(DEVICE)
     pipe_t2i.set_progress_bar_config(disable=True)
 
-    # Share components for img2img
+    # Share components for img2img and inpainting
     pipe_i2i = AutoPipelineForImage2Image.from_pipe(pipe_t2i)
     pipe_i2i.set_progress_bar_config(disable=True)
 
+    pipe_inpaint = AutoPipelineForInpainting.from_pipe(pipe_t2i)
+    pipe_inpaint.set_progress_bar_config(disable=True)
+
     # ── Step 3: Generate Global Anchors ────────────────────────────────
-    print("\n[3/4] Generating global anchors (entities + backgrounds)...")
+    print("\n[3/5] Generating global anchors (entities + backgrounds)...")
     anchor_images: dict[str, Image.Image] = {}
 
     gen = torch.Generator(device=DEVICE).manual_seed(SEED)
@@ -107,7 +117,7 @@ def main():
             prompt=prompt,
             negative_prompt="blurry, low quality, distorted",
             num_inference_steps=4,
-            guidance_scale=0.0,  # turbo = cfg-free
+            guidance_scale=0.0,
             generator=gen,
             width=512,
             height=512,
@@ -118,7 +128,7 @@ def main():
         print(f"  Anchor {symbol}: saved -> {path}")
 
     # ── Step 4: Load CLIP for embeddings cache ─────────────────────────
-    print("\n[3.5/4] Building CLIP embedding cache...")
+    print("\n[4/5] Building CLIP embedding cache...")
     from transformers import CLIPVisionModelWithProjection, CLIPImageProcessor
 
     clip_model = CLIPVisionModelWithProjection.from_pretrained(
@@ -142,7 +152,7 @@ def main():
     torch.cuda.empty_cache()
 
     # ── Step 5: Generate Keyframes via Routing ─────────────────────────
-    print("\n[4/4] Generating keyframes in topological order...")
+    print("\n[5/5] Generating keyframes in topological order...")
     keyframes: dict[str, Image.Image] = {}
 
     for node in gen_order:
@@ -154,7 +164,7 @@ def main():
         print(f"\n  --- {kind} {node.shot_id} (parent={parent_id}, D={d}) ---")
         print(f"      Prompt: {prompt[:80]}...")
 
-        gen = torch.Generator(device=DEVICE).manual_seed(SEED + hash(node.shot_id) % 10000)
+        gen = torch.Generator(device=DEVICE).manual_seed(SEED + _stable_hash(node.shot_id))
 
         if node.parent_node is None:
             # Root node — pure text2image
@@ -169,38 +179,78 @@ def main():
             ).images[0]
 
         elif d == 0:
-            # Rule A: Optimal reuse — copy parent keyframe, light img2img
+            # Rule A: Optimal reuse — img2img with light strength
             parent_img = keyframes[node.parent_node.shot_id]
             img = pipe_i2i(
                 prompt=prompt,
                 negative_prompt="blurry, low quality, distorted",
                 image=parent_img,
-                strength=0.3,  # light — mostly reuse (min viable for 4-step turbo)
+                strength=0.3,
                 num_inference_steps=4,
                 guidance_scale=0.0,
                 generator=gen,
             ).images[0]
 
         elif d == 1:
-            # Rule B: Direct derivation — img2img from parent with moderate strength
             parent_img = keyframes[node.parent_node.shot_id]
-            img = pipe_i2i(
-                prompt=prompt,
-                negative_prompt="blurry, low quality, distorted",
-                image=parent_img,
-                strength=0.45,  # moderate — keep structure, allow changes
-                num_inference_steps=4,
-                guidance_scale=0.0,
-                generator=gen,
-            ).images[0]
+            parent = node.parent_node
+            added = node.entities - parent.entities
+            removed = parent.entities - node.entities
+
+            if added:
+                # ── MASKED INPAINTING: protect parent, draw new entity ──
+                added_ent = sorted(added)[0]
+
+                mask = Image.new("L", (512, 512), 0)
+                mask_draw = ImageDraw.Draw(mask)
+                mask_draw.rectangle([0, 0, 255, 511], fill=255)  # left half = redraw
+
+                # Only the added entity's embedding
+                ip_embed = embedding_cache[added_ent].unsqueeze(0).unsqueeze(0).to(DEVICE)
+
+                print(f"      Mode: INPAINT (+entity, added={added_ent} on LEFT)")
+                img = pipe_inpaint(
+                    prompt=prompt,
+                    negative_prompt="blurry, low quality, distorted",
+                    image=parent_img,
+                    mask_image=mask,
+                    num_inference_steps=8,
+                    guidance_scale=0.0,
+                    strength=0.8,
+                    generator=gen,
+                ).images[0]
+
+            elif removed:
+                # -entity: moderate img2img
+                print(f"      Mode: IMG2IMG (-entity({removed}), strength=0.45)")
+                img = pipe_i2i(
+                    prompt=prompt,
+                    negative_prompt="blurry, low quality, distorted",
+                    image=parent_img,
+                    strength=0.45,
+                    num_inference_steps=4,
+                    guidance_scale=0.0,
+                    generator=gen,
+                ).images[0]
+
+            else:
+                # bg change: moderate img2img
+                print(f"      Mode: IMG2IMG (bg change, strength=0.45)")
+                img = pipe_i2i(
+                    prompt=prompt,
+                    negative_prompt="blurry, low quality, distorted",
+                    image=parent_img,
+                    strength=0.45,
+                    num_inference_steps=4,
+                    guidance_scale=0.0,
+                    generator=gen,
+                ).images[0]
 
         else:
-            # Should never happen (bridges guarantee D ≤ 1)
             raise RuntimeError(f"D={d} for {node.shot_id} — bridge injection failed!")
 
         keyframes[node.shot_id] = img
 
-        # Save only real shots (skip bridges from final output, but save for debug)
         tag = "bridge" if node.is_bridge else "shot"
         path = OUT_DIR / f"{tag}_{node.shot_id}.png"
         img.save(path)
@@ -212,7 +262,6 @@ def main():
     print(f"Output directory: {OUT_DIR.resolve()}")
     print("=" * 70)
 
-    # Create a contact sheet of real shots only
     real_shots = [n for n in gen_order if not n.is_bridge]
     _make_contact_sheet(real_shots, keyframes)
 
@@ -227,7 +276,6 @@ def _make_contact_sheet(shots: list[ShotNode], keyframes: dict[str, Image.Image]
     pad = 4
     sheet = Image.new("RGB", (cols * (w + pad) + pad, rows * (h + pad + 20) + pad), (30, 30, 30))
 
-    from PIL import ImageDraw, ImageFont
     draw = ImageDraw.Draw(sheet)
 
     for i, (shot, img) in enumerate(zip(shots, imgs)):
