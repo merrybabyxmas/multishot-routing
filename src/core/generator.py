@@ -351,13 +351,42 @@ class KeyframeGenerator:
         return torch.zeros(1, 1, 1280, device=self.device, dtype=self.dtype)
 
     def _compose_ip_embeds(self, node):
+        """Return list of individual (1280,) embeddings — one per entity + bg."""
         embeds = []
         for ent in sorted(node.entities):
-            embeds.append(self.embedding_cache[ent].unsqueeze(0))  # (1, 1280)
-        embeds.append(self.embedding_cache[node.bg].unsqueeze(0))  # (1, 1280)
-        # Concatenate along sequence dim so each identity is preserved as a separate token
-        combined = torch.cat(embeds, dim=0).unsqueeze(0)  # (1, N, 1280)
-        return combined
+            embeds.append(self.embedding_cache[ent])  # (1280,)
+        embeds.append(self.embedding_cache[node.bg])  # (1280,)
+        return embeds
+
+    def _stack_ip_embeds(self, embed_list):
+        """Stack embed list into (1, N, 1280) tensor for pipeline."""
+        return torch.stack(embed_list, dim=0).unsqueeze(0)
+
+    def _build_ip_masks(self, node, added_entities, spatial_mask):
+        """Build per-entity IP-Adapter masks for spatial isolation.
+        Returns tensor of shape (1, N, H, W) — one channel per entity + bg."""
+        H, W = 512, 512
+        channels = []
+        for ent in sorted(node.entities):
+            if ent in added_entities:
+                # New entity → left side only
+                m = torch.zeros(H, W, device=self.device, dtype=self.dtype)
+                if spatial_mask == "right":
+                    m[:, :W // 2] = 1.0
+                else:
+                    m[:, W // 2:] = 1.0
+            else:
+                # Existing parent entity → right side only
+                m = torch.zeros(H, W, device=self.device, dtype=self.dtype)
+                if spatial_mask == "right":
+                    m[:, W // 2:] = 1.0
+                else:
+                    m[:, :W // 2] = 1.0
+            channels.append(m)
+        # Background → full image
+        channels.append(torch.ones(H, W, device=self.device, dtype=self.dtype))
+        # Stack to (1, N, H, W) as required by diffusers
+        return torch.stack(channels, dim=0).unsqueeze(0)  # (1, N, H, W)
 
     @staticmethod
     def build_prompt(node, entity_prompts, bg_prompts):
@@ -399,7 +428,7 @@ class KeyframeGenerator:
             img = self.pipe(
                 prompt=prompt,
                 negative_prompt="blurry, low quality, distorted, deformed",
-                ip_adapter_image_embeds=[ip_embeds],
+                ip_adapter_image_embeds=[self._stack_ip_embeds(ip_embeds)],
                 num_inference_steps=self.num_steps,
                 guidance_scale=0.0,
                 generator=gen,
@@ -427,9 +456,13 @@ class KeyframeGenerator:
             # Spatial masking: when adding entity to single-entity parent,
             # confine parent structure to one side, free the other for new entity
             spatial_mask = None
+            cross_attention_kwargs = None
             if added and len(parent.entities) == 1 and len(node.entities) >= 2:
                 spatial_mask = "right"
-                print(f"  [Spatial Mask] '{spatial_mask}' — parent({parent.entities}) on right, new({added}) on left")
+                ip_masks = self._build_ip_masks(node, added, spatial_mask)
+                cross_attention_kwargs = {"ip_adapter_masks": [ip_masks]}
+                print(f"  [Spatial Mask] KV='{spatial_mask}' + IP-Adapter masks ({len(ip_masks)} regions)")
+                print(f"    New({added})→left, Parent({parent.entities})→right, BG→full")
 
             if added:
                 blend = self.max_blend * 0.35
@@ -446,6 +479,7 @@ class KeyframeGenerator:
             self._generate_with_parent_kv(
                 node, prompt, ip_embeds, keyframes, gen,
                 blend_override=blend,
+                cross_attention_kwargs=cross_attention_kwargs,
             )
             self.attn_ctrl.set_spatial_mask(None)
             img = self._last_generated
@@ -456,7 +490,8 @@ class KeyframeGenerator:
         return img
 
     def _generate_with_parent_kv(self, node, prompt, ip_embeds, keyframes,
-                                  gen, blend_override=None):
+                                  gen, blend_override=None,
+                                  cross_attention_kwargs=None):
         parent = node.parent_node
 
         # Load parent's cached K/V (from its actual generation)
@@ -482,16 +517,20 @@ class KeyframeGenerator:
             step_log.append((step, ratio))
             return cbk
 
-        self._last_generated = self.pipe(
+        pipe_kwargs = dict(
             prompt=prompt,
             negative_prompt="blurry, low quality, distorted, deformed",
-            ip_adapter_image_embeds=[ip_embeds],
+            ip_adapter_image_embeds=[self._stack_ip_embeds(ip_embeds)],
             num_inference_steps=self.num_steps,
             guidance_scale=0.0,
             generator=gen,
             width=512, height=512,
             callback_on_step_end=callback,
-        ).images[0]
+        )
+        if cross_attention_kwargs is not None:
+            pipe_kwargs["cross_attention_kwargs"] = cross_attention_kwargs
+
+        self._last_generated = self.pipe(**pipe_kwargs).images[0]
 
         # Cache this node's K/V for its children
         self.attn_ctrl.save_kv_to_cache(node.shot_id)
