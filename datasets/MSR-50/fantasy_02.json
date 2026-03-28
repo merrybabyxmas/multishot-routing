@@ -1,0 +1,122 @@
+{
+  "scenario_id": "fantasy_02",
+  "domain": "High Fantasy",
+  "entities": {
+    "A": "a dwarven warrior king with braided red beard decorated with gold rings, heavy mithril plate armor, wielding a rune-inscribed war hammer, stocky powerful build, full body, standing, white background",
+    "B": "a celestial white stag with crystalline antlers that glow with inner light, ethereal mist surrounding hooves, sapphire blue eyes, majestic tall stance, full body, white background",
+    "C": "a fire demon with cracked obsidian skin revealing magma underneath, curling ram horns wreathed in flame, massive bat-like wings folded, towering menacing stance, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a grand dwarven throne hall carved inside a mountain, massive stone pillars with gold inlay, lava channels providing warm light, echoing vast space, cinematic, no people",
+    "E": "a frozen tundra battlefield with broken weapons in snow, aurora borealis overhead, distant ice mountains, howling wind implied by snow trails, cinematic, no people",
+    "F": "inside a volcanic forge with rivers of lava, anvils and chains hanging from ceiling, extreme heat distortion, orange and red glow, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a dwarven warrior king with braided red beard decorated with gold rings, heavy mithril plate armor, wielding a rune-inscribed war hammer, stocky powerful build, dwarven warrior king surveys the grand throne hall from atop the stone staircase, in a grand dwarven throne hall carved inside a mountain, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a dwarven warrior king with braided red beard decorated with gold rings, heavy mithril plate armor, wielding a rune-inscribed war hammer, stocky powerful build dwarven warrior king surveys the grand throne hall from atop the stone staircase in a grand dwarven throne hall carved inside a mountain, massive stone pillars with gold inlay, lava channels providing warm light, echoing vast space, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a dwarven warrior king with braided red beard decorated with gold rings, heavy mithril plate armor, wielding a rune-inscribed war hammer, stocky powerful build standing on the left, a celestial white stag with crystalline antlers that glow with inner light, ethereal mist surrounding hooves, sapphire blue eyes, majestic tall stance standing on the right, celestial white stag trots across the frozen ground, antlers glowing softly, in a grand dwarven throne hall carved inside a mountain, cinematic still frame, high quality, detailed",
+      "motion_prompt": "celestial white stag trots across the frozen ground, antlers glowing softly in a grand dwarven throne hall carved inside a mountain, massive stone pillars with gold inlay, lava channels providing warm light, echoing vast space, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a dwarven warrior king with braided red beard decorated with gold rings, heavy mithril plate armor, wielding a rune-inscribed war hammer, stocky powerful build standing on the left, a celestial white stag with crystalline antlers that glow with inner light, ethereal mist surrounding hooves, sapphire blue eyes, majestic tall stance standing on the right, dwarven warrior king and celestial white stag advance together across the wind-swept tundra battlefield, in a frozen tundra battlefield with broken weapons in snow, cinematic still frame, high quality, detailed",
+      "motion_prompt": "dwarven warrior king and celestial white stag advance together across the wind-swept tundra battlefield in a frozen tundra battlefield with broken weapons in snow, aurora borealis overhead, distant ice mountains, howling wind implied by snow trails, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a dwarven warrior king with braided red beard decorated with gold rings, heavy mithril plate armor, wielding a rune-inscribed war hammer, stocky powerful build, dwarven warrior king descends alone into the volcanic forge, heat distorting the air, in inside a volcanic forge with rivers of lava, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a dwarven warrior king with braided red beard decorated with gold rings, heavy mithril plate armor, wielding a rune-inscribed war hammer, stocky powerful build dwarven warrior king descends alone into the volcanic forge, heat distorting the air in inside a volcanic forge with rivers of lava, anvils and chains hanging from ceiling, extreme heat distortion, orange and red glow, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a dwarven warrior king with braided red beard decorated with gold rings, heavy mithril plate armor, wielding a rune-inscribed war hammer, stocky powerful build, dwarven warrior king hammers a rune into the anvil with powerful focused strikes, in inside a volcanic forge with rivers of lava, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a dwarven warrior king with braided red beard decorated with gold rings, heavy mithril plate armor, wielding a rune-inscribed war hammer, stocky powerful build dwarven warrior king hammers a rune into the anvil with powerful focused strikes in inside a volcanic forge with rivers of lava, anvils and chains hanging from ceiling, extreme heat distortion, orange and red glow, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a dwarven warrior king with braided red beard decorated with gold rings, heavy mithril plate armor, wielding a rune-inscribed war hammer, stocky powerful build standing on the left, a celestial white stag with crystalline antlers that glow with inner light, ethereal mist surrounding hooves, sapphire blue eyes, majestic tall stance standing on the right, dwarven warrior king climbs out of the forge and finds celestial white stag waiting in the snow, in a frozen tundra battlefield with broken weapons in snow, cinematic still frame, high quality, detailed",
+      "motion_prompt": "dwarven warrior king climbs out of the forge and finds celestial white stag waiting in the snow in a frozen tundra battlefield with broken weapons in snow, aurora borealis overhead, distant ice mountains, howling wind implied by snow trails, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a fire demon with cracked obsidian skin revealing magma underneath, curling ram horns wreathed in flame, massive bat-like wings folded, towering menacing stance, fire demon erupts from the lava in a column of flame and smoke, in a frozen tundra battlefield with broken weapons in snow, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a fire demon with cracked obsidian skin revealing magma underneath, curling ram horns wreathed in flame, massive bat-like wings folded, towering menacing stance fire demon erupts from the lava in a column of flame and smoke in a frozen tundra battlefield with broken weapons in snow, aurora borealis overhead, distant ice mountains, howling wind implied by snow trails, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a dwarven warrior king with braided red beard decorated with gold rings, heavy mithril plate armor, wielding a rune-inscribed war hammer, stocky powerful build standing on the left, a fire demon with cracked obsidian skin revealing magma underneath, curling ram horns wreathed in flame, massive bat-like wings folded, towering menacing stance standing on the right, dwarven warrior king raises the war hammer and faces fire demon with unwavering resolve, in a frozen tundra battlefield with broken weapons in snow, cinematic still frame, high quality, detailed",
+      "motion_prompt": "dwarven warrior king raises the war hammer and faces fire demon with unwavering resolve in a frozen tundra battlefield with broken weapons in snow, aurora borealis overhead, distant ice mountains, howling wind implied by snow trails, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a dwarven warrior king with braided red beard decorated with gold rings, heavy mithril plate armor, wielding a rune-inscribed war hammer, stocky powerful build standing on the left, a celestial white stag with crystalline antlers that glow with inner light, ethereal mist surrounding hooves, sapphire blue eyes, majestic tall stance standing on the right, dwarven warrior king and celestial white stag charge together back toward the throne hall, in a grand dwarven throne hall carved inside a mountain, cinematic still frame, high quality, detailed",
+      "motion_prompt": "dwarven warrior king and celestial white stag charge together back toward the throne hall in a grand dwarven throne hall carved inside a mountain, massive stone pillars with gold inlay, lava channels providing warm light, echoing vast space, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a dwarven warrior king with braided red beard decorated with gold rings, heavy mithril plate armor, wielding a rune-inscribed war hammer, stocky powerful build, dwarven warrior king sits heavily on the throne, victorious but exhausted, in a grand dwarven throne hall carved inside a mountain, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a dwarven warrior king with braided red beard decorated with gold rings, heavy mithril plate armor, wielding a rune-inscribed war hammer, stocky powerful build dwarven warrior king sits heavily on the throne, victorious but exhausted in a grand dwarven throne hall carved inside a mountain, massive stone pillars with gold inlay, lava channels providing warm light, echoing vast space, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

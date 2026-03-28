@@ -1,0 +1,122 @@
+{
+  "scenario_id": "modern_02",
+  "domain": "Modern Realistic",
+  "entities": {
+    "A": "a bearded hipster barista with man-bun, flannel shirt rolled to elbows revealing tattoo sleeves, leather apron, carrying a latte art cup, full body, standing, white background",
+    "B": "a calico cat with distinctive orange-black-white patches, green eyes, fluffy tail curled upward, sitting with one paw raised, full body, white background",
+    "C": "a food inspector in a white lab coat with clipboard, wire-rim glasses, stern expression, latex gloves, official ID badge on lanyard, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a trendy artisan bakery with display cases of pastries, chalkboard menu, warm wood and white tile decor, morning sunlight through front window, cinematic, no people",
+    "E": "a commercial kitchen during health inspection with bright fluorescent lights, stainless steel everywhere, organized ingredient stations, clipboard on counter, cinematic, no people",
+    "F": "a cluttered storage room behind a bakery with flour sacks, stacked boxes, narrow shelves, single bare lightbulb, dusty atmosphere, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a bearded hipster barista with man-bun, flannel shirt rolled to elbows revealing tattoo sleeves, leather apron, carrying a latte art cup, bearded hipster barista arranges pastries in the display case with careful precision, in a trendy artisan bakery with display cases of pastries, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a bearded hipster barista with man-bun, flannel shirt rolled to elbows revealing tattoo sleeves, leather apron, carrying a latte art cup bearded hipster barista arranges pastries in the display case with careful precision in a trendy artisan bakery with display cases of pastries, chalkboard menu, warm wood and white tile decor, morning sunlight through front window, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a bearded hipster barista with man-bun, flannel shirt rolled to elbows revealing tattoo sleeves, leather apron, carrying a latte art cup standing on the left, a calico cat with distinctive orange-black-white patches, green eyes, fluffy tail curled upward, sitting with one paw raised standing on the right, calico cat leaps onto the counter and watches bearded hipster barista with bright green eyes, in a trendy artisan bakery with display cases of pastries, cinematic still frame, high quality, detailed",
+      "motion_prompt": "calico cat leaps onto the counter and watches bearded hipster barista with bright green eyes in a trendy artisan bakery with display cases of pastries, chalkboard menu, warm wood and white tile decor, morning sunlight through front window, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a bearded hipster barista with man-bun, flannel shirt rolled to elbows revealing tattoo sleeves, leather apron, carrying a latte art cup standing on the left, a calico cat with distinctive orange-black-white patches, green eyes, fluffy tail curled upward, sitting with one paw raised standing on the right, bearded hipster barista and calico cat enter the fluorescent-lit commercial kitchen together, in a commercial kitchen during health inspection with bright fluorescent lights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "bearded hipster barista and calico cat enter the fluorescent-lit commercial kitchen together in a commercial kitchen during health inspection with bright fluorescent lights, stainless steel everywhere, organized ingredient stations, clipboard on counter, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a bearded hipster barista with man-bun, flannel shirt rolled to elbows revealing tattoo sleeves, leather apron, carrying a latte art cup, bearded hipster barista opens the storage room door and steps inside alone, in a cluttered storage room behind a bakery with flour sacks, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a bearded hipster barista with man-bun, flannel shirt rolled to elbows revealing tattoo sleeves, leather apron, carrying a latte art cup bearded hipster barista opens the storage room door and steps inside alone in a cluttered storage room behind a bakery with flour sacks, stacked boxes, narrow shelves, single bare lightbulb, dusty atmosphere, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a bearded hipster barista with man-bun, flannel shirt rolled to elbows revealing tattoo sleeves, leather apron, carrying a latte art cup, bearded hipster barista checks expiration dates on flour sacks, brow furrowed, in a cluttered storage room behind a bakery with flour sacks, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a bearded hipster barista with man-bun, flannel shirt rolled to elbows revealing tattoo sleeves, leather apron, carrying a latte art cup bearded hipster barista checks expiration dates on flour sacks, brow furrowed in a cluttered storage room behind a bakery with flour sacks, stacked boxes, narrow shelves, single bare lightbulb, dusty atmosphere, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a bearded hipster barista with man-bun, flannel shirt rolled to elbows revealing tattoo sleeves, leather apron, carrying a latte art cup standing on the left, a calico cat with distinctive orange-black-white patches, green eyes, fluffy tail curled upward, sitting with one paw raised standing on the right, bearded hipster barista emerges carrying supplies and finds calico cat napping on the counter, in a commercial kitchen during health inspection with bright fluorescent lights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "bearded hipster barista emerges carrying supplies and finds calico cat napping on the counter in a commercial kitchen during health inspection with bright fluorescent lights, stainless steel everywhere, organized ingredient stations, clipboard on counter, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a food inspector in a white lab coat with clipboard, wire-rim glasses, stern expression, latex gloves, official ID badge on lanyard, food inspector in a white lab coat enters clipboard-first, scanning the premises with scrutiny, in a commercial kitchen during health inspection with bright fluorescent lights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a food inspector in a white lab coat with clipboard, wire-rim glasses, stern expression, latex gloves, official ID badge on lanyard food inspector in a white lab coat enters clipboard-first, scanning the premises with scrutiny in a commercial kitchen during health inspection with bright fluorescent lights, stainless steel everywhere, organized ingredient stations, clipboard on counter, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a bearded hipster barista with man-bun, flannel shirt rolled to elbows revealing tattoo sleeves, leather apron, carrying a latte art cup standing on the left, a food inspector in a white lab coat with clipboard, wire-rim glasses, stern expression, latex gloves, official ID badge on lanyard standing on the right, bearded hipster barista turns to face food inspector in a white lab coat and gestures to the organized workspace, in a commercial kitchen during health inspection with bright fluorescent lights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "bearded hipster barista turns to face food inspector in a white lab coat and gestures to the organized workspace in a commercial kitchen during health inspection with bright fluorescent lights, stainless steel everywhere, organized ingredient stations, clipboard on counter, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a bearded hipster barista with man-bun, flannel shirt rolled to elbows revealing tattoo sleeves, leather apron, carrying a latte art cup standing on the left, a calico cat with distinctive orange-black-white patches, green eyes, fluffy tail curled upward, sitting with one paw raised standing on the right, bearded hipster barista and calico cat slip together out the bakery's back entrance, in a trendy artisan bakery with display cases of pastries, cinematic still frame, high quality, detailed",
+      "motion_prompt": "bearded hipster barista and calico cat slip together out the bakery's back entrance in a trendy artisan bakery with display cases of pastries, chalkboard menu, warm wood and white tile decor, morning sunlight through front window, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a bearded hipster barista with man-bun, flannel shirt rolled to elbows revealing tattoo sleeves, leather apron, carrying a latte art cup, bearded hipster barista leans against the flour-dusted counter, relieved the inspection passed, in a trendy artisan bakery with display cases of pastries, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a bearded hipster barista with man-bun, flannel shirt rolled to elbows revealing tattoo sleeves, leather apron, carrying a latte art cup bearded hipster barista leans against the flour-dusted counter, relieved the inspection passed in a trendy artisan bakery with display cases of pastries, chalkboard menu, warm wood and white tile decor, morning sunlight through front window, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

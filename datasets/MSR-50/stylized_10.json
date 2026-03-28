@@ -1,0 +1,122 @@
+{
+  "scenario_id": "stylized_10",
+  "domain": "Stylized / Animation",
+  "entities": {
+    "A": "a cartoon mushroom adventurer with a red-and-white spotted cap as hat, tiny legs in green boots, carrying a twig walking stick, cheerful round face, 3D Pixar style, full body, standing, white background",
+    "B": "a cartoon snail companion with a spiral rainbow shell, slimy translucent body, eyestalks with cute eyes, slow but determined expression, 3D Pixar style, full body, white background",
+    "C": "a cartoon thorny bramble monster with twisted vine body, glowing red berry eyes, leaf-covered arms reaching outward, rooted feet, menacing, 3D Pixar style, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a cartoon enchanted forest clearing with giant toadstools, fairy ring of flowers, soft bioluminescent glow, ancient tree with face, magical atmosphere, 3D Pixar style, cinematic, no people",
+    "E": "a cartoon dark swamp with gnarled dead trees, green murky water, floating log, will-o-wisps, eerie fog, 3D Pixar style, cinematic, no people",
+    "F": "a narrow cartoon root tunnel underground with earthworm holes in walls, packed earth ceiling, tiny glowing crystals, cozy earthy, 3D Pixar style, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a cartoon mushroom adventurer with a red-and-white spotted cap as hat, tiny legs in green boots, carrying a twig walking stick, cheerful round face, 3D Pixar style, cartoon mushroom adventurer walks cheerfully through the enchanted clearing, twig walking stick tapping, in a cartoon enchanted forest clearing with giant toadstools, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon mushroom adventurer with a red-and-white spotted cap as hat, tiny legs in green boots, carrying a twig walking stick, cheerful round face, 3D Pixar style cartoon mushroom adventurer walks cheerfully through the enchanted clearing, twig walking stick tapping in a cartoon enchanted forest clearing with giant toadstools, fairy ring of flowers, soft bioluminescent glow, ancient tree with face, magical atmosphere, 3D Pixar style, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon mushroom adventurer with a red-and-white spotted cap as hat, tiny legs in green boots, carrying a twig walking stick, cheerful round face, 3D Pixar style standing on the left, a cartoon snail companion with a spiral rainbow shell, slimy translucent body, eyestalks with cute eyes, slow but determined expression, 3D Pixar style standing on the right, cartoon snail companion slides slowly along the path, rainbow shell catching bioluminescent glow, in a cartoon enchanted forest clearing with giant toadstools, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon snail companion slides slowly along the path, rainbow shell catching bioluminescent glow in a cartoon enchanted forest clearing with giant toadstools, fairy ring of flowers, soft bioluminescent glow, ancient tree with face, magical atmosphere, 3D Pixar style, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon mushroom adventurer with a red-and-white spotted cap as hat, tiny legs in green boots, carrying a twig walking stick, cheerful round face, 3D Pixar style standing on the left, a cartoon snail companion with a spiral rainbow shell, slimy translucent body, eyestalks with cute eyes, slow but determined expression, 3D Pixar style standing on the right, cartoon mushroom adventurer and cartoon snail companion venture together into the dark cartoon swamp, in a cartoon dark swamp with gnarled dead trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon mushroom adventurer and cartoon snail companion venture together into the dark cartoon swamp in a cartoon dark swamp with gnarled dead trees, green murky water, floating log, will-o-wisps, eerie fog, 3D Pixar style, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a cartoon mushroom adventurer with a red-and-white spotted cap as hat, tiny legs in green boots, carrying a twig walking stick, cheerful round face, 3D Pixar style, cartoon mushroom adventurer squeezes alone into the narrow root tunnel underground, in a narrow cartoon root tunnel underground with earthworm holes in walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon mushroom adventurer with a red-and-white spotted cap as hat, tiny legs in green boots, carrying a twig walking stick, cheerful round face, 3D Pixar style cartoon mushroom adventurer squeezes alone into the narrow root tunnel underground in a narrow cartoon root tunnel underground with earthworm holes in walls, packed earth ceiling, tiny glowing crystals, cozy earthy, 3D Pixar style, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a cartoon mushroom adventurer with a red-and-white spotted cap as hat, tiny legs in green boots, carrying a twig walking stick, cheerful round face, 3D Pixar style, cartoon mushroom adventurer examines tiny glowing crystals in the packed earth walls, in a narrow cartoon root tunnel underground with earthworm holes in walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon mushroom adventurer with a red-and-white spotted cap as hat, tiny legs in green boots, carrying a twig walking stick, cheerful round face, 3D Pixar style cartoon mushroom adventurer examines tiny glowing crystals in the packed earth walls in a narrow cartoon root tunnel underground with earthworm holes in walls, packed earth ceiling, tiny glowing crystals, cozy earthy, 3D Pixar style, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon mushroom adventurer with a red-and-white spotted cap as hat, tiny legs in green boots, carrying a twig walking stick, cheerful round face, 3D Pixar style standing on the left, a cartoon snail companion with a spiral rainbow shell, slimy translucent body, eyestalks with cute eyes, slow but determined expression, 3D Pixar style standing on the right, cartoon mushroom adventurer pops back up and finds cartoon snail companion stuck on a floating log, eyestalks spinning, in a cartoon dark swamp with gnarled dead trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon mushroom adventurer pops back up and finds cartoon snail companion stuck on a floating log, eyestalks spinning in a cartoon dark swamp with gnarled dead trees, green murky water, floating log, will-o-wisps, eerie fog, 3D Pixar style, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a cartoon thorny bramble monster with twisted vine body, glowing red berry eyes, leaf-covered arms reaching outward, rooted feet, menacing, 3D Pixar style, cartoon thorny bramble monster erupts from the swamp water, thorny vine arms reaching outward, in a cartoon dark swamp with gnarled dead trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon thorny bramble monster with twisted vine body, glowing red berry eyes, leaf-covered arms reaching outward, rooted feet, menacing, 3D Pixar style cartoon thorny bramble monster erupts from the swamp water, thorny vine arms reaching outward in a cartoon dark swamp with gnarled dead trees, green murky water, floating log, will-o-wisps, eerie fog, 3D Pixar style, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon mushroom adventurer with a red-and-white spotted cap as hat, tiny legs in green boots, carrying a twig walking stick, cheerful round face, 3D Pixar style standing on the left, a cartoon thorny bramble monster with twisted vine body, glowing red berry eyes, leaf-covered arms reaching outward, rooted feet, menacing, 3D Pixar style standing on the right, cartoon mushroom adventurer raises the twig walking stick and faces cartoon thorny bramble monster with determined round face, in a cartoon dark swamp with gnarled dead trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon mushroom adventurer raises the twig walking stick and faces cartoon thorny bramble monster with determined round face in a cartoon dark swamp with gnarled dead trees, green murky water, floating log, will-o-wisps, eerie fog, 3D Pixar style, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon mushroom adventurer with a red-and-white spotted cap as hat, tiny legs in green boots, carrying a twig walking stick, cheerful round face, 3D Pixar style standing on the left, a cartoon snail companion with a spiral rainbow shell, slimy translucent body, eyestalks with cute eyes, slow but determined expression, 3D Pixar style standing on the right, cartoon mushroom adventurer and cartoon snail companion hurry together back to the enchanted clearing, in a cartoon enchanted forest clearing with giant toadstools, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon mushroom adventurer and cartoon snail companion hurry together back to the enchanted clearing in a cartoon enchanted forest clearing with giant toadstools, fairy ring of flowers, soft bioluminescent glow, ancient tree with face, magical atmosphere, 3D Pixar style, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a cartoon mushroom adventurer with a red-and-white spotted cap as hat, tiny legs in green boots, carrying a twig walking stick, cheerful round face, 3D Pixar style, cartoon mushroom adventurer sits alone on a giant toadstool, cheerful face beaming at the fairy ring, in a cartoon enchanted forest clearing with giant toadstools, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon mushroom adventurer with a red-and-white spotted cap as hat, tiny legs in green boots, carrying a twig walking stick, cheerful round face, 3D Pixar style cartoon mushroom adventurer sits alone on a giant toadstool, cheerful face beaming at the fairy ring in a cartoon enchanted forest clearing with giant toadstools, fairy ring of flowers, soft bioluminescent glow, ancient tree with face, magical atmosphere, 3D Pixar style, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

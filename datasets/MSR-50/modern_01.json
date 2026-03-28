@@ -1,0 +1,122 @@
+{
+  "scenario_id": "modern_01",
+  "domain": "Modern Realistic",
+  "entities": {
+    "A": "a young professional woman in a tailored navy blazer and white blouse, shoulder-length dark hair, holding a tablet device, confident posture, full body, standing, white background",
+    "B": "a golden retriever therapy dog wearing a blue service vest, friendly alert expression, sitting obediently, well-groomed fluffy coat, full body, white background",
+    "C": "a stern security guard in a black uniform with radio earpiece, buzz-cut grey hair, crossing arms, tall imposing build, aviator sunglasses, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a cozy modern coffee shop interior with exposed brick walls, warm pendant lighting, wooden tables, steaming espresso machine, rain visible through large windows, cinematic, no people",
+    "E": "a sleek open-plan corporate office with glass partitions, computer monitors on desks, city skyline view from floor-to-ceiling windows, cool white lighting, cinematic, no people",
+    "F": "a narrow back-of-house restaurant kitchen with stainless steel counters, hanging pots, steam from cooking, tile floor, cramped busy atmosphere, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a young professional woman in a tailored navy blazer and white blouse, shoulder-length dark hair, holding a tablet device, confident posture, young professional woman sits at a window table, tapping on the tablet while sipping coffee, in a cozy modern coffee shop interior with exposed brick walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a young professional woman in a tailored navy blazer and white blouse, shoulder-length dark hair, holding a tablet device, confident posture young professional woman sits at a window table, tapping on the tablet while sipping coffee in a cozy modern coffee shop interior with exposed brick walls, warm pendant lighting, wooden tables, steaming espresso machine, rain visible through large windows, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a young professional woman in a tailored navy blazer and white blouse, shoulder-length dark hair, holding a tablet device, confident posture standing on the left, a golden retriever therapy dog wearing a blue service vest, friendly alert expression, sitting obediently, well-groomed fluffy coat standing on the right, golden retriever therapy dog trots in wearing the service vest and sits beside young professional woman, in a cozy modern coffee shop interior with exposed brick walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "golden retriever therapy dog trots in wearing the service vest and sits beside young professional woman in a cozy modern coffee shop interior with exposed brick walls, warm pendant lighting, wooden tables, steaming espresso machine, rain visible through large windows, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a young professional woman in a tailored navy blazer and white blouse, shoulder-length dark hair, holding a tablet device, confident posture standing on the left, a golden retriever therapy dog wearing a blue service vest, friendly alert expression, sitting obediently, well-groomed fluffy coat standing on the right, young professional woman and golden retriever therapy dog walk through the glass partitions into the corporate office, in a sleek open-plan corporate office with glass partitions, cinematic still frame, high quality, detailed",
+      "motion_prompt": "young professional woman and golden retriever therapy dog walk through the glass partitions into the corporate office in a sleek open-plan corporate office with glass partitions, computer monitors on desks, city skyline view from floor-to-ceiling windows, cool white lighting, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a young professional woman in a tailored navy blazer and white blouse, shoulder-length dark hair, holding a tablet device, confident posture, young professional woman pushes through the swinging door into the restaurant kitchen alone, in a narrow back-of-house restaurant kitchen with stainless steel counters, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a young professional woman in a tailored navy blazer and white blouse, shoulder-length dark hair, holding a tablet device, confident posture young professional woman pushes through the swinging door into the restaurant kitchen alone in a narrow back-of-house restaurant kitchen with stainless steel counters, hanging pots, steam from cooking, tile floor, cramped busy atmosphere, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a young professional woman in a tailored navy blazer and white blouse, shoulder-length dark hair, holding a tablet device, confident posture, young professional woman inspects stainless steel counters, making notes on the tablet, in a narrow back-of-house restaurant kitchen with stainless steel counters, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a young professional woman in a tailored navy blazer and white blouse, shoulder-length dark hair, holding a tablet device, confident posture young professional woman inspects stainless steel counters, making notes on the tablet in a narrow back-of-house restaurant kitchen with stainless steel counters, hanging pots, steam from cooking, tile floor, cramped busy atmosphere, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a young professional woman in a tailored navy blazer and white blouse, shoulder-length dark hair, holding a tablet device, confident posture standing on the left, a golden retriever therapy dog wearing a blue service vest, friendly alert expression, sitting obediently, well-groomed fluffy coat standing on the right, young professional woman exits the kitchen and finds golden retriever therapy dog waiting by the door, tail wagging, in a sleek open-plan corporate office with glass partitions, cinematic still frame, high quality, detailed",
+      "motion_prompt": "young professional woman exits the kitchen and finds golden retriever therapy dog waiting by the door, tail wagging in a sleek open-plan corporate office with glass partitions, computer monitors on desks, city skyline view from floor-to-ceiling windows, cool white lighting, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a stern security guard in a black uniform with radio earpiece, buzz-cut grey hair, crossing arms, tall imposing build, aviator sunglasses, stern security guard in a black uniform rounds the corner with arms crossed and a stern expression, in a sleek open-plan corporate office with glass partitions, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a stern security guard in a black uniform with radio earpiece, buzz-cut grey hair, crossing arms, tall imposing build, aviator sunglasses stern security guard in a black uniform rounds the corner with arms crossed and a stern expression in a sleek open-plan corporate office with glass partitions, computer monitors on desks, city skyline view from floor-to-ceiling windows, cool white lighting, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a young professional woman in a tailored navy blazer and white blouse, shoulder-length dark hair, holding a tablet device, confident posture standing on the left, a stern security guard in a black uniform with radio earpiece, buzz-cut grey hair, crossing arms, tall imposing build, aviator sunglasses standing on the right, young professional woman straightens up and addresses stern security guard in a black uniform with professional confidence, in a sleek open-plan corporate office with glass partitions, cinematic still frame, high quality, detailed",
+      "motion_prompt": "young professional woman straightens up and addresses stern security guard in a black uniform with professional confidence in a sleek open-plan corporate office with glass partitions, computer monitors on desks, city skyline view from floor-to-ceiling windows, cool white lighting, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a young professional woman in a tailored navy blazer and white blouse, shoulder-length dark hair, holding a tablet device, confident posture standing on the left, a golden retriever therapy dog wearing a blue service vest, friendly alert expression, sitting obediently, well-groomed fluffy coat standing on the right, young professional woman and golden retriever therapy dog walk briskly together back toward the coffee shop, in a cozy modern coffee shop interior with exposed brick walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "young professional woman and golden retriever therapy dog walk briskly together back toward the coffee shop in a cozy modern coffee shop interior with exposed brick walls, warm pendant lighting, wooden tables, steaming espresso machine, rain visible through large windows, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a young professional woman in a tailored navy blazer and white blouse, shoulder-length dark hair, holding a tablet device, confident posture, young professional woman sits alone at the window table, watching rain streak the glass, in a cozy modern coffee shop interior with exposed brick walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a young professional woman in a tailored navy blazer and white blouse, shoulder-length dark hair, holding a tablet device, confident posture young professional woman sits alone at the window table, watching rain streak the glass in a cozy modern coffee shop interior with exposed brick walls, warm pendant lighting, wooden tables, steaming espresso machine, rain visible through large windows, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

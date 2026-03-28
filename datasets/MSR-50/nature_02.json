@@ -1,0 +1,122 @@
+{
+  "scenario_id": "nature_02",
+  "domain": "Nature / Animals",
+  "entities": {
+    "A": "a grey timber wolf with thick winter coat, silver-grey fur with white chest, keen yellow eyes, alert standing pose on all fours, full body, white background",
+    "B": "a large brown bear with thick cinnamon-colored fur, powerful build, standing on all fours, small rounded ears, heavy paws, full body, white background",
+    "C": "a bald eagle with brilliant white head, dark brown body feathers, sharp yellow beak and talons, wingspan partially open, full body, white background"
+  },
+  "backgrounds": {
+    "D": "a misty pine forest in early morning with shafts of golden light, moss-covered ground, fern undergrowth, distant mountain visible, cinematic, no people",
+    "E": "a rocky mountain stream with clear rushing water over boulders, autumn-colored trees along banks, salmon visible in shallows, cinematic, no people",
+    "F": "inside a hollow fallen tree trunk, soft decomposing wood interior, mushrooms growing, filtered green light from outside, cozy den atmosphere, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a grey timber wolf with thick winter coat, silver-grey fur with white chest, keen yellow eyes, alert standing pose on all fours, grey timber wolf lifts nose to the misty morning air, testing the forest scents, in a misty pine forest in early morning with shafts of golden light, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a grey timber wolf with thick winter coat, silver-grey fur with white chest, keen yellow eyes, alert standing pose on all fours grey timber wolf lifts nose to the misty morning air, testing the forest scents in a misty pine forest in early morning with shafts of golden light, moss-covered ground, fern undergrowth, distant mountain visible, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a grey timber wolf with thick winter coat, silver-grey fur with white chest, keen yellow eyes, alert standing pose on all fours standing on the left, a large brown bear with thick cinnamon-colored fur, powerful build, standing on all fours, small rounded ears, heavy paws standing on the right, large brown bear ambles out from behind a pine and sits heavily nearby, in a misty pine forest in early morning with shafts of golden light, cinematic still frame, high quality, detailed",
+      "motion_prompt": "large brown bear ambles out from behind a pine and sits heavily nearby in a misty pine forest in early morning with shafts of golden light, moss-covered ground, fern undergrowth, distant mountain visible, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a grey timber wolf with thick winter coat, silver-grey fur with white chest, keen yellow eyes, alert standing pose on all fours standing on the left, a large brown bear with thick cinnamon-colored fur, powerful build, standing on all fours, small rounded ears, heavy paws standing on the right, grey timber wolf and large brown bear follow the rocky stream together, stepping on boulders, in a rocky mountain stream with clear rushing water over boulders, cinematic still frame, high quality, detailed",
+      "motion_prompt": "grey timber wolf and large brown bear follow the rocky stream together, stepping on boulders in a rocky mountain stream with clear rushing water over boulders, autumn-colored trees along banks, salmon visible in shallows, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a grey timber wolf with thick winter coat, silver-grey fur with white chest, keen yellow eyes, alert standing pose on all fours, grey timber wolf pads alone into the hollow fallen tree trunk, in inside a hollow fallen tree trunk, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a grey timber wolf with thick winter coat, silver-grey fur with white chest, keen yellow eyes, alert standing pose on all fours grey timber wolf pads alone into the hollow fallen tree trunk in inside a hollow fallen tree trunk, soft decomposing wood interior, mushrooms growing, filtered green light from outside, cozy den atmosphere, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a grey timber wolf with thick winter coat, silver-grey fur with white chest, keen yellow eyes, alert standing pose on all fours, grey timber wolf curls up inside the decomposing wood, listening to the forest, in inside a hollow fallen tree trunk, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a grey timber wolf with thick winter coat, silver-grey fur with white chest, keen yellow eyes, alert standing pose on all fours grey timber wolf curls up inside the decomposing wood, listening to the forest in inside a hollow fallen tree trunk, soft decomposing wood interior, mushrooms growing, filtered green light from outside, cozy den atmosphere, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a grey timber wolf with thick winter coat, silver-grey fur with white chest, keen yellow eyes, alert standing pose on all fours standing on the left, a large brown bear with thick cinnamon-colored fur, powerful build, standing on all fours, small rounded ears, heavy paws standing on the right, grey timber wolf emerges and finds large brown bear fishing in the stream nearby, in a rocky mountain stream with clear rushing water over boulders, cinematic still frame, high quality, detailed",
+      "motion_prompt": "grey timber wolf emerges and finds large brown bear fishing in the stream nearby in a rocky mountain stream with clear rushing water over boulders, autumn-colored trees along banks, salmon visible in shallows, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a bald eagle with brilliant white head, dark brown body feathers, sharp yellow beak and talons, wingspan partially open, bald eagle soars overhead, casting a massive shadow across the clearing, in a rocky mountain stream with clear rushing water over boulders, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a bald eagle with brilliant white head, dark brown body feathers, sharp yellow beak and talons, wingspan partially open bald eagle soars overhead, casting a massive shadow across the clearing in a rocky mountain stream with clear rushing water over boulders, autumn-colored trees along banks, salmon visible in shallows, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a grey timber wolf with thick winter coat, silver-grey fur with white chest, keen yellow eyes, alert standing pose on all fours standing on the left, a bald eagle with brilliant white head, dark brown body feathers, sharp yellow beak and talons, wingspan partially open standing on the right, grey timber wolf crouches low and watches bald eagle circling in the mountain sky, in a rocky mountain stream with clear rushing water over boulders, cinematic still frame, high quality, detailed",
+      "motion_prompt": "grey timber wolf crouches low and watches bald eagle circling in the mountain sky in a rocky mountain stream with clear rushing water over boulders, autumn-colored trees along banks, salmon visible in shallows, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a grey timber wolf with thick winter coat, silver-grey fur with white chest, keen yellow eyes, alert standing pose on all fours standing on the left, a large brown bear with thick cinnamon-colored fur, powerful build, standing on all fours, small rounded ears, heavy paws standing on the right, grey timber wolf and large brown bear retreat together into the dense pine forest, in a misty pine forest in early morning with shafts of golden light, cinematic still frame, high quality, detailed",
+      "motion_prompt": "grey timber wolf and large brown bear retreat together into the dense pine forest in a misty pine forest in early morning with shafts of golden light, moss-covered ground, fern undergrowth, distant mountain visible, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a grey timber wolf with thick winter coat, silver-grey fur with white chest, keen yellow eyes, alert standing pose on all fours, grey timber wolf sits alone on a mossy log, morning mist swirling around, in a misty pine forest in early morning with shafts of golden light, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a grey timber wolf with thick winter coat, silver-grey fur with white chest, keen yellow eyes, alert standing pose on all fours grey timber wolf sits alone on a mossy log, morning mist swirling around in a misty pine forest in early morning with shafts of golden light, moss-covered ground, fern undergrowth, distant mountain visible, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

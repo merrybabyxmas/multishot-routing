@@ -1,0 +1,122 @@
+{
+  "scenario_id": "fantasy_09",
+  "domain": "High Fantasy",
+  "entities": {
+    "A": "a sea-elf mermaid warrior with turquoise scales on lower body, coral armor on torso, trident in hand, flowing teal hair with shell ornaments, fierce expression, full body, standing, white background",
+    "B": "a hermit crab golem with a crystal shell, stone crab body with gem-encrusted pincers, barnacles and coral growing on legs, slow heavy stance, full body, white background",
+    "C": "a kraken priest with octopus head and human body in dark ceremonial robes, tentacle beard, staff topped with a glowing pearl, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a coastal cliff fortress overlooking stormy seas, waves crashing on rocks below, lightning flashing in dark clouds, sea spray and wind, cinematic, no people",
+    "E": "an underwater coral palace with bioluminescent coral architecture, shafts of light from surface above, schools of tropical fish, serene blue-green atmosphere, cinematic, no people",
+    "F": "a narrow sea cave with tide pools and barnacle-covered walls, single opening letting in ocean light, echoing water sounds, damp salty atmosphere, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a sea-elf mermaid warrior with turquoise scales on lower body, coral armor on torso, trident in hand, flowing teal hair with shell ornaments, fierce expression, sea-elf mermaid warrior stands on the fortress cliff edge, wind whipping teal hair, in a coastal cliff fortress overlooking stormy seas, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a sea-elf mermaid warrior with turquoise scales on lower body, coral armor on torso, trident in hand, flowing teal hair with shell ornaments, fierce expression sea-elf mermaid warrior stands on the fortress cliff edge, wind whipping teal hair in a coastal cliff fortress overlooking stormy seas, waves crashing on rocks below, lightning flashing in dark clouds, sea spray and wind, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a sea-elf mermaid warrior with turquoise scales on lower body, coral armor on torso, trident in hand, flowing teal hair with shell ornaments, fierce expression standing on the left, a hermit crab golem with a crystal shell, stone crab body with gem-encrusted pincers, barnacles and coral growing on legs, slow heavy stance standing on the right, hermit crab golem scuttles sideways along the rocks, crystal shell sparkling, in a coastal cliff fortress overlooking stormy seas, cinematic still frame, high quality, detailed",
+      "motion_prompt": "hermit crab golem scuttles sideways along the rocks, crystal shell sparkling in a coastal cliff fortress overlooking stormy seas, waves crashing on rocks below, lightning flashing in dark clouds, sea spray and wind, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a sea-elf mermaid warrior with turquoise scales on lower body, coral armor on torso, trident in hand, flowing teal hair with shell ornaments, fierce expression standing on the left, a hermit crab golem with a crystal shell, stone crab body with gem-encrusted pincers, barnacles and coral growing on legs, slow heavy stance standing on the right, sea-elf mermaid warrior and hermit crab golem descend together into the underwater coral palace, in an underwater coral palace with bioluminescent coral architecture, cinematic still frame, high quality, detailed",
+      "motion_prompt": "sea-elf mermaid warrior and hermit crab golem descend together into the underwater coral palace in an underwater coral palace with bioluminescent coral architecture, shafts of light from surface above, schools of tropical fish, serene blue-green atmosphere, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a sea-elf mermaid warrior with turquoise scales on lower body, coral armor on torso, trident in hand, flowing teal hair with shell ornaments, fierce expression, sea-elf mermaid warrior swims alone into the narrow sea cave, light fading quickly, in a narrow sea cave with tide pools and barnacle-covered walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a sea-elf mermaid warrior with turquoise scales on lower body, coral armor on torso, trident in hand, flowing teal hair with shell ornaments, fierce expression sea-elf mermaid warrior swims alone into the narrow sea cave, light fading quickly in a narrow sea cave with tide pools and barnacle-covered walls, single opening letting in ocean light, echoing water sounds, damp salty atmosphere, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a sea-elf mermaid warrior with turquoise scales on lower body, coral armor on torso, trident in hand, flowing teal hair with shell ornaments, fierce expression, sea-elf mermaid warrior examines strange bioluminescent patterns on the cave walls, in a narrow sea cave with tide pools and barnacle-covered walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a sea-elf mermaid warrior with turquoise scales on lower body, coral armor on torso, trident in hand, flowing teal hair with shell ornaments, fierce expression sea-elf mermaid warrior examines strange bioluminescent patterns on the cave walls in a narrow sea cave with tide pools and barnacle-covered walls, single opening letting in ocean light, echoing water sounds, damp salty atmosphere, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a sea-elf mermaid warrior with turquoise scales on lower body, coral armor on torso, trident in hand, flowing teal hair with shell ornaments, fierce expression standing on the left, a hermit crab golem with a crystal shell, stone crab body with gem-encrusted pincers, barnacles and coral growing on legs, slow heavy stance standing on the right, sea-elf mermaid warrior emerges and finds hermit crab golem guarding the palace entrance loyally, in an underwater coral palace with bioluminescent coral architecture, cinematic still frame, high quality, detailed",
+      "motion_prompt": "sea-elf mermaid warrior emerges and finds hermit crab golem guarding the palace entrance loyally in an underwater coral palace with bioluminescent coral architecture, shafts of light from surface above, schools of tropical fish, serene blue-green atmosphere, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a kraken priest with octopus head and human body in dark ceremonial robes, tentacle beard, staff topped with a glowing pearl, kraken priest rises from the deep water, tentacle beard writhing and staff glowing, in an underwater coral palace with bioluminescent coral architecture, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a kraken priest with octopus head and human body in dark ceremonial robes, tentacle beard, staff topped with a glowing pearl kraken priest rises from the deep water, tentacle beard writhing and staff glowing in an underwater coral palace with bioluminescent coral architecture, shafts of light from surface above, schools of tropical fish, serene blue-green atmosphere, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a sea-elf mermaid warrior with turquoise scales on lower body, coral armor on torso, trident in hand, flowing teal hair with shell ornaments, fierce expression standing on the left, a kraken priest with octopus head and human body in dark ceremonial robes, tentacle beard, staff topped with a glowing pearl standing on the right, sea-elf mermaid warrior grips the trident tightly and faces kraken priest in the underwater hall, in an underwater coral palace with bioluminescent coral architecture, cinematic still frame, high quality, detailed",
+      "motion_prompt": "sea-elf mermaid warrior grips the trident tightly and faces kraken priest in the underwater hall in an underwater coral palace with bioluminescent coral architecture, shafts of light from surface above, schools of tropical fish, serene blue-green atmosphere, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a sea-elf mermaid warrior with turquoise scales on lower body, coral armor on torso, trident in hand, flowing teal hair with shell ornaments, fierce expression standing on the left, a hermit crab golem with a crystal shell, stone crab body with gem-encrusted pincers, barnacles and coral growing on legs, slow heavy stance standing on the right, sea-elf mermaid warrior and hermit crab golem swim together up toward the stormy surface, in a coastal cliff fortress overlooking stormy seas, cinematic still frame, high quality, detailed",
+      "motion_prompt": "sea-elf mermaid warrior and hermit crab golem swim together up toward the stormy surface in a coastal cliff fortress overlooking stormy seas, waves crashing on rocks below, lightning flashing in dark clouds, sea spray and wind, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a sea-elf mermaid warrior with turquoise scales on lower body, coral armor on torso, trident in hand, flowing teal hair with shell ornaments, fierce expression, sea-elf mermaid warrior stands alone on the cliff, watching waves crash below, in a coastal cliff fortress overlooking stormy seas, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a sea-elf mermaid warrior with turquoise scales on lower body, coral armor on torso, trident in hand, flowing teal hair with shell ornaments, fierce expression sea-elf mermaid warrior stands alone on the cliff, watching waves crash below in a coastal cliff fortress overlooking stormy seas, waves crashing on rocks below, lightning flashing in dark clouds, sea spray and wind, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

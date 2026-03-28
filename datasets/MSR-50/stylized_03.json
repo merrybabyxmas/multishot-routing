@@ -1,0 +1,122 @@
+{
+  "scenario_id": "stylized_03",
+  "domain": "Stylized / Animation",
+  "entities": {
+    "A": "a tiny cartoon fairy with sparkly pink wings, blue dress made of flower petals, messy blonde hair with daisy crown, round face with freckles, hovering pose, 3D Pixar style, full body, white background",
+    "B": "a cartoon ladybug with oversized cute eyes, red shell with black spots, tiny blue shoes on each of six legs, cheerful expression, 3D Pixar style, full body, white background",
+    "C": "a cartoon garden gnome come to life with bushy white beard, red pointed hat, chubby cheeks, holding a tiny lantern, waddle-ready stance, 3D Pixar style, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a magical cartoon flower garden with oversized daisies and tulips, dewdrops sparkling, butterfly-dotted air, small stone path, warm golden light, 3D Pixar style, cinematic, no people",
+    "E": "a cartoon mushroom village nestled in tree roots, tiny doors and windows in mushrooms, fairy lights strung between caps, soft green ambient glow, 3D Pixar style, cinematic, no people",
+    "F": "a narrow cartoon underground tunnel with root tendrils as ceiling, glowing worm lights, smooth earthen walls, cozy but tight, 3D Pixar style, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a tiny cartoon fairy with sparkly pink wings, blue dress made of flower petals, messy blonde hair with daisy crown, round face with freckles, hovering pose, 3D Pixar style, tiny cartoon fairy flutters through the magical garden, leaving a trail of sparkles, in a magical cartoon flower garden with oversized daisies and tulips, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a tiny cartoon fairy with sparkly pink wings, blue dress made of flower petals, messy blonde hair with daisy crown, round face with freckles, hovering pose, 3D Pixar style tiny cartoon fairy flutters through the magical garden, leaving a trail of sparkles in a magical cartoon flower garden with oversized daisies and tulips, dewdrops sparkling, butterfly-dotted air, small stone path, warm golden light, 3D Pixar style, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a tiny cartoon fairy with sparkly pink wings, blue dress made of flower petals, messy blonde hair with daisy crown, round face with freckles, hovering pose, 3D Pixar style standing on the left, a cartoon ladybug with oversized cute eyes, red shell with black spots, tiny blue shoes on each of six legs, cheerful expression, 3D Pixar style standing on the right, cartoon ladybug toddles along the stone path on six tiny blue-shoed legs, in a magical cartoon flower garden with oversized daisies and tulips, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon ladybug toddles along the stone path on six tiny blue-shoed legs in a magical cartoon flower garden with oversized daisies and tulips, dewdrops sparkling, butterfly-dotted air, small stone path, warm golden light, 3D Pixar style, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a tiny cartoon fairy with sparkly pink wings, blue dress made of flower petals, messy blonde hair with daisy crown, round face with freckles, hovering pose, 3D Pixar style standing on the left, a cartoon ladybug with oversized cute eyes, red shell with black spots, tiny blue shoes on each of six legs, cheerful expression, 3D Pixar style standing on the right, tiny cartoon fairy and cartoon ladybug fly together toward the glowing mushroom village, in a cartoon mushroom village nestled in tree roots, cinematic still frame, high quality, detailed",
+      "motion_prompt": "tiny cartoon fairy and cartoon ladybug fly together toward the glowing mushroom village in a cartoon mushroom village nestled in tree roots, tiny doors and windows in mushrooms, fairy lights strung between caps, soft green ambient glow, 3D Pixar style, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a tiny cartoon fairy with sparkly pink wings, blue dress made of flower petals, messy blonde hair with daisy crown, round face with freckles, hovering pose, 3D Pixar style, tiny cartoon fairy squeezes alone into the narrow underground root tunnel, in a narrow cartoon underground tunnel with root tendrils as ceiling, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a tiny cartoon fairy with sparkly pink wings, blue dress made of flower petals, messy blonde hair with daisy crown, round face with freckles, hovering pose, 3D Pixar style tiny cartoon fairy squeezes alone into the narrow underground root tunnel in a narrow cartoon underground tunnel with root tendrils as ceiling, glowing worm lights, smooth earthen walls, cozy but tight, 3D Pixar style, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a tiny cartoon fairy with sparkly pink wings, blue dress made of flower petals, messy blonde hair with daisy crown, round face with freckles, hovering pose, 3D Pixar style, tiny cartoon fairy examines glowing worm lights on the earthen ceiling with wonder, in a narrow cartoon underground tunnel with root tendrils as ceiling, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a tiny cartoon fairy with sparkly pink wings, blue dress made of flower petals, messy blonde hair with daisy crown, round face with freckles, hovering pose, 3D Pixar style tiny cartoon fairy examines glowing worm lights on the earthen ceiling with wonder in a narrow cartoon underground tunnel with root tendrils as ceiling, glowing worm lights, smooth earthen walls, cozy but tight, 3D Pixar style, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a tiny cartoon fairy with sparkly pink wings, blue dress made of flower petals, messy blonde hair with daisy crown, round face with freckles, hovering pose, 3D Pixar style standing on the left, a cartoon ladybug with oversized cute eyes, red shell with black spots, tiny blue shoes on each of six legs, cheerful expression, 3D Pixar style standing on the right, tiny cartoon fairy zips back and finds cartoon ladybug admiring a dewdrop on a giant tulip, in a cartoon mushroom village nestled in tree roots, cinematic still frame, high quality, detailed",
+      "motion_prompt": "tiny cartoon fairy zips back and finds cartoon ladybug admiring a dewdrop on a giant tulip in a cartoon mushroom village nestled in tree roots, tiny doors and windows in mushrooms, fairy lights strung between caps, soft green ambient glow, 3D Pixar style, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a cartoon garden gnome come to life with bushy white beard, red pointed hat, chubby cheeks, holding a tiny lantern, waddle-ready stance, 3D Pixar style, cartoon garden gnome come to life waddles into the clearing, lantern swinging and eyes narrowed, in a cartoon mushroom village nestled in tree roots, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon garden gnome come to life with bushy white beard, red pointed hat, chubby cheeks, holding a tiny lantern, waddle-ready stance, 3D Pixar style cartoon garden gnome come to life waddles into the clearing, lantern swinging and eyes narrowed in a cartoon mushroom village nestled in tree roots, tiny doors and windows in mushrooms, fairy lights strung between caps, soft green ambient glow, 3D Pixar style, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a tiny cartoon fairy with sparkly pink wings, blue dress made of flower petals, messy blonde hair with daisy crown, round face with freckles, hovering pose, 3D Pixar style standing on the left, a cartoon garden gnome come to life with bushy white beard, red pointed hat, chubby cheeks, holding a tiny lantern, waddle-ready stance, 3D Pixar style standing on the right, tiny cartoon fairy puffs up tiny wings and hovers defiantly before cartoon garden gnome come to life, in a cartoon mushroom village nestled in tree roots, cinematic still frame, high quality, detailed",
+      "motion_prompt": "tiny cartoon fairy puffs up tiny wings and hovers defiantly before cartoon garden gnome come to life in a cartoon mushroom village nestled in tree roots, tiny doors and windows in mushrooms, fairy lights strung between caps, soft green ambient glow, 3D Pixar style, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a tiny cartoon fairy with sparkly pink wings, blue dress made of flower petals, messy blonde hair with daisy crown, round face with freckles, hovering pose, 3D Pixar style standing on the left, a cartoon ladybug with oversized cute eyes, red shell with black spots, tiny blue shoes on each of six legs, cheerful expression, 3D Pixar style standing on the right, tiny cartoon fairy and cartoon ladybug zip together through the flower garden at top speed, in a magical cartoon flower garden with oversized daisies and tulips, cinematic still frame, high quality, detailed",
+      "motion_prompt": "tiny cartoon fairy and cartoon ladybug zip together through the flower garden at top speed in a magical cartoon flower garden with oversized daisies and tulips, dewdrops sparkling, butterfly-dotted air, small stone path, warm golden light, 3D Pixar style, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a tiny cartoon fairy with sparkly pink wings, blue dress made of flower petals, messy blonde hair with daisy crown, round face with freckles, hovering pose, 3D Pixar style, tiny cartoon fairy rests alone on a daisy petal, catching tiny breath with a smile, in a magical cartoon flower garden with oversized daisies and tulips, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a tiny cartoon fairy with sparkly pink wings, blue dress made of flower petals, messy blonde hair with daisy crown, round face with freckles, hovering pose, 3D Pixar style tiny cartoon fairy rests alone on a daisy petal, catching tiny breath with a smile in a magical cartoon flower garden with oversized daisies and tulips, dewdrops sparkling, butterfly-dotted air, small stone path, warm golden light, 3D Pixar style, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

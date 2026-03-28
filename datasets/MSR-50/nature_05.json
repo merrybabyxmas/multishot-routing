@@ -1,0 +1,122 @@
+{
+  "scenario_id": "nature_05",
+  "domain": "Nature / Animals",
+  "entities": {
+    "A": "a snow leopard with thick pale grey spotted fur, long fluffy tail, wide paws, ice-blue eyes, stealthy crouching stance, full body, white background",
+    "B": "a Himalayan monal pheasant with iridescent rainbow plumage of green blue and copper, red face, elaborate tail feathers displayed, full body, white background",
+    "C": "a yak with long shaggy dark brown coat, curved horns, massive stocky build, frost on fur, heavy breathing stance, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a high-altitude Himalayan mountain meadow with wildflowers, distant snow-capped peaks, prayer flags fluttering, thin blue sky, cinematic, no people",
+    "E": "a rocky mountain pass with dramatic cliff edges, clouds below the viewpoint, sparse alpine vegetation, harsh wind-sculpted rocks, cinematic, no people",
+    "F": "a sheltered mountain cave with view of valley below, smooth wind-worn walls, lichen patterns, snow at entrance, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a snow leopard with thick pale grey spotted fur, long fluffy tail, wide paws, ice-blue eyes, stealthy crouching stance, snow leopard prowls across the alpine meadow, fur blending with the rocky terrain, in a high-altitude Himalayan mountain meadow with wildflowers, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a snow leopard with thick pale grey spotted fur, long fluffy tail, wide paws, ice-blue eyes, stealthy crouching stance snow leopard prowls across the alpine meadow, fur blending with the rocky terrain in a high-altitude Himalayan mountain meadow with wildflowers, distant snow-capped peaks, prayer flags fluttering, thin blue sky, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a snow leopard with thick pale grey spotted fur, long fluffy tail, wide paws, ice-blue eyes, stealthy crouching stance standing on the left, a Himalayan monal pheasant with iridescent rainbow plumage of green blue and copper, red face, elaborate tail feathers displayed standing on the right, Himalayan monal pheasant struts through the wildflowers, iridescent plumage catching the light, in a high-altitude Himalayan mountain meadow with wildflowers, cinematic still frame, high quality, detailed",
+      "motion_prompt": "Himalayan monal pheasant struts through the wildflowers, iridescent plumage catching the light in a high-altitude Himalayan mountain meadow with wildflowers, distant snow-capped peaks, prayer flags fluttering, thin blue sky, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a snow leopard with thick pale grey spotted fur, long fluffy tail, wide paws, ice-blue eyes, stealthy crouching stance standing on the left, a Himalayan monal pheasant with iridescent rainbow plumage of green blue and copper, red face, elaborate tail feathers displayed standing on the right, snow leopard and Himalayan monal pheasant traverse the rocky mountain pass together, clouds below, in a rocky mountain pass with dramatic cliff edges, cinematic still frame, high quality, detailed",
+      "motion_prompt": "snow leopard and Himalayan monal pheasant traverse the rocky mountain pass together, clouds below in a rocky mountain pass with dramatic cliff edges, clouds below the viewpoint, sparse alpine vegetation, harsh wind-sculpted rocks, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a snow leopard with thick pale grey spotted fur, long fluffy tail, wide paws, ice-blue eyes, stealthy crouching stance, snow leopard slinks alone into the sheltered mountain cave, in a sheltered mountain cave with view of valley below, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a snow leopard with thick pale grey spotted fur, long fluffy tail, wide paws, ice-blue eyes, stealthy crouching stance snow leopard slinks alone into the sheltered mountain cave in a sheltered mountain cave with view of valley below, smooth wind-worn walls, lichen patterns, snow at entrance, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a snow leopard with thick pale grey spotted fur, long fluffy tail, wide paws, ice-blue eyes, stealthy crouching stance, snow leopard rests in the cave, gazing out at the valley far below, in a sheltered mountain cave with view of valley below, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a snow leopard with thick pale grey spotted fur, long fluffy tail, wide paws, ice-blue eyes, stealthy crouching stance snow leopard rests in the cave, gazing out at the valley far below in a sheltered mountain cave with view of valley below, smooth wind-worn walls, lichen patterns, snow at entrance, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a snow leopard with thick pale grey spotted fur, long fluffy tail, wide paws, ice-blue eyes, stealthy crouching stance standing on the left, a Himalayan monal pheasant with iridescent rainbow plumage of green blue and copper, red face, elaborate tail feathers displayed standing on the right, snow leopard pads back out and finds Himalayan monal pheasant displaying feathers at the cave mouth, in a rocky mountain pass with dramatic cliff edges, cinematic still frame, high quality, detailed",
+      "motion_prompt": "snow leopard pads back out and finds Himalayan monal pheasant displaying feathers at the cave mouth in a rocky mountain pass with dramatic cliff edges, clouds below the viewpoint, sparse alpine vegetation, harsh wind-sculpted rocks, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a yak with long shaggy dark brown coat, curved horns, massive stocky build, frost on fur, heavy breathing stance, yak appears at the ridge, shaggy coat frosted with ice, horns lowered, in a rocky mountain pass with dramatic cliff edges, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a yak with long shaggy dark brown coat, curved horns, massive stocky build, frost on fur, heavy breathing stance yak appears at the ridge, shaggy coat frosted with ice, horns lowered in a rocky mountain pass with dramatic cliff edges, clouds below the viewpoint, sparse alpine vegetation, harsh wind-sculpted rocks, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a snow leopard with thick pale grey spotted fur, long fluffy tail, wide paws, ice-blue eyes, stealthy crouching stance standing on the left, a yak with long shaggy dark brown coat, curved horns, massive stocky build, frost on fur, heavy breathing stance standing on the right, snow leopard crouches on a rock ledge and faces yak across the narrow pass, in a rocky mountain pass with dramatic cliff edges, cinematic still frame, high quality, detailed",
+      "motion_prompt": "snow leopard crouches on a rock ledge and faces yak across the narrow pass in a rocky mountain pass with dramatic cliff edges, clouds below the viewpoint, sparse alpine vegetation, harsh wind-sculpted rocks, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a snow leopard with thick pale grey spotted fur, long fluffy tail, wide paws, ice-blue eyes, stealthy crouching stance standing on the left, a Himalayan monal pheasant with iridescent rainbow plumage of green blue and copper, red face, elaborate tail feathers displayed standing on the right, snow leopard and Himalayan monal pheasant descend together through the meadow at speed, in a high-altitude Himalayan mountain meadow with wildflowers, cinematic still frame, high quality, detailed",
+      "motion_prompt": "snow leopard and Himalayan monal pheasant descend together through the meadow at speed in a high-altitude Himalayan mountain meadow with wildflowers, distant snow-capped peaks, prayer flags fluttering, thin blue sky, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a snow leopard with thick pale grey spotted fur, long fluffy tail, wide paws, ice-blue eyes, stealthy crouching stance, snow leopard lies alone on a high ledge, snow-capped peaks glowing at sunset, in a high-altitude Himalayan mountain meadow with wildflowers, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a snow leopard with thick pale grey spotted fur, long fluffy tail, wide paws, ice-blue eyes, stealthy crouching stance snow leopard lies alone on a high ledge, snow-capped peaks glowing at sunset in a high-altitude Himalayan mountain meadow with wildflowers, distant snow-capped peaks, prayer flags fluttering, thin blue sky, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

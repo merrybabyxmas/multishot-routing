@@ -1,0 +1,122 @@
+{
+  "scenario_id": "scifi_05",
+  "domain": "Sci-Fi / Cyberpunk",
+  "entities": {
+    "A": "a rebel smuggler girl with twin holstered laser pistols, leather jacket over neon-green tank top, braided black hair with gold beads, confident stance, full body, standing, white background",
+    "B": "a modified racing drone bike hovering off the ground, red and black carbon fiber hull, exposed thruster engines, compact sleek design, full body, white background",
+    "C": "a corrupt corporate enforcer in a pristine white suit with a chrome mask covering upper face, concealed arm-blade, imposing tall build, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a bustling neon marketplace in a space station, holographic vendor signs in multiple alien languages, crowded narrow walkways with steam vents, colorful atmospheric lighting, cinematic, no people",
+    "E": "a hidden rebel base inside a hollowed-out asteroid, rough stone walls with bolted metal panels, tactical holographic map in center, dim blue and green lighting, cinematic, no people",
+    "F": "a cramped smuggler ship cargo hold stacked with crates and contraband, low ceiling, single swinging overhead light, hammock in corner, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a rebel smuggler girl with twin holstered laser pistols, leather jacket over neon-green tank top, braided black hair with gold beads, confident stance, rebel smuggler girl walks through the neon marketplace, hand resting on holster, in a bustling neon marketplace in a space station, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a rebel smuggler girl with twin holstered laser pistols, leather jacket over neon-green tank top, braided black hair with gold beads, confident stance rebel smuggler girl walks through the neon marketplace, hand resting on holster in a bustling neon marketplace in a space station, holographic vendor signs in multiple alien languages, crowded narrow walkways with steam vents, colorful atmospheric lighting, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a rebel smuggler girl with twin holstered laser pistols, leather jacket over neon-green tank top, braided black hair with gold beads, confident stance standing on the left, a modified racing drone bike hovering off the ground, red and black carbon fiber hull, exposed thruster engines, compact sleek design standing on the right, modified racing drone bike hovering off the ground roars up on thrusters and parks hovering beside rebel smuggler girl, in a bustling neon marketplace in a space station, cinematic still frame, high quality, detailed",
+      "motion_prompt": "modified racing drone bike hovering off the ground roars up on thrusters and parks hovering beside rebel smuggler girl in a bustling neon marketplace in a space station, holographic vendor signs in multiple alien languages, crowded narrow walkways with steam vents, colorful atmospheric lighting, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a rebel smuggler girl with twin holstered laser pistols, leather jacket over neon-green tank top, braided black hair with gold beads, confident stance standing on the left, a modified racing drone bike hovering off the ground, red and black carbon fiber hull, exposed thruster engines, compact sleek design standing on the right, rebel smuggler girl and modified racing drone bike hovering off the ground sneak through the rebel base entrance together, in a hidden rebel base inside a hollowed-out asteroid, cinematic still frame, high quality, detailed",
+      "motion_prompt": "rebel smuggler girl and modified racing drone bike hovering off the ground sneak through the rebel base entrance together in a hidden rebel base inside a hollowed-out asteroid, rough stone walls with bolted metal panels, tactical holographic map in center, dim blue and green lighting, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a rebel smuggler girl with twin holstered laser pistols, leather jacket over neon-green tank top, braided black hair with gold beads, confident stance, rebel smuggler girl ducks alone into the cramped smuggler ship cargo hold, in a cramped smuggler ship cargo hold stacked with crates and contraband, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a rebel smuggler girl with twin holstered laser pistols, leather jacket over neon-green tank top, braided black hair with gold beads, confident stance rebel smuggler girl ducks alone into the cramped smuggler ship cargo hold in a cramped smuggler ship cargo hold stacked with crates and contraband, low ceiling, single swinging overhead light, hammock in corner, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a rebel smuggler girl with twin holstered laser pistols, leather jacket over neon-green tank top, braided black hair with gold beads, confident stance, rebel smuggler girl rummages through crates, searching for the right device, in a cramped smuggler ship cargo hold stacked with crates and contraband, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a rebel smuggler girl with twin holstered laser pistols, leather jacket over neon-green tank top, braided black hair with gold beads, confident stance rebel smuggler girl rummages through crates, searching for the right device in a cramped smuggler ship cargo hold stacked with crates and contraband, low ceiling, single swinging overhead light, hammock in corner, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a rebel smuggler girl with twin holstered laser pistols, leather jacket over neon-green tank top, braided black hair with gold beads, confident stance standing on the left, a modified racing drone bike hovering off the ground, red and black carbon fiber hull, exposed thruster engines, compact sleek design standing on the right, rebel smuggler girl exits the hold and meets modified racing drone bike hovering off the ground hovering at the doorway, in a hidden rebel base inside a hollowed-out asteroid, cinematic still frame, high quality, detailed",
+      "motion_prompt": "rebel smuggler girl exits the hold and meets modified racing drone bike hovering off the ground hovering at the doorway in a hidden rebel base inside a hollowed-out asteroid, rough stone walls with bolted metal panels, tactical holographic map in center, dim blue and green lighting, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a corrupt corporate enforcer in a pristine white suit with a chrome mask covering upper face, concealed arm-blade, imposing tall build, corrupt corporate enforcer in a pristine white suit steps out from behind the tactical map, chrome mask gleaming, in a hidden rebel base inside a hollowed-out asteroid, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a corrupt corporate enforcer in a pristine white suit with a chrome mask covering upper face, concealed arm-blade, imposing tall build corrupt corporate enforcer in a pristine white suit steps out from behind the tactical map, chrome mask gleaming in a hidden rebel base inside a hollowed-out asteroid, rough stone walls with bolted metal panels, tactical holographic map in center, dim blue and green lighting, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a rebel smuggler girl with twin holstered laser pistols, leather jacket over neon-green tank top, braided black hair with gold beads, confident stance standing on the left, a corrupt corporate enforcer in a pristine white suit with a chrome mask covering upper face, concealed arm-blade, imposing tall build standing on the right, rebel smuggler girl quick-draws both pistols and faces corrupt corporate enforcer in a pristine white suit across the room, in a hidden rebel base inside a hollowed-out asteroid, cinematic still frame, high quality, detailed",
+      "motion_prompt": "rebel smuggler girl quick-draws both pistols and faces corrupt corporate enforcer in a pristine white suit across the room in a hidden rebel base inside a hollowed-out asteroid, rough stone walls with bolted metal panels, tactical holographic map in center, dim blue and green lighting, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a rebel smuggler girl with twin holstered laser pistols, leather jacket over neon-green tank top, braided black hair with gold beads, confident stance standing on the left, a modified racing drone bike hovering off the ground, red and black carbon fiber hull, exposed thruster engines, compact sleek design standing on the right, rebel smuggler girl and modified racing drone bike hovering off the ground blast out of the base into the busy marketplace, in a bustling neon marketplace in a space station, cinematic still frame, high quality, detailed",
+      "motion_prompt": "rebel smuggler girl and modified racing drone bike hovering off the ground blast out of the base into the busy marketplace in a bustling neon marketplace in a space station, holographic vendor signs in multiple alien languages, crowded narrow walkways with steam vents, colorful atmospheric lighting, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a rebel smuggler girl with twin holstered laser pistols, leather jacket over neon-green tank top, braided black hair with gold beads, confident stance, rebel smuggler girl holsters the pistols and breathes out under the neon signs, in a bustling neon marketplace in a space station, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a rebel smuggler girl with twin holstered laser pistols, leather jacket over neon-green tank top, braided black hair with gold beads, confident stance rebel smuggler girl holsters the pistols and breathes out under the neon signs in a bustling neon marketplace in a space station, holographic vendor signs in multiple alien languages, crowded narrow walkways with steam vents, colorful atmospheric lighting, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

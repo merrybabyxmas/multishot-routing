@@ -1,0 +1,122 @@
+{
+  "scenario_id": "fantasy_01",
+  "domain": "High Fantasy",
+  "entities": {
+    "A": "a brave elven archer with long platinum blonde hair, green leather tunic with leaf patterns, carrying a glowing wooden longbow, lean tall build, pointed ears, full body, standing, white background",
+    "B": "a massive stone golem with moss-covered boulder body, glowing blue runic eyes carved into face, tree-trunk-thick arms, towering eight feet tall, full body, standing, white background",
+    "C": "a dark necromancer in tattered black robes with skull-topped iron staff, pale gaunt face, sunken glowing purple eyes, skeletal hands, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "an enchanted glowing forest with giant bioluminescent mushrooms, misty atmosphere, fireflies drifting between ancient oaks, dappled moonlight, cinematic, no people",
+    "E": "a crumbling ancient ruined temple with cracked stone pillars, moonlight streaming through collapsed ceiling, overgrown with vines, cinematic, no people",
+    "F": "a dark underground crypt lit by green torches, skull carvings on stone walls, cobwebs across sarcophagi, damp musty atmosphere, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a brave elven archer with long platinum blonde hair, green leather tunic with leaf patterns, carrying a glowing wooden longbow, lean tall build, pointed ears, brave elven archer stands alert at the forest edge, bow drawn and scanning for danger, in an enchanted glowing forest with giant bioluminescent mushrooms, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a brave elven archer with long platinum blonde hair, green leather tunic with leaf patterns, carrying a glowing wooden longbow, lean tall build, pointed ears brave elven archer stands alert at the forest edge, bow drawn and scanning for danger in an enchanted glowing forest with giant bioluminescent mushrooms, misty atmosphere, fireflies drifting between ancient oaks, dappled moonlight, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a brave elven archer with long platinum blonde hair, green leather tunic with leaf patterns, carrying a glowing wooden longbow, lean tall build, pointed ears standing on the left, a massive stone golem with moss-covered boulder body, glowing blue runic eyes carved into face, tree-trunk-thick arms, towering eight feet tall standing on the right, massive stone golem lumbers through the undergrowth and stops beside brave elven archer, in an enchanted glowing forest with giant bioluminescent mushrooms, cinematic still frame, high quality, detailed",
+      "motion_prompt": "massive stone golem lumbers through the undergrowth and stops beside brave elven archer in an enchanted glowing forest with giant bioluminescent mushrooms, misty atmosphere, fireflies drifting between ancient oaks, dappled moonlight, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a brave elven archer with long platinum blonde hair, green leather tunic with leaf patterns, carrying a glowing wooden longbow, lean tall build, pointed ears standing on the left, a massive stone golem with moss-covered boulder body, glowing blue runic eyes carved into face, tree-trunk-thick arms, towering eight feet tall standing on the right, brave elven archer and massive stone golem venture cautiously into the ancient ruins together, in a crumbling ancient ruined temple with cracked stone pillars, cinematic still frame, high quality, detailed",
+      "motion_prompt": "brave elven archer and massive stone golem venture cautiously into the ancient ruins together in a crumbling ancient ruined temple with cracked stone pillars, moonlight streaming through collapsed ceiling, overgrown with vines, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a brave elven archer with long platinum blonde hair, green leather tunic with leaf patterns, carrying a glowing wooden longbow, lean tall build, pointed ears, brave elven archer squeezes alone into the dark underground crypt passage, in a dark underground crypt lit by green torches, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a brave elven archer with long platinum blonde hair, green leather tunic with leaf patterns, carrying a glowing wooden longbow, lean tall build, pointed ears brave elven archer squeezes alone into the dark underground crypt passage in a dark underground crypt lit by green torches, skull carvings on stone walls, cobwebs across sarcophagi, damp musty atmosphere, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a brave elven archer with long platinum blonde hair, green leather tunic with leaf patterns, carrying a glowing wooden longbow, lean tall build, pointed ears, brave elven archer kneels to examine glowing runes carved into the stone floor, in a dark underground crypt lit by green torches, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a brave elven archer with long platinum blonde hair, green leather tunic with leaf patterns, carrying a glowing wooden longbow, lean tall build, pointed ears brave elven archer kneels to examine glowing runes carved into the stone floor in a dark underground crypt lit by green torches, skull carvings on stone walls, cobwebs across sarcophagi, damp musty atmosphere, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a brave elven archer with long platinum blonde hair, green leather tunic with leaf patterns, carrying a glowing wooden longbow, lean tall build, pointed ears standing on the left, a massive stone golem with moss-covered boulder body, glowing blue runic eyes carved into face, tree-trunk-thick arms, towering eight feet tall standing on the right, brave elven archer returns to the temple and finds massive stone golem standing guard faithfully, in a crumbling ancient ruined temple with cracked stone pillars, cinematic still frame, high quality, detailed",
+      "motion_prompt": "brave elven archer returns to the temple and finds massive stone golem standing guard faithfully in a crumbling ancient ruined temple with cracked stone pillars, moonlight streaming through collapsed ceiling, overgrown with vines, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a dark necromancer in tattered black robes with skull-topped iron staff, pale gaunt face, sunken glowing purple eyes, skeletal hands, dark necromancer in tattered black robes materializes from swirling dark energy with staff raised, in a crumbling ancient ruined temple with cracked stone pillars, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a dark necromancer in tattered black robes with skull-topped iron staff, pale gaunt face, sunken glowing purple eyes, skeletal hands dark necromancer in tattered black robes materializes from swirling dark energy with staff raised in a crumbling ancient ruined temple with cracked stone pillars, moonlight streaming through collapsed ceiling, overgrown with vines, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a brave elven archer with long platinum blonde hair, green leather tunic with leaf patterns, carrying a glowing wooden longbow, lean tall build, pointed ears standing on the left, a dark necromancer in tattered black robes with skull-topped iron staff, pale gaunt face, sunken glowing purple eyes, skeletal hands standing on the right, brave elven archer draws the bow and faces dark necromancer in tattered black robes across the crumbling hall, in a crumbling ancient ruined temple with cracked stone pillars, cinematic still frame, high quality, detailed",
+      "motion_prompt": "brave elven archer draws the bow and faces dark necromancer in tattered black robes across the crumbling hall in a crumbling ancient ruined temple with cracked stone pillars, moonlight streaming through collapsed ceiling, overgrown with vines, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a brave elven archer with long platinum blonde hair, green leather tunic with leaf patterns, carrying a glowing wooden longbow, lean tall build, pointed ears standing on the left, a massive stone golem with moss-covered boulder body, glowing blue runic eyes carved into face, tree-trunk-thick arms, towering eight feet tall standing on the right, brave elven archer and massive stone golem flee together through the moonlit forest, in an enchanted glowing forest with giant bioluminescent mushrooms, cinematic still frame, high quality, detailed",
+      "motion_prompt": "brave elven archer and massive stone golem flee together through the moonlit forest in an enchanted glowing forest with giant bioluminescent mushrooms, misty atmosphere, fireflies drifting between ancient oaks, dappled moonlight, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a brave elven archer with long platinum blonde hair, green leather tunic with leaf patterns, carrying a glowing wooden longbow, lean tall build, pointed ears, brave elven archer leans against an ancient oak, catching breath in safety, in an enchanted glowing forest with giant bioluminescent mushrooms, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a brave elven archer with long platinum blonde hair, green leather tunic with leaf patterns, carrying a glowing wooden longbow, lean tall build, pointed ears brave elven archer leans against an ancient oak, catching breath in safety in an enchanted glowing forest with giant bioluminescent mushrooms, misty atmosphere, fireflies drifting between ancient oaks, dappled moonlight, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "scenario_id": "nature_09",
+  "domain": "Nature / Animals",
+  "entities": {
+    "A": "a mandrill with vivid blue and red face markings, olive-brown fur, prominent muzzle, strong arms, walking on all fours with tail up, full body, white background",
+    "B": "a grey crowned crane with grey body, striking golden crown feathers, red throat patch, long elegant legs, dancing pose, full body, white background",
+    "C": "a silverback gorilla with dark fur and silver saddle marking on back, massive muscular build, intelligent brown eyes, knuckle-walking stance, full body, white background"
+  },
+  "backgrounds": {
+    "D": "an African tropical forest clearing with massive fig trees, filtered sunlight creating spotlight patches, lush green undergrowth, humid atmosphere, cinematic, no people",
+    "E": "a volcanic landscape with black lava rock and sparse green vegetation, steam vents, dramatic cloudy sky, harsh terrain contrasts, cinematic, no people",
+    "F": "a narrow forest stream bed with smooth round stones, overhanging ferns, crystal clear shallow water, cool shade, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a mandrill with vivid blue and red face markings, olive-brown fur, prominent muzzle, strong arms, walking on all fours with tail up, mandrill sits on a sun-dappled branch, vivid face markings catching the light, in an African tropical forest clearing with massive fig trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a mandrill with vivid blue and red face markings, olive-brown fur, prominent muzzle, strong arms, walking on all fours with tail up mandrill sits on a sun-dappled branch, vivid face markings catching the light in an African tropical forest clearing with massive fig trees, filtered sunlight creating spotlight patches, lush green undergrowth, humid atmosphere, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a mandrill with vivid blue and red face markings, olive-brown fur, prominent muzzle, strong arms, walking on all fours with tail up standing on the left, a grey crowned crane with grey body, striking golden crown feathers, red throat patch, long elegant legs, dancing pose standing on the right, grey crowned crane lands gracefully nearby, golden crown feathers fanning out, in an African tropical forest clearing with massive fig trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "grey crowned crane lands gracefully nearby, golden crown feathers fanning out in an African tropical forest clearing with massive fig trees, filtered sunlight creating spotlight patches, lush green undergrowth, humid atmosphere, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a mandrill with vivid blue and red face markings, olive-brown fur, prominent muzzle, strong arms, walking on all fours with tail up standing on the left, a grey crowned crane with grey body, striking golden crown feathers, red throat patch, long elegant legs, dancing pose standing on the right, mandrill and grey crowned crane clamber together across the volcanic black lava rock, in a volcanic landscape with black lava rock and sparse green vegetation, cinematic still frame, high quality, detailed",
+      "motion_prompt": "mandrill and grey crowned crane clamber together across the volcanic black lava rock in a volcanic landscape with black lava rock and sparse green vegetation, steam vents, dramatic cloudy sky, harsh terrain contrasts, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a mandrill with vivid blue and red face markings, olive-brown fur, prominent muzzle, strong arms, walking on all fours with tail up, mandrill descends alone into the narrow stream bed among smooth stones, in a narrow forest stream bed with smooth round stones, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a mandrill with vivid blue and red face markings, olive-brown fur, prominent muzzle, strong arms, walking on all fours with tail up mandrill descends alone into the narrow stream bed among smooth stones in a narrow forest stream bed with smooth round stones, overhanging ferns, crystal clear shallow water, cool shade, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a mandrill with vivid blue and red face markings, olive-brown fur, prominent muzzle, strong arms, walking on all fours with tail up, mandrill washes hands in the crystal clear water, watching for fish, in a narrow forest stream bed with smooth round stones, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a mandrill with vivid blue and red face markings, olive-brown fur, prominent muzzle, strong arms, walking on all fours with tail up mandrill washes hands in the crystal clear water, watching for fish in a narrow forest stream bed with smooth round stones, overhanging ferns, crystal clear shallow water, cool shade, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a mandrill with vivid blue and red face markings, olive-brown fur, prominent muzzle, strong arms, walking on all fours with tail up standing on the left, a grey crowned crane with grey body, striking golden crown feathers, red throat patch, long elegant legs, dancing pose standing on the right, mandrill climbs back up and finds grey crowned crane performing an elegant dance display, in a volcanic landscape with black lava rock and sparse green vegetation, cinematic still frame, high quality, detailed",
+      "motion_prompt": "mandrill climbs back up and finds grey crowned crane performing an elegant dance display in a volcanic landscape with black lava rock and sparse green vegetation, steam vents, dramatic cloudy sky, harsh terrain contrasts, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a silverback gorilla with dark fur and silver saddle marking on back, massive muscular build, intelligent brown eyes, knuckle-walking stance, silverback gorilla emerges from the dense vegetation, knuckle-walking with slow power, in a volcanic landscape with black lava rock and sparse green vegetation, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a silverback gorilla with dark fur and silver saddle marking on back, massive muscular build, intelligent brown eyes, knuckle-walking stance silverback gorilla emerges from the dense vegetation, knuckle-walking with slow power in a volcanic landscape with black lava rock and sparse green vegetation, steam vents, dramatic cloudy sky, harsh terrain contrasts, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a mandrill with vivid blue and red face markings, olive-brown fur, prominent muzzle, strong arms, walking on all fours with tail up standing on the left, a silverback gorilla with dark fur and silver saddle marking on back, massive muscular build, intelligent brown eyes, knuckle-walking stance standing on the right, mandrill stands upright and displays teeth, facing silverback gorilla across the clearing, in a volcanic landscape with black lava rock and sparse green vegetation, cinematic still frame, high quality, detailed",
+      "motion_prompt": "mandrill stands upright and displays teeth, facing silverback gorilla across the clearing in a volcanic landscape with black lava rock and sparse green vegetation, steam vents, dramatic cloudy sky, harsh terrain contrasts, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a mandrill with vivid blue and red face markings, olive-brown fur, prominent muzzle, strong arms, walking on all fours with tail up standing on the left, a grey crowned crane with grey body, striking golden crown feathers, red throat patch, long elegant legs, dancing pose standing on the right, mandrill and grey crowned crane flee together through the tropical forest canopy, in an African tropical forest clearing with massive fig trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "mandrill and grey crowned crane flee together through the tropical forest canopy in an African tropical forest clearing with massive fig trees, filtered sunlight creating spotlight patches, lush green undergrowth, humid atmosphere, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a mandrill with vivid blue and red face markings, olive-brown fur, prominent muzzle, strong arms, walking on all fours with tail up, mandrill sits alone on a high rock, grooming in the golden afternoon light, in an African tropical forest clearing with massive fig trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a mandrill with vivid blue and red face markings, olive-brown fur, prominent muzzle, strong arms, walking on all fours with tail up mandrill sits alone on a high rock, grooming in the golden afternoon light in an African tropical forest clearing with massive fig trees, filtered sunlight creating spotlight patches, lush green undergrowth, humid atmosphere, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

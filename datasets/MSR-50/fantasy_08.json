@@ -1,0 +1,122 @@
+{
+  "scenario_id": "fantasy_08",
+  "domain": "High Fantasy",
+  "entities": {
+    "A": "a centaur warrior with human torso of a woman with braided auburn hair, horse body of chestnut color, wielding a long spear and round shield, proud stance, full body, standing, white background",
+    "B": "a pixie swarm appearing as a cluster of tiny humanoids with dragonfly wings, each emitting soft pastel glow, moving as a collective cloud, full body, white background",
+    "C": "an ancient treant with bark-skin face, branch antlers, root-like legs, leaves as hair, moss beard, towering ancient presence, glowing amber sap eyes, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a sun-dappled meadow with wildflowers and a babbling brook, distant rolling green hills, white clouds in blue sky, peaceful pastoral atmosphere, cinematic, no people",
+    "E": "a mystical standing stone circle on a hilltop at twilight, ancient runes glowing faintly, mist rolling in from surrounding moors, dramatic sky, cinematic, no people",
+    "F": "inside a massive hollow tree trunk turned dwelling, spiral staircase carved in wood, mushroom lights, cozy earthy interior, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a centaur warrior with human torso of a woman with braided auburn hair, horse body of chestnut color, wielding a long spear and round shield, proud stance, centaur warrior canters through the sun-dappled meadow, spear gleaming, in a sun-dappled meadow with wildflowers and a babbling brook, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a centaur warrior with human torso of a woman with braided auburn hair, horse body of chestnut color, wielding a long spear and round shield, proud stance centaur warrior canters through the sun-dappled meadow, spear gleaming in a sun-dappled meadow with wildflowers and a babbling brook, distant rolling green hills, white clouds in blue sky, peaceful pastoral atmosphere, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a centaur warrior with human torso of a woman with braided auburn hair, horse body of chestnut color, wielding a long spear and round shield, proud stance standing on the left, a pixie swarm appearing as a cluster of tiny humanoids with dragonfly wings, each emitting soft pastel glow, moving as a collective cloud standing on the right, pixie swarm appearing as a cluster of tiny humanoids swarm in glowing pastel colors and flutter around centaur warrior's head, in a sun-dappled meadow with wildflowers and a babbling brook, cinematic still frame, high quality, detailed",
+      "motion_prompt": "pixie swarm appearing as a cluster of tiny humanoids swarm in glowing pastel colors and flutter around centaur warrior's head in a sun-dappled meadow with wildflowers and a babbling brook, distant rolling green hills, white clouds in blue sky, peaceful pastoral atmosphere, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a centaur warrior with human torso of a woman with braided auburn hair, horse body of chestnut color, wielding a long spear and round shield, proud stance standing on the left, a pixie swarm appearing as a cluster of tiny humanoids with dragonfly wings, each emitting soft pastel glow, moving as a collective cloud standing on the right, centaur warrior and pixie swarm appearing as a cluster of tiny humanoids approach the mystical standing stones at twilight together, in a mystical standing stone circle on a hilltop at twilight, cinematic still frame, high quality, detailed",
+      "motion_prompt": "centaur warrior and pixie swarm appearing as a cluster of tiny humanoids approach the mystical standing stones at twilight together in a mystical standing stone circle on a hilltop at twilight, ancient runes glowing faintly, mist rolling in from surrounding moors, dramatic sky, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a centaur warrior with human torso of a woman with braided auburn hair, horse body of chestnut color, wielding a long spear and round shield, proud stance, centaur warrior squeezes alone into the hollow tree dwelling interior, in inside a massive hollow tree trunk turned dwelling, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a centaur warrior with human torso of a woman with braided auburn hair, horse body of chestnut color, wielding a long spear and round shield, proud stance centaur warrior squeezes alone into the hollow tree dwelling interior in inside a massive hollow tree trunk turned dwelling, spiral staircase carved in wood, mushroom lights, cozy earthy interior, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a centaur warrior with human torso of a woman with braided auburn hair, horse body of chestnut color, wielding a long spear and round shield, proud stance, centaur warrior examines carved wooden artifacts along the spiral staircase, in inside a massive hollow tree trunk turned dwelling, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a centaur warrior with human torso of a woman with braided auburn hair, horse body of chestnut color, wielding a long spear and round shield, proud stance centaur warrior examines carved wooden artifacts along the spiral staircase in inside a massive hollow tree trunk turned dwelling, spiral staircase carved in wood, mushroom lights, cozy earthy interior, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a centaur warrior with human torso of a woman with braided auburn hair, horse body of chestnut color, wielding a long spear and round shield, proud stance standing on the left, a pixie swarm appearing as a cluster of tiny humanoids with dragonfly wings, each emitting soft pastel glow, moving as a collective cloud standing on the right, centaur warrior trots back out and finds pixie swarm appearing as a cluster of tiny humanoids dancing among the standing stones, in a mystical standing stone circle on a hilltop at twilight, cinematic still frame, high quality, detailed",
+      "motion_prompt": "centaur warrior trots back out and finds pixie swarm appearing as a cluster of tiny humanoids dancing among the standing stones in a mystical standing stone circle on a hilltop at twilight, ancient runes glowing faintly, mist rolling in from surrounding moors, dramatic sky, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "an ancient treant with bark-skin face, branch antlers, root-like legs, leaves as hair, moss beard, towering ancient presence, glowing amber sap eyes, ancient treant awakens with a deep groan, bark-face eyes glowing amber, in a mystical standing stone circle on a hilltop at twilight, cinematic still frame, high quality, detailed",
+      "motion_prompt": "an ancient treant with bark-skin face, branch antlers, root-like legs, leaves as hair, moss beard, towering ancient presence, glowing amber sap eyes ancient treant awakens with a deep groan, bark-face eyes glowing amber in a mystical standing stone circle on a hilltop at twilight, ancient runes glowing faintly, mist rolling in from surrounding moors, dramatic sky, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a centaur warrior with human torso of a woman with braided auburn hair, horse body of chestnut color, wielding a long spear and round shield, proud stance standing on the left, an ancient treant with bark-skin face, branch antlers, root-like legs, leaves as hair, moss beard, towering ancient presence, glowing amber sap eyes standing on the right, centaur warrior lowers the spear and faces ancient treant across the moonlit hilltop, in a mystical standing stone circle on a hilltop at twilight, cinematic still frame, high quality, detailed",
+      "motion_prompt": "centaur warrior lowers the spear and faces ancient treant across the moonlit hilltop in a mystical standing stone circle on a hilltop at twilight, ancient runes glowing faintly, mist rolling in from surrounding moors, dramatic sky, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a centaur warrior with human torso of a woman with braided auburn hair, horse body of chestnut color, wielding a long spear and round shield, proud stance standing on the left, a pixie swarm appearing as a cluster of tiny humanoids with dragonfly wings, each emitting soft pastel glow, moving as a collective cloud standing on the right, centaur warrior and pixie swarm appearing as a cluster of tiny humanoids gallop together across the meadow at full speed, in a sun-dappled meadow with wildflowers and a babbling brook, cinematic still frame, high quality, detailed",
+      "motion_prompt": "centaur warrior and pixie swarm appearing as a cluster of tiny humanoids gallop together across the meadow at full speed in a sun-dappled meadow with wildflowers and a babbling brook, distant rolling green hills, white clouds in blue sky, peaceful pastoral atmosphere, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a centaur warrior with human torso of a woman with braided auburn hair, horse body of chestnut color, wielding a long spear and round shield, proud stance, centaur warrior stands alone by the babbling brook, spear planted in the earth, in a sun-dappled meadow with wildflowers and a babbling brook, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a centaur warrior with human torso of a woman with braided auburn hair, horse body of chestnut color, wielding a long spear and round shield, proud stance centaur warrior stands alone by the babbling brook, spear planted in the earth in a sun-dappled meadow with wildflowers and a babbling brook, distant rolling green hills, white clouds in blue sky, peaceful pastoral atmosphere, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

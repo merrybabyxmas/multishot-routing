@@ -1,0 +1,122 @@
+{
+  "scenario_id": "nature_07",
+  "domain": "Nature / Animals",
+  "entities": {
+    "A": "a scarlet macaw with vivid red, blue, and yellow plumage, long tail feathers, curved grey beak, perched with wings slightly spread, full body, white background",
+    "B": "a capuchin monkey with brown and cream fur, intelligent dark eyes, long prehensile tail, small hands gripping a branch, curious pose, full body, white background",
+    "C": "a black jaguar with barely visible rosette pattern in dark fur, muscular build, green-gold eyes, powerful stalking stance, full body, white background"
+  },
+  "backgrounds": {
+    "D": "a dense Amazon rainforest canopy with enormous trees, hanging vines and bromeliads, filtered green light, cacophony of color, humid misty, cinematic, no people",
+    "E": "a jungle river clearing with still brown water reflecting trees, lily pads, colorful butterflies, golden afternoon light, cinematic, no people",
+    "F": "a narrow jungle floor trail between massive buttress roots, leaf litter, fungus on fallen logs, dim dappled light, earthy atmosphere, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a scarlet macaw with vivid red, blue, and yellow plumage, long tail feathers, curved grey beak, perched with wings slightly spread, scarlet macaw spreads vivid red wings on a high branch, calling out across the canopy, in a dense Amazon rainforest canopy with enormous trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a scarlet macaw with vivid red, blue, and yellow plumage, long tail feathers, curved grey beak, perched with wings slightly spread scarlet macaw spreads vivid red wings on a high branch, calling out across the canopy in a dense Amazon rainforest canopy with enormous trees, hanging vines and bromeliads, filtered green light, cacophony of color, humid misty, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a scarlet macaw with vivid red, blue, and yellow plumage, long tail feathers, curved grey beak, perched with wings slightly spread standing on the left, a capuchin monkey with brown and cream fur, intelligent dark eyes, long prehensile tail, small hands gripping a branch, curious pose standing on the right, capuchin monkey swings through the vines and lands on a nearby branch, in a dense Amazon rainforest canopy with enormous trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "capuchin monkey swings through the vines and lands on a nearby branch in a dense Amazon rainforest canopy with enormous trees, hanging vines and bromeliads, filtered green light, cacophony of color, humid misty, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a scarlet macaw with vivid red, blue, and yellow plumage, long tail feathers, curved grey beak, perched with wings slightly spread standing on the left, a capuchin monkey with brown and cream fur, intelligent dark eyes, long prehensile tail, small hands gripping a branch, curious pose standing on the right, scarlet macaw and capuchin monkey descend together to the jungle river clearing, in a jungle river clearing with still brown water reflecting trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "scarlet macaw and capuchin monkey descend together to the jungle river clearing in a jungle river clearing with still brown water reflecting trees, lily pads, colorful butterflies, golden afternoon light, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a scarlet macaw with vivid red, blue, and yellow plumage, long tail feathers, curved grey beak, perched with wings slightly spread, scarlet macaw hops alone down the narrow jungle floor trail between roots, in a narrow jungle floor trail between massive buttress roots, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a scarlet macaw with vivid red, blue, and yellow plumage, long tail feathers, curved grey beak, perched with wings slightly spread scarlet macaw hops alone down the narrow jungle floor trail between roots in a narrow jungle floor trail between massive buttress roots, leaf litter, fungus on fallen logs, dim dappled light, earthy atmosphere, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a scarlet macaw with vivid red, blue, and yellow plumage, long tail feathers, curved grey beak, perched with wings slightly spread, scarlet macaw pecks at colorful fungi growing on a fallen log, in a narrow jungle floor trail between massive buttress roots, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a scarlet macaw with vivid red, blue, and yellow plumage, long tail feathers, curved grey beak, perched with wings slightly spread scarlet macaw pecks at colorful fungi growing on a fallen log in a narrow jungle floor trail between massive buttress roots, leaf litter, fungus on fallen logs, dim dappled light, earthy atmosphere, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a scarlet macaw with vivid red, blue, and yellow plumage, long tail feathers, curved grey beak, perched with wings slightly spread standing on the left, a capuchin monkey with brown and cream fur, intelligent dark eyes, long prehensile tail, small hands gripping a branch, curious pose standing on the right, scarlet macaw flutters back and finds capuchin monkey grooming by the river edge, in a jungle river clearing with still brown water reflecting trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "scarlet macaw flutters back and finds capuchin monkey grooming by the river edge in a jungle river clearing with still brown water reflecting trees, lily pads, colorful butterflies, golden afternoon light, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a black jaguar with barely visible rosette pattern in dark fur, muscular build, green-gold eyes, powerful stalking stance, black jaguar pads out of the shadows, dark coat barely visible, green-gold eyes glowing, in a jungle river clearing with still brown water reflecting trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a black jaguar with barely visible rosette pattern in dark fur, muscular build, green-gold eyes, powerful stalking stance black jaguar pads out of the shadows, dark coat barely visible, green-gold eyes glowing in a jungle river clearing with still brown water reflecting trees, lily pads, colorful butterflies, golden afternoon light, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a scarlet macaw with vivid red, blue, and yellow plumage, long tail feathers, curved grey beak, perched with wings slightly spread standing on the left, a black jaguar with barely visible rosette pattern in dark fur, muscular build, green-gold eyes, powerful stalking stance standing on the right, scarlet macaw takes flight and circles warily above as black jaguar prowls below, in a jungle river clearing with still brown water reflecting trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "scarlet macaw takes flight and circles warily above as black jaguar prowls below in a jungle river clearing with still brown water reflecting trees, lily pads, colorful butterflies, golden afternoon light, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a scarlet macaw with vivid red, blue, and yellow plumage, long tail feathers, curved grey beak, perched with wings slightly spread standing on the left, a capuchin monkey with brown and cream fur, intelligent dark eyes, long prehensile tail, small hands gripping a branch, curious pose standing on the right, scarlet macaw and capuchin monkey flee together through the canopy, branches swaying, in a dense Amazon rainforest canopy with enormous trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "scarlet macaw and capuchin monkey flee together through the canopy, branches swaying in a dense Amazon rainforest canopy with enormous trees, hanging vines and bromeliads, filtered green light, cacophony of color, humid misty, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a scarlet macaw with vivid red, blue, and yellow plumage, long tail feathers, curved grey beak, perched with wings slightly spread, scarlet macaw perches alone on the highest branch, feathers ruffled but safe, in a dense Amazon rainforest canopy with enormous trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a scarlet macaw with vivid red, blue, and yellow plumage, long tail feathers, curved grey beak, perched with wings slightly spread scarlet macaw perches alone on the highest branch, feathers ruffled but safe in a dense Amazon rainforest canopy with enormous trees, hanging vines and bromeliads, filtered green light, cacophony of color, humid misty, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

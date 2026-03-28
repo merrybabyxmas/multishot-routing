@@ -1,0 +1,122 @@
+{
+  "scenario_id": "modern_04",
+  "domain": "Modern Realistic",
+  "entities": {
+    "A": "a street musician young man with an acoustic guitar strapped on, faded jeans and vintage band t-shirt, curly brown hair, sneakers, relaxed easy smile, full body, standing, white background",
+    "B": "a border collie with black and white markings, intelligent brown eyes, red bandana around neck, alert herding stance, full body, white background",
+    "C": "a police officer in standard blue uniform with badge and utility belt, short dark hair, professional stern demeanor, hand on radio, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a vibrant city park in autumn with golden-leaved trees, paved paths, benches along a pond, joggers in background blur, warm late afternoon sun, cinematic, no people",
+    "E": "a busy subway platform with tiled walls and arriving train lights, electronic departure board, yellow safety line, underground fluorescent lighting, cinematic, no people",
+    "F": "a dimly lit underground parking garage with concrete pillars, numbered parking spaces, security cameras visible, distant car headlights, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a street musician young man with an acoustic guitar strapped on, faded jeans and vintage band t-shirt, curly brown hair, sneakers, relaxed easy smile, street musician young man sits on a park bench, strumming guitar in the golden autumn light, in a vibrant city park in autumn with golden-leaved trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a street musician young man with an acoustic guitar strapped on, faded jeans and vintage band t-shirt, curly brown hair, sneakers, relaxed easy smile street musician young man sits on a park bench, strumming guitar in the golden autumn light in a vibrant city park in autumn with golden-leaved trees, paved paths, benches along a pond, joggers in background blur, warm late afternoon sun, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a street musician young man with an acoustic guitar strapped on, faded jeans and vintage band t-shirt, curly brown hair, sneakers, relaxed easy smile standing on the left, a border collie with black and white markings, intelligent brown eyes, red bandana around neck, alert herding stance standing on the right, border collie bounds over with a red bandana and drops a stick at street musician young man's feet, in a vibrant city park in autumn with golden-leaved trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "border collie bounds over with a red bandana and drops a stick at street musician young man's feet in a vibrant city park in autumn with golden-leaved trees, paved paths, benches along a pond, joggers in background blur, warm late afternoon sun, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a street musician young man with an acoustic guitar strapped on, faded jeans and vintage band t-shirt, curly brown hair, sneakers, relaxed easy smile standing on the left, a border collie with black and white markings, intelligent brown eyes, red bandana around neck, alert herding stance standing on the right, street musician young man and border collie descend the subway stairs into the underground platform, in a busy subway platform with tiled walls and arriving train lights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "street musician young man and border collie descend the subway stairs into the underground platform in a busy subway platform with tiled walls and arriving train lights, electronic departure board, yellow safety line, underground fluorescent lighting, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a street musician young man with an acoustic guitar strapped on, faded jeans and vintage band t-shirt, curly brown hair, sneakers, relaxed easy smile, street musician young man walks alone into the dim parking garage, footsteps echoing, in a dimly lit underground parking garage with concrete pillars, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a street musician young man with an acoustic guitar strapped on, faded jeans and vintage band t-shirt, curly brown hair, sneakers, relaxed easy smile street musician young man walks alone into the dim parking garage, footsteps echoing in a dimly lit underground parking garage with concrete pillars, numbered parking spaces, security cameras visible, distant car headlights, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a street musician young man with an acoustic guitar strapped on, faded jeans and vintage band t-shirt, curly brown hair, sneakers, relaxed easy smile, street musician young man checks behind concrete pillars, looking for a parked car, in a dimly lit underground parking garage with concrete pillars, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a street musician young man with an acoustic guitar strapped on, faded jeans and vintage band t-shirt, curly brown hair, sneakers, relaxed easy smile street musician young man checks behind concrete pillars, looking for a parked car in a dimly lit underground parking garage with concrete pillars, numbered parking spaces, security cameras visible, distant car headlights, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a street musician young man with an acoustic guitar strapped on, faded jeans and vintage band t-shirt, curly brown hair, sneakers, relaxed easy smile standing on the left, a border collie with black and white markings, intelligent brown eyes, red bandana around neck, alert herding stance standing on the right, street musician young man jogs back up and finds border collie sitting patiently by the subway entrance, in a busy subway platform with tiled walls and arriving train lights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "street musician young man jogs back up and finds border collie sitting patiently by the subway entrance in a busy subway platform with tiled walls and arriving train lights, electronic departure board, yellow safety line, underground fluorescent lighting, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a police officer in standard blue uniform with badge and utility belt, short dark hair, professional stern demeanor, hand on radio, police officer in standard blue uniform steps out from behind a pillar in full uniform, hand on radio, in a busy subway platform with tiled walls and arriving train lights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a police officer in standard blue uniform with badge and utility belt, short dark hair, professional stern demeanor, hand on radio police officer in standard blue uniform steps out from behind a pillar in full uniform, hand on radio in a busy subway platform with tiled walls and arriving train lights, electronic departure board, yellow safety line, underground fluorescent lighting, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a street musician young man with an acoustic guitar strapped on, faded jeans and vintage band t-shirt, curly brown hair, sneakers, relaxed easy smile standing on the left, a police officer in standard blue uniform with badge and utility belt, short dark hair, professional stern demeanor, hand on radio standing on the right, street musician young man pauses and faces police officer in standard blue uniform, guitar still slung across shoulders, in a busy subway platform with tiled walls and arriving train lights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "street musician young man pauses and faces police officer in standard blue uniform, guitar still slung across shoulders in a busy subway platform with tiled walls and arriving train lights, electronic departure board, yellow safety line, underground fluorescent lighting, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a street musician young man with an acoustic guitar strapped on, faded jeans and vintage band t-shirt, curly brown hair, sneakers, relaxed easy smile standing on the left, a border collie with black and white markings, intelligent brown eyes, red bandana around neck, alert herding stance standing on the right, street musician young man and border collie walk quickly together back through the autumn park, in a vibrant city park in autumn with golden-leaved trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "street musician young man and border collie walk quickly together back through the autumn park in a vibrant city park in autumn with golden-leaved trees, paved paths, benches along a pond, joggers in background blur, warm late afternoon sun, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a street musician young man with an acoustic guitar strapped on, faded jeans and vintage band t-shirt, curly brown hair, sneakers, relaxed easy smile, street musician young man sits alone on the bench, watching leaves drift onto the pond, in a vibrant city park in autumn with golden-leaved trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a street musician young man with an acoustic guitar strapped on, faded jeans and vintage band t-shirt, curly brown hair, sneakers, relaxed easy smile street musician young man sits alone on the bench, watching leaves drift onto the pond in a vibrant city park in autumn with golden-leaved trees, paved paths, benches along a pond, joggers in background blur, warm late afternoon sun, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

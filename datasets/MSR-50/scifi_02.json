@@ -1,0 +1,122 @@
+{
+  "scenario_id": "scifi_02",
+  "domain": "Sci-Fi / Cyberpunk",
+  "entities": {
+    "A": "a female space marine in white and gold powered armor, short red mohawk hair, plasma rifle across her chest, battle scars on the suit, athletic build, full body, standing, white background",
+    "B": "a hovering scout drone with four rotors and a blue scanning beam, chrome shell with orange warning stripes, compact cylindrical body, full body, white background",
+    "C": "a towering alien warlord with dark purple skin and four arms, ornate bone-like crown, wearing scale armor made of obsidian plates, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "the bridge of a damaged starship with sparking consoles and flickering emergency lights, large viewport showing a nebula, debris floating in zero-gravity sections, cinematic, no people",
+    "E": "a derelict alien temple on a barren moon, massive carved pillars with unknown symbols, bioluminescent moss, shattered dome revealing stars above, cinematic, no people",
+    "F": "a cramped escape pod interior with a single viewport, emergency lighting strips, life support readouts, strapped-in seats, tight metallic walls, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a female space marine in white and gold powered armor, short red mohawk hair, plasma rifle across her chest, battle scars on the suit, athletic build, female space marine in white and gold powered armor emerges from the airlock, scanning the damaged bridge warily, in the bridge of a damaged starship with sparking consoles and flickering emergency lights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a female space marine in white and gold powered armor, short red mohawk hair, plasma rifle across her chest, battle scars on the suit, athletic build female space marine in white and gold powered armor emerges from the airlock, scanning the damaged bridge warily in the bridge of a damaged starship with sparking consoles and flickering emergency lights, large viewport showing a nebula, debris floating in zero-gravity sections, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a female space marine in white and gold powered armor, short red mohawk hair, plasma rifle across her chest, battle scars on the suit, athletic build standing on the left, a hovering scout drone with four rotors and a blue scanning beam, chrome shell with orange warning stripes, compact cylindrical body standing on the right, hovering scout drone hovers through floating debris and circles around female space marine in white and gold powered armor, in the bridge of a damaged starship with sparking consoles and flickering emergency lights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "hovering scout drone hovers through floating debris and circles around female space marine in white and gold powered armor in the bridge of a damaged starship with sparking consoles and flickering emergency lights, large viewport showing a nebula, debris floating in zero-gravity sections, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a female space marine in white and gold powered armor, short red mohawk hair, plasma rifle across her chest, battle scars on the suit, athletic build standing on the left, a hovering scout drone with four rotors and a blue scanning beam, chrome shell with orange warning stripes, compact cylindrical body standing on the right, female space marine in white and gold powered armor and hovering scout drone move cautiously through the alien temple ruins, in a derelict alien temple on a barren moon, cinematic still frame, high quality, detailed",
+      "motion_prompt": "female space marine in white and gold powered armor and hovering scout drone move cautiously through the alien temple ruins in a derelict alien temple on a barren moon, massive carved pillars with unknown symbols, bioluminescent moss, shattered dome revealing stars above, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a female space marine in white and gold powered armor, short red mohawk hair, plasma rifle across her chest, battle scars on the suit, athletic build, female space marine in white and gold powered armor squeezes alone into the cramped escape pod interior, in a cramped escape pod interior with a single viewport, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a female space marine in white and gold powered armor, short red mohawk hair, plasma rifle across her chest, battle scars on the suit, athletic build female space marine in white and gold powered armor squeezes alone into the cramped escape pod interior in a cramped escape pod interior with a single viewport, emergency lighting strips, life support readouts, strapped-in seats, tight metallic walls, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a female space marine in white and gold powered armor, short red mohawk hair, plasma rifle across her chest, battle scars on the suit, athletic build, female space marine in white and gold powered armor checks life-support readouts with focused intensity, in a cramped escape pod interior with a single viewport, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a female space marine in white and gold powered armor, short red mohawk hair, plasma rifle across her chest, battle scars on the suit, athletic build female space marine in white and gold powered armor checks life-support readouts with focused intensity in a cramped escape pod interior with a single viewport, emergency lighting strips, life support readouts, strapped-in seats, tight metallic walls, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a female space marine in white and gold powered armor, short red mohawk hair, plasma rifle across her chest, battle scars on the suit, athletic build standing on the left, a hovering scout drone with four rotors and a blue scanning beam, chrome shell with orange warning stripes, compact cylindrical body standing on the right, female space marine in white and gold powered armor exits the pod and finds hovering scout drone scanning the area nearby, in a derelict alien temple on a barren moon, cinematic still frame, high quality, detailed",
+      "motion_prompt": "female space marine in white and gold powered armor exits the pod and finds hovering scout drone scanning the area nearby in a derelict alien temple on a barren moon, massive carved pillars with unknown symbols, bioluminescent moss, shattered dome revealing stars above, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a towering alien warlord with dark purple skin and four arms, ornate bone-like crown, wearing scale armor made of obsidian plates, towering alien warlord rises from behind the crumbling stone pillars, in a derelict alien temple on a barren moon, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a towering alien warlord with dark purple skin and four arms, ornate bone-like crown, wearing scale armor made of obsidian plates towering alien warlord rises from behind the crumbling stone pillars in a derelict alien temple on a barren moon, massive carved pillars with unknown symbols, bioluminescent moss, shattered dome revealing stars above, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a female space marine in white and gold powered armor, short red mohawk hair, plasma rifle across her chest, battle scars on the suit, athletic build standing on the left, a towering alien warlord with dark purple skin and four arms, ornate bone-like crown, wearing scale armor made of obsidian plates standing on the right, female space marine in white and gold powered armor draws a weapon and faces towering alien warlord across the broken floor, in a derelict alien temple on a barren moon, cinematic still frame, high quality, detailed",
+      "motion_prompt": "female space marine in white and gold powered armor draws a weapon and faces towering alien warlord across the broken floor in a derelict alien temple on a barren moon, massive carved pillars with unknown symbols, bioluminescent moss, shattered dome revealing stars above, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a female space marine in white and gold powered armor, short red mohawk hair, plasma rifle across her chest, battle scars on the suit, athletic build standing on the left, a hovering scout drone with four rotors and a blue scanning beam, chrome shell with orange warning stripes, compact cylindrical body standing on the right, female space marine in white and gold powered armor and hovering scout drone race back toward the damaged starship, in the bridge of a damaged starship with sparking consoles and flickering emergency lights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "female space marine in white and gold powered armor and hovering scout drone race back toward the damaged starship in the bridge of a damaged starship with sparking consoles and flickering emergency lights, large viewport showing a nebula, debris floating in zero-gravity sections, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a female space marine in white and gold powered armor, short red mohawk hair, plasma rifle across her chest, battle scars on the suit, athletic build, female space marine in white and gold powered armor collapses into a seat, staring out at the nebula, in the bridge of a damaged starship with sparking consoles and flickering emergency lights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a female space marine in white and gold powered armor, short red mohawk hair, plasma rifle across her chest, battle scars on the suit, athletic build female space marine in white and gold powered armor collapses into a seat, staring out at the nebula in the bridge of a damaged starship with sparking consoles and flickering emergency lights, large viewport showing a nebula, debris floating in zero-gravity sections, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

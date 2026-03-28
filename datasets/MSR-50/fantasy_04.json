@@ -1,0 +1,122 @@
+{
+  "scenario_id": "fantasy_04",
+  "domain": "High Fantasy",
+  "entities": {
+    "A": "a wandering bard with a lute on his back, feathered wide-brim hat, colorful patchwork cloak, charming smile, lean build with knee-high boots, full body, standing, white background",
+    "B": "a loyal timber wolf companion with grey and white fur, intelligent amber eyes, leather harness with small saddlebags, alert standing pose, full body, white background",
+    "C": "a troll chieftain with mossy green skin and tusks, bone necklace and fur loincloth, crude wooden club, massively muscular build, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a vibrant medieval market square with colorful tent stalls, cobblestone ground, a fountain in the center, hanging lanterns at dusk, warm festive atmosphere, cinematic, no people",
+    "E": "the interior of a grand wizard tower library, spiraling shelves of ancient books, floating candles, astrolabe and crystal ball on desk, warm scholarly light, cinematic, no people",
+    "F": "a murky swamp with twisted dead trees, bubbling pools of green water, hanging Spanish moss, occasional will-o-wisps, fog-covered, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a wandering bard with a lute on his back, feathered wide-brim hat, colorful patchwork cloak, charming smile, lean build with knee-high boots, wandering bard strums the lute by the fountain in the bustling market square, in a vibrant medieval market square with colorful tent stalls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a wandering bard with a lute on his back, feathered wide-brim hat, colorful patchwork cloak, charming smile, lean build with knee-high boots wandering bard strums the lute by the fountain in the bustling market square in a vibrant medieval market square with colorful tent stalls, cobblestone ground, a fountain in the center, hanging lanterns at dusk, warm festive atmosphere, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a wandering bard with a lute on his back, feathered wide-brim hat, colorful patchwork cloak, charming smile, lean build with knee-high boots standing on the left, a loyal timber wolf companion with grey and white fur, intelligent amber eyes, leather harness with small saddlebags, alert standing pose standing on the right, loyal timber wolf companion pads through the crowd and sits loyally at wandering bard's feet, in a vibrant medieval market square with colorful tent stalls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "loyal timber wolf companion pads through the crowd and sits loyally at wandering bard's feet in a vibrant medieval market square with colorful tent stalls, cobblestone ground, a fountain in the center, hanging lanterns at dusk, warm festive atmosphere, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a wandering bard with a lute on his back, feathered wide-brim hat, colorful patchwork cloak, charming smile, lean build with knee-high boots standing on the left, a loyal timber wolf companion with grey and white fur, intelligent amber eyes, leather harness with small saddlebags, alert standing pose standing on the right, wandering bard and loyal timber wolf companion climb the wizard tower staircase together, in the interior of a grand wizard tower library, cinematic still frame, high quality, detailed",
+      "motion_prompt": "wandering bard and loyal timber wolf companion climb the wizard tower staircase together in the interior of a grand wizard tower library, spiraling shelves of ancient books, floating candles, astrolabe and crystal ball on desk, warm scholarly light, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a wandering bard with a lute on his back, feathered wide-brim hat, colorful patchwork cloak, charming smile, lean build with knee-high boots, wandering bard ventures alone into the murky swamp, boots squelching, in a murky swamp with twisted dead trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a wandering bard with a lute on his back, feathered wide-brim hat, colorful patchwork cloak, charming smile, lean build with knee-high boots wandering bard ventures alone into the murky swamp, boots squelching in a murky swamp with twisted dead trees, bubbling pools of green water, hanging Spanish moss, occasional will-o-wisps, fog-covered, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a wandering bard with a lute on his back, feathered wide-brim hat, colorful patchwork cloak, charming smile, lean build with knee-high boots, wandering bard examines strange glowing will-o-wisps from a safe distance, in a murky swamp with twisted dead trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a wandering bard with a lute on his back, feathered wide-brim hat, colorful patchwork cloak, charming smile, lean build with knee-high boots wandering bard examines strange glowing will-o-wisps from a safe distance in a murky swamp with twisted dead trees, bubbling pools of green water, hanging Spanish moss, occasional will-o-wisps, fog-covered, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a wandering bard with a lute on his back, feathered wide-brim hat, colorful patchwork cloak, charming smile, lean build with knee-high boots standing on the left, a loyal timber wolf companion with grey and white fur, intelligent amber eyes, leather harness with small saddlebags, alert standing pose standing on the right, wandering bard returns to the tower and finds loyal timber wolf companion by the library door, in the interior of a grand wizard tower library, cinematic still frame, high quality, detailed",
+      "motion_prompt": "wandering bard returns to the tower and finds loyal timber wolf companion by the library door in the interior of a grand wizard tower library, spiraling shelves of ancient books, floating candles, astrolabe and crystal ball on desk, warm scholarly light, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a troll chieftain with mossy green skin and tusks, bone necklace and fur loincloth, crude wooden club, massively muscular build, troll chieftain crashes through the undergrowth, tusks gleaming with fury, in the interior of a grand wizard tower library, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a troll chieftain with mossy green skin and tusks, bone necklace and fur loincloth, crude wooden club, massively muscular build troll chieftain crashes through the undergrowth, tusks gleaming with fury in the interior of a grand wizard tower library, spiraling shelves of ancient books, floating candles, astrolabe and crystal ball on desk, warm scholarly light, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a wandering bard with a lute on his back, feathered wide-brim hat, colorful patchwork cloak, charming smile, lean build with knee-high boots standing on the left, a troll chieftain with mossy green skin and tusks, bone necklace and fur loincloth, crude wooden club, massively muscular build standing on the right, wandering bard plants feet firmly and raises a hand to face troll chieftain, in the interior of a grand wizard tower library, cinematic still frame, high quality, detailed",
+      "motion_prompt": "wandering bard plants feet firmly and raises a hand to face troll chieftain in the interior of a grand wizard tower library, spiraling shelves of ancient books, floating candles, astrolabe and crystal ball on desk, warm scholarly light, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a wandering bard with a lute on his back, feathered wide-brim hat, colorful patchwork cloak, charming smile, lean build with knee-high boots standing on the left, a loyal timber wolf companion with grey and white fur, intelligent amber eyes, leather harness with small saddlebags, alert standing pose standing on the right, wandering bard and loyal timber wolf companion race together through the market at full speed, in a vibrant medieval market square with colorful tent stalls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "wandering bard and loyal timber wolf companion race together through the market at full speed in a vibrant medieval market square with colorful tent stalls, cobblestone ground, a fountain in the center, hanging lanterns at dusk, warm festive atmosphere, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a wandering bard with a lute on his back, feathered wide-brim hat, colorful patchwork cloak, charming smile, lean build with knee-high boots, wandering bard sits by the fountain, playing a relieved tune on the lute, in a vibrant medieval market square with colorful tent stalls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a wandering bard with a lute on his back, feathered wide-brim hat, colorful patchwork cloak, charming smile, lean build with knee-high boots wandering bard sits by the fountain, playing a relieved tune on the lute in a vibrant medieval market square with colorful tent stalls, cobblestone ground, a fountain in the center, hanging lanterns at dusk, warm festive atmosphere, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

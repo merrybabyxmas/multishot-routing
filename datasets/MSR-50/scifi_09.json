@@ -1,0 +1,122 @@
+{
+  "scenario_id": "scifi_09",
+  "domain": "Sci-Fi / Cyberpunk",
+  "entities": {
+    "A": "a diplomatic android with porcelain-white skin and perfectly symmetrical features, wearing a formal navy kimono, silver hair in a bun, serene expression, full body, standing, white background",
+    "B": "a small maintenance spider-bot with eight articulated chrome legs, red tool appendages, dome-shaped body with a single camera eye, full body, white background",
+    "C": "a void entity manifesting as a shifting humanoid silhouette of deep purple and black, star-like points of light within its form, no distinct features, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a tranquil Japanese cyber-garden with holographic cherry blossoms, a still koi pond with digital fish, stone lanterns with LED glow, misty dawn atmosphere, cinematic, no people",
+    "E": "a high-security vault room with laser grid visible in dim light, circular titanium door, biometric scanners on walls, cold sterile atmosphere, cinematic, no people",
+    "F": "a narrow rooftop bridge between two buildings at night, wind turbines spinning, antenna forest silhouetted against city glow, gusty atmosphere, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a diplomatic android with porcelain-white skin and perfectly symmetrical features, wearing a formal navy kimono, silver hair in a bun, serene expression, diplomatic android kneels beside the koi pond, observing the digital fish serenely, in a tranquil Japanese cyber-garden with holographic cherry blossoms, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a diplomatic android with porcelain-white skin and perfectly symmetrical features, wearing a formal navy kimono, silver hair in a bun, serene expression diplomatic android kneels beside the koi pond, observing the digital fish serenely in a tranquil Japanese cyber-garden with holographic cherry blossoms, a still koi pond with digital fish, stone lanterns with LED glow, misty dawn atmosphere, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a diplomatic android with porcelain-white skin and perfectly symmetrical features, wearing a formal navy kimono, silver hair in a bun, serene expression standing on the left, a small maintenance spider-bot with eight articulated chrome legs, red tool appendages, dome-shaped body with a single camera eye standing on the right, small maintenance spider-bot scuttles across the stone path on eight precise chrome legs, in a tranquil Japanese cyber-garden with holographic cherry blossoms, cinematic still frame, high quality, detailed",
+      "motion_prompt": "small maintenance spider-bot scuttles across the stone path on eight precise chrome legs in a tranquil Japanese cyber-garden with holographic cherry blossoms, a still koi pond with digital fish, stone lanterns with LED glow, misty dawn atmosphere, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a diplomatic android with porcelain-white skin and perfectly symmetrical features, wearing a formal navy kimono, silver hair in a bun, serene expression standing on the left, a small maintenance spider-bot with eight articulated chrome legs, red tool appendages, dome-shaped body with a single camera eye standing on the right, diplomatic android and small maintenance spider-bot slip past laser grids into the vault room, in a high-security vault room with laser grid visible in dim light, cinematic still frame, high quality, detailed",
+      "motion_prompt": "diplomatic android and small maintenance spider-bot slip past laser grids into the vault room in a high-security vault room with laser grid visible in dim light, circular titanium door, biometric scanners on walls, cold sterile atmosphere, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a diplomatic android with porcelain-white skin and perfectly symmetrical features, wearing a formal navy kimono, silver hair in a bun, serene expression, diplomatic android climbs alone onto the narrow rooftop bridge between buildings, in a narrow rooftop bridge between two buildings at night, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a diplomatic android with porcelain-white skin and perfectly symmetrical features, wearing a formal navy kimono, silver hair in a bun, serene expression diplomatic android climbs alone onto the narrow rooftop bridge between buildings in a narrow rooftop bridge between two buildings at night, wind turbines spinning, antenna forest silhouetted against city glow, gusty atmosphere, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a diplomatic android with porcelain-white skin and perfectly symmetrical features, wearing a formal navy kimono, silver hair in a bun, serene expression, diplomatic android balances on the bridge, wind tugging at the formal kimono, in a narrow rooftop bridge between two buildings at night, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a diplomatic android with porcelain-white skin and perfectly symmetrical features, wearing a formal navy kimono, silver hair in a bun, serene expression diplomatic android balances on the bridge, wind tugging at the formal kimono in a narrow rooftop bridge between two buildings at night, wind turbines spinning, antenna forest silhouetted against city glow, gusty atmosphere, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a diplomatic android with porcelain-white skin and perfectly symmetrical features, wearing a formal navy kimono, silver hair in a bun, serene expression standing on the left, a small maintenance spider-bot with eight articulated chrome legs, red tool appendages, dome-shaped body with a single camera eye standing on the right, diplomatic android returns through the vault door to find small maintenance spider-bot disabling sensors, in a high-security vault room with laser grid visible in dim light, cinematic still frame, high quality, detailed",
+      "motion_prompt": "diplomatic android returns through the vault door to find small maintenance spider-bot disabling sensors in a high-security vault room with laser grid visible in dim light, circular titanium door, biometric scanners on walls, cold sterile atmosphere, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a void entity manifesting as a shifting humanoid silhouette of deep purple and black, star-like points of light within its form, no distinct features, void entity manifesting as a shifting humanoid silhouette of deep purple and black materializes from shifting purple-black void energy, in a high-security vault room with laser grid visible in dim light, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a void entity manifesting as a shifting humanoid silhouette of deep purple and black, star-like points of light within its form, no distinct features void entity manifesting as a shifting humanoid silhouette of deep purple and black materializes from shifting purple-black void energy in a high-security vault room with laser grid visible in dim light, circular titanium door, biometric scanners on walls, cold sterile atmosphere, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a diplomatic android with porcelain-white skin and perfectly symmetrical features, wearing a formal navy kimono, silver hair in a bun, serene expression standing on the left, a void entity manifesting as a shifting humanoid silhouette of deep purple and black, star-like points of light within its form, no distinct features standing on the right, diplomatic android assumes a defensive stance as void entity manifesting as a shifting humanoid silhouette of deep purple and black pulses with starlight, in a high-security vault room with laser grid visible in dim light, cinematic still frame, high quality, detailed",
+      "motion_prompt": "diplomatic android assumes a defensive stance as void entity manifesting as a shifting humanoid silhouette of deep purple and black pulses with starlight in a high-security vault room with laser grid visible in dim light, circular titanium door, biometric scanners on walls, cold sterile atmosphere, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a diplomatic android with porcelain-white skin and perfectly symmetrical features, wearing a formal navy kimono, silver hair in a bun, serene expression standing on the left, a small maintenance spider-bot with eight articulated chrome legs, red tool appendages, dome-shaped body with a single camera eye standing on the right, diplomatic android and small maintenance spider-bot dash together through the tranquil cyber-garden, in a tranquil Japanese cyber-garden with holographic cherry blossoms, cinematic still frame, high quality, detailed",
+      "motion_prompt": "diplomatic android and small maintenance spider-bot dash together through the tranquil cyber-garden in a tranquil Japanese cyber-garden with holographic cherry blossoms, a still koi pond with digital fish, stone lanterns with LED glow, misty dawn atmosphere, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a diplomatic android with porcelain-white skin and perfectly symmetrical features, wearing a formal navy kimono, silver hair in a bun, serene expression, diplomatic android sits peacefully by the pond, composure fully restored, in a tranquil Japanese cyber-garden with holographic cherry blossoms, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a diplomatic android with porcelain-white skin and perfectly symmetrical features, wearing a formal navy kimono, silver hair in a bun, serene expression diplomatic android sits peacefully by the pond, composure fully restored in a tranquil Japanese cyber-garden with holographic cherry blossoms, a still koi pond with digital fish, stone lanterns with LED glow, misty dawn atmosphere, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

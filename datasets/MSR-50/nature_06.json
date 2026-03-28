@@ -1,0 +1,122 @@
+{
+  "scenario_id": "nature_06",
+  "domain": "Nature / Animals",
+  "entities": {
+    "A": "a green sea turtle with patterned brown and green shell, smooth skin with white and green coloring, flippers extended, gentle swimming pose, full body, white background",
+    "B": "a bottlenose dolphin with sleek grey body, permanent smile expression, dorsal fin prominent, playful jumping pose, full body, white background",
+    "C": "a great white shark with powerful torpedo-shaped grey body, white underbelly, rows of visible teeth, cold dark eyes, swimming pose, full body, white background"
+  },
+  "backgrounds": {
+    "D": "a vibrant coral reef with colorful coral formations and tropical fish, clear turquoise water, shafts of sunlight from surface, marine diversity, cinematic, no people",
+    "E": "a dramatic rocky coastline with crashing waves and tide pools, sea spray, barnacle-covered rocks, overcast sky, cinematic, no people",
+    "F": "a dark deep-ocean environment with bioluminescent organisms, distant hydrothermal vent glow, particle-filled water, pressure-darkness, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a green sea turtle with patterned brown and green shell, smooth skin with white and green coloring, flippers extended, gentle swimming pose, green sea turtle glides gracefully through the coral reef, patterned shell catching light, in a vibrant coral reef with colorful coral formations and tropical fish, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a green sea turtle with patterned brown and green shell, smooth skin with white and green coloring, flippers extended, gentle swimming pose green sea turtle glides gracefully through the coral reef, patterned shell catching light in a vibrant coral reef with colorful coral formations and tropical fish, clear turquoise water, shafts of sunlight from surface, marine diversity, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a green sea turtle with patterned brown and green shell, smooth skin with white and green coloring, flippers extended, gentle swimming pose standing on the left, a bottlenose dolphin with sleek grey body, permanent smile expression, dorsal fin prominent, playful jumping pose standing on the right, bottlenose dolphin leaps playfully from the water and splashes near green sea turtle, in a vibrant coral reef with colorful coral formations and tropical fish, cinematic still frame, high quality, detailed",
+      "motion_prompt": "bottlenose dolphin leaps playfully from the water and splashes near green sea turtle in a vibrant coral reef with colorful coral formations and tropical fish, clear turquoise water, shafts of sunlight from surface, marine diversity, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a green sea turtle with patterned brown and green shell, smooth skin with white and green coloring, flippers extended, gentle swimming pose standing on the left, a bottlenose dolphin with sleek grey body, permanent smile expression, dorsal fin prominent, playful jumping pose standing on the right, green sea turtle and bottlenose dolphin swim together along the dramatic rocky coastline, in a dramatic rocky coastline with crashing waves and tide pools, cinematic still frame, high quality, detailed",
+      "motion_prompt": "green sea turtle and bottlenose dolphin swim together along the dramatic rocky coastline in a dramatic rocky coastline with crashing waves and tide pools, sea spray, barnacle-covered rocks, overcast sky, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a green sea turtle with patterned brown and green shell, smooth skin with white and green coloring, flippers extended, gentle swimming pose, green sea turtle dives alone into the dark deep-ocean environment, in a dark deep-ocean environment with bioluminescent organisms, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a green sea turtle with patterned brown and green shell, smooth skin with white and green coloring, flippers extended, gentle swimming pose green sea turtle dives alone into the dark deep-ocean environment in a dark deep-ocean environment with bioluminescent organisms, distant hydrothermal vent glow, particle-filled water, pressure-darkness, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a green sea turtle with patterned brown and green shell, smooth skin with white and green coloring, flippers extended, gentle swimming pose, green sea turtle drifts near a hydrothermal vent, observing bioluminescent life, in a dark deep-ocean environment with bioluminescent organisms, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a green sea turtle with patterned brown and green shell, smooth skin with white and green coloring, flippers extended, gentle swimming pose green sea turtle drifts near a hydrothermal vent, observing bioluminescent life in a dark deep-ocean environment with bioluminescent organisms, distant hydrothermal vent glow, particle-filled water, pressure-darkness, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a green sea turtle with patterned brown and green shell, smooth skin with white and green coloring, flippers extended, gentle swimming pose standing on the left, a bottlenose dolphin with sleek grey body, permanent smile expression, dorsal fin prominent, playful jumping pose standing on the right, green sea turtle surfaces and finds bottlenose dolphin clicking nearby in the shallows, in a dramatic rocky coastline with crashing waves and tide pools, cinematic still frame, high quality, detailed",
+      "motion_prompt": "green sea turtle surfaces and finds bottlenose dolphin clicking nearby in the shallows in a dramatic rocky coastline with crashing waves and tide pools, sea spray, barnacle-covered rocks, overcast sky, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a great white shark with powerful torpedo-shaped grey body, white underbelly, rows of visible teeth, cold dark eyes, swimming pose, great white shark surges up from the deep, rows of teeth gleaming white, in a dramatic rocky coastline with crashing waves and tide pools, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a great white shark with powerful torpedo-shaped grey body, white underbelly, rows of visible teeth, cold dark eyes, swimming pose great white shark surges up from the deep, rows of teeth gleaming white in a dramatic rocky coastline with crashing waves and tide pools, sea spray, barnacle-covered rocks, overcast sky, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a green sea turtle with patterned brown and green shell, smooth skin with white and green coloring, flippers extended, gentle swimming pose standing on the left, a great white shark with powerful torpedo-shaped grey body, white underbelly, rows of visible teeth, cold dark eyes, swimming pose standing on the right, green sea turtle turns and faces great white shark in the open water, holding position, in a dramatic rocky coastline with crashing waves and tide pools, cinematic still frame, high quality, detailed",
+      "motion_prompt": "green sea turtle turns and faces great white shark in the open water, holding position in a dramatic rocky coastline with crashing waves and tide pools, sea spray, barnacle-covered rocks, overcast sky, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a green sea turtle with patterned brown and green shell, smooth skin with white and green coloring, flippers extended, gentle swimming pose standing on the left, a bottlenose dolphin with sleek grey body, permanent smile expression, dorsal fin prominent, playful jumping pose standing on the right, green sea turtle and bottlenose dolphin swim rapidly together back toward the reef, in a vibrant coral reef with colorful coral formations and tropical fish, cinematic still frame, high quality, detailed",
+      "motion_prompt": "green sea turtle and bottlenose dolphin swim rapidly together back toward the reef in a vibrant coral reef with colorful coral formations and tropical fish, clear turquoise water, shafts of sunlight from surface, marine diversity, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a green sea turtle with patterned brown and green shell, smooth skin with white and green coloring, flippers extended, gentle swimming pose, green sea turtle rests alone in a warm patch of sunlight on the sandy floor, in a vibrant coral reef with colorful coral formations and tropical fish, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a green sea turtle with patterned brown and green shell, smooth skin with white and green coloring, flippers extended, gentle swimming pose green sea turtle rests alone in a warm patch of sunlight on the sandy floor in a vibrant coral reef with colorful coral formations and tropical fish, clear turquoise water, shafts of sunlight from surface, marine diversity, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

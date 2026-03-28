@@ -1,0 +1,122 @@
+{
+  "scenario_id": "nature_10",
+  "domain": "Nature / Animals",
+  "entities": {
+    "A": "a red deer stag with magnificent multi-pointed antlers, rich brown coat, white rump patch, proud head-up stance, misty breath, full body, standing, white background",
+    "B": "a European badger with black and white striped face, grey body fur, sturdy low build, small eyes, digging-ready stance, full body, white background",
+    "C": "a wild boar with coarse dark brown bristly fur, prominent curved tusks, muscular compact body, scarred snout, aggressive low stance, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a Scottish highland moor at dawn with heather-covered rolling hills, morning mist in valleys, distant loch visible, soft golden light, cinematic, no people",
+    "E": "a European ancient oak forest with massive gnarled trees, carpet of autumn leaves, soft golden afternoon light, fairy-tale atmosphere, cinematic, no people",
+    "F": "a dark badger sett entrance among tree roots, packed earth, paw prints in mud, dim forest light, underground den opening, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a red deer stag with magnificent multi-pointed antlers, rich brown coat, white rump patch, proud head-up stance, misty breath, red deer stag stands on a misty highland moor, antlers silhouetted against the dawn sky, in a Scottish highland moor at dawn with heather-covered rolling hills, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a red deer stag with magnificent multi-pointed antlers, rich brown coat, white rump patch, proud head-up stance, misty breath red deer stag stands on a misty highland moor, antlers silhouetted against the dawn sky in a Scottish highland moor at dawn with heather-covered rolling hills, morning mist in valleys, distant loch visible, soft golden light, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a red deer stag with magnificent multi-pointed antlers, rich brown coat, white rump patch, proud head-up stance, misty breath standing on the left, a European badger with black and white striped face, grey body fur, sturdy low build, small eyes, digging-ready stance standing on the right, European badger waddles out from behind a heather bush, striped face alert, in a Scottish highland moor at dawn with heather-covered rolling hills, cinematic still frame, high quality, detailed",
+      "motion_prompt": "European badger waddles out from behind a heather bush, striped face alert in a Scottish highland moor at dawn with heather-covered rolling hills, morning mist in valleys, distant loch visible, soft golden light, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a red deer stag with magnificent multi-pointed antlers, rich brown coat, white rump patch, proud head-up stance, misty breath standing on the left, a European badger with black and white striped face, grey body fur, sturdy low build, small eyes, digging-ready stance standing on the right, red deer stag and European badger walk together through the ancient oak forest, in a European ancient oak forest with massive gnarled trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "red deer stag and European badger walk together through the ancient oak forest in a European ancient oak forest with massive gnarled trees, carpet of autumn leaves, soft golden afternoon light, fairy-tale atmosphere, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a red deer stag with magnificent multi-pointed antlers, rich brown coat, white rump patch, proud head-up stance, misty breath, red deer stag pushes alone into the dark sett entrance among tree roots, in a dark badger sett entrance among tree roots, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a red deer stag with magnificent multi-pointed antlers, rich brown coat, white rump patch, proud head-up stance, misty breath red deer stag pushes alone into the dark sett entrance among tree roots in a dark badger sett entrance among tree roots, packed earth, paw prints in mud, dim forest light, underground den opening, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a red deer stag with magnificent multi-pointed antlers, rich brown coat, white rump patch, proud head-up stance, misty breath, red deer stag pauses in the packed-earth tunnel, listening carefully, in a dark badger sett entrance among tree roots, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a red deer stag with magnificent multi-pointed antlers, rich brown coat, white rump patch, proud head-up stance, misty breath red deer stag pauses in the packed-earth tunnel, listening carefully in a dark badger sett entrance among tree roots, packed earth, paw prints in mud, dim forest light, underground den opening, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a red deer stag with magnificent multi-pointed antlers, rich brown coat, white rump patch, proud head-up stance, misty breath standing on the left, a European badger with black and white striped face, grey body fur, sturdy low build, small eyes, digging-ready stance standing on the right, red deer stag backs out and finds European badger sniffing the autumn leaves nearby, in a European ancient oak forest with massive gnarled trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "red deer stag backs out and finds European badger sniffing the autumn leaves nearby in a European ancient oak forest with massive gnarled trees, carpet of autumn leaves, soft golden afternoon light, fairy-tale atmosphere, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a wild boar with coarse dark brown bristly fur, prominent curved tusks, muscular compact body, scarred snout, aggressive low stance, wild boar charges out of the undergrowth, tusks gleaming, bristles raised, in a European ancient oak forest with massive gnarled trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a wild boar with coarse dark brown bristly fur, prominent curved tusks, muscular compact body, scarred snout, aggressive low stance wild boar charges out of the undergrowth, tusks gleaming, bristles raised in a European ancient oak forest with massive gnarled trees, carpet of autumn leaves, soft golden afternoon light, fairy-tale atmosphere, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a red deer stag with magnificent multi-pointed antlers, rich brown coat, white rump patch, proud head-up stance, misty breath standing on the left, a wild boar with coarse dark brown bristly fur, prominent curved tusks, muscular compact body, scarred snout, aggressive low stance standing on the right, red deer stag lowers the antlers and faces wild boar across the forest clearing, in a European ancient oak forest with massive gnarled trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "red deer stag lowers the antlers and faces wild boar across the forest clearing in a European ancient oak forest with massive gnarled trees, carpet of autumn leaves, soft golden afternoon light, fairy-tale atmosphere, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a red deer stag with magnificent multi-pointed antlers, rich brown coat, white rump patch, proud head-up stance, misty breath standing on the left, a European badger with black and white striped face, grey body fur, sturdy low build, small eyes, digging-ready stance standing on the right, red deer stag and European badger bolt together across the rolling heather-covered hills, in a Scottish highland moor at dawn with heather-covered rolling hills, cinematic still frame, high quality, detailed",
+      "motion_prompt": "red deer stag and European badger bolt together across the rolling heather-covered hills in a Scottish highland moor at dawn with heather-covered rolling hills, morning mist in valleys, distant loch visible, soft golden light, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a red deer stag with magnificent multi-pointed antlers, rich brown coat, white rump patch, proud head-up stance, misty breath, red deer stag stands alone on the hilltop, mist swirling around, loch visible below, in a Scottish highland moor at dawn with heather-covered rolling hills, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a red deer stag with magnificent multi-pointed antlers, rich brown coat, white rump patch, proud head-up stance, misty breath red deer stag stands alone on the hilltop, mist swirling around, loch visible below in a Scottish highland moor at dawn with heather-covered rolling hills, morning mist in valleys, distant loch visible, soft golden light, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

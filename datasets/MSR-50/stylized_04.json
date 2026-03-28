@@ -1,0 +1,122 @@
+{
+  "scenario_id": "stylized_04",
+  "domain": "Stylized / Animation",
+  "entities": {
+    "A": "a cartoon space explorer puppy in a tiny astronaut suit, bubble helmet, fluffy brown ears poking out, big excited eyes, wagging tail visible through suit, 3D Pixar style, full body, standing, white background",
+    "B": "a cartoon alien blob with translucent green jelly body, three eyes on stalks, tiny tentacle arms, floating slightly off ground, cute confused expression, 3D Pixar style, full body, white background",
+    "C": "a cartoon pirate octopus with an eyepatch, tiny tricorn hat, four tentacles holding different weapons, scarred purple body, menacing grin, 3D Pixar style, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a cartoon outer space scene with colorful planets, sparkly stars, a ringed planet in background, asteroid belt, vibrant cosmic colors, 3D Pixar style, cinematic, no people",
+    "E": "a cartoon alien planet surface with purple sand dunes, two suns in pink sky, crystal rock formations, floating jellyfish creatures in air, 3D Pixar style, cinematic, no people",
+    "F": "inside a cartoon spaceship corridor with blinking lights, round porthole windows showing space, curved white walls, futuristic sliding doors, 3D Pixar style, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a cartoon space explorer puppy in a tiny astronaut suit, bubble helmet, fluffy brown ears poking out, big excited eyes, wagging tail visible through suit, 3D Pixar style, cartoon space explorer puppy bounces excitedly inside the spaceship, nose pressed against the porthole, in a cartoon outer space scene with colorful planets, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon space explorer puppy in a tiny astronaut suit, bubble helmet, fluffy brown ears poking out, big excited eyes, wagging tail visible through suit, 3D Pixar style cartoon space explorer puppy bounces excitedly inside the spaceship, nose pressed against the porthole in a cartoon outer space scene with colorful planets, sparkly stars, a ringed planet in background, asteroid belt, vibrant cosmic colors, 3D Pixar style, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon space explorer puppy in a tiny astronaut suit, bubble helmet, fluffy brown ears poking out, big excited eyes, wagging tail visible through suit, 3D Pixar style standing on the left, a cartoon alien blob with translucent green jelly body, three eyes on stalks, tiny tentacle arms, floating slightly off ground, cute confused expression, 3D Pixar style standing on the right, cartoon alien blob oozes in through a vent and wobbles over to cartoon space explorer puppy on tentacle arms, in a cartoon outer space scene with colorful planets, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon alien blob oozes in through a vent and wobbles over to cartoon space explorer puppy on tentacle arms in a cartoon outer space scene with colorful planets, sparkly stars, a ringed planet in background, asteroid belt, vibrant cosmic colors, 3D Pixar style, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon space explorer puppy in a tiny astronaut suit, bubble helmet, fluffy brown ears poking out, big excited eyes, wagging tail visible through suit, 3D Pixar style standing on the left, a cartoon alien blob with translucent green jelly body, three eyes on stalks, tiny tentacle arms, floating slightly off ground, cute confused expression, 3D Pixar style standing on the right, cartoon space explorer puppy and cartoon alien blob step out onto the alien planet's purple sand together, in a cartoon alien planet surface with purple sand dunes, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon space explorer puppy and cartoon alien blob step out onto the alien planet's purple sand together in a cartoon alien planet surface with purple sand dunes, two suns in pink sky, crystal rock formations, floating jellyfish creatures in air, 3D Pixar style, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a cartoon space explorer puppy in a tiny astronaut suit, bubble helmet, fluffy brown ears poking out, big excited eyes, wagging tail visible through suit, 3D Pixar style, cartoon space explorer puppy floats alone into the spaceship corridor, tail wagging in zero gravity, in inside a cartoon spaceship corridor with blinking lights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon space explorer puppy in a tiny astronaut suit, bubble helmet, fluffy brown ears poking out, big excited eyes, wagging tail visible through suit, 3D Pixar style cartoon space explorer puppy floats alone into the spaceship corridor, tail wagging in zero gravity in inside a cartoon spaceship corridor with blinking lights, round porthole windows showing space, curved white walls, futuristic sliding doors, 3D Pixar style, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a cartoon space explorer puppy in a tiny astronaut suit, bubble helmet, fluffy brown ears poking out, big excited eyes, wagging tail visible through suit, 3D Pixar style, cartoon space explorer puppy paws at blinking control panels, accidentally activating the alarms, in inside a cartoon spaceship corridor with blinking lights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon space explorer puppy in a tiny astronaut suit, bubble helmet, fluffy brown ears poking out, big excited eyes, wagging tail visible through suit, 3D Pixar style cartoon space explorer puppy paws at blinking control panels, accidentally activating the alarms in inside a cartoon spaceship corridor with blinking lights, round porthole windows showing space, curved white walls, futuristic sliding doors, 3D Pixar style, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon space explorer puppy in a tiny astronaut suit, bubble helmet, fluffy brown ears poking out, big excited eyes, wagging tail visible through suit, 3D Pixar style standing on the left, a cartoon alien blob with translucent green jelly body, three eyes on stalks, tiny tentacle arms, floating slightly off ground, cute confused expression, 3D Pixar style standing on the right, cartoon space explorer puppy bounces back and finds cartoon alien blob stuck to the airlock window like jelly, in a cartoon alien planet surface with purple sand dunes, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon space explorer puppy bounces back and finds cartoon alien blob stuck to the airlock window like jelly in a cartoon alien planet surface with purple sand dunes, two suns in pink sky, crystal rock formations, floating jellyfish creatures in air, 3D Pixar style, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a cartoon pirate octopus with an eyepatch, tiny tricorn hat, four tentacles holding different weapons, scarred purple body, menacing grin, 3D Pixar style, cartoon pirate octopus bursts up from the sand, tentacles waving weapons in every direction, in a cartoon alien planet surface with purple sand dunes, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon pirate octopus with an eyepatch, tiny tricorn hat, four tentacles holding different weapons, scarred purple body, menacing grin, 3D Pixar style cartoon pirate octopus bursts up from the sand, tentacles waving weapons in every direction in a cartoon alien planet surface with purple sand dunes, two suns in pink sky, crystal rock formations, floating jellyfish creatures in air, 3D Pixar style, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon space explorer puppy in a tiny astronaut suit, bubble helmet, fluffy brown ears poking out, big excited eyes, wagging tail visible through suit, 3D Pixar style standing on the left, a cartoon pirate octopus with an eyepatch, tiny tricorn hat, four tentacles holding different weapons, scarred purple body, menacing grin, 3D Pixar style standing on the right, cartoon space explorer puppy barks bravely and faces cartoon pirate octopus, bubble helmet fogging up with determination, in a cartoon alien planet surface with purple sand dunes, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon space explorer puppy barks bravely and faces cartoon pirate octopus, bubble helmet fogging up with determination in a cartoon alien planet surface with purple sand dunes, two suns in pink sky, crystal rock formations, floating jellyfish creatures in air, 3D Pixar style, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon space explorer puppy in a tiny astronaut suit, bubble helmet, fluffy brown ears poking out, big excited eyes, wagging tail visible through suit, 3D Pixar style standing on the left, a cartoon alien blob with translucent green jelly body, three eyes on stalks, tiny tentacle arms, floating slightly off ground, cute confused expression, 3D Pixar style standing on the right, cartoon space explorer puppy and cartoon alien blob tumble together back into the spaceship hatch, in a cartoon outer space scene with colorful planets, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon space explorer puppy and cartoon alien blob tumble together back into the spaceship hatch in a cartoon outer space scene with colorful planets, sparkly stars, a ringed planet in background, asteroid belt, vibrant cosmic colors, 3D Pixar style, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a cartoon space explorer puppy in a tiny astronaut suit, bubble helmet, fluffy brown ears poking out, big excited eyes, wagging tail visible through suit, 3D Pixar style, cartoon space explorer puppy curls up alone by the porthole, watching colorful planets drift by, in a cartoon outer space scene with colorful planets, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon space explorer puppy in a tiny astronaut suit, bubble helmet, fluffy brown ears poking out, big excited eyes, wagging tail visible through suit, 3D Pixar style cartoon space explorer puppy curls up alone by the porthole, watching colorful planets drift by in a cartoon outer space scene with colorful planets, sparkly stars, a ringed planet in background, asteroid belt, vibrant cosmic colors, 3D Pixar style, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

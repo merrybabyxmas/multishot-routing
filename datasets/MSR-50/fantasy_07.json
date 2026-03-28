@@ -1,0 +1,122 @@
+{
+  "scenario_id": "fantasy_07",
+  "domain": "High Fantasy",
+  "entities": {
+    "A": "a gnome alchemist with oversized round spectacles, wild white Einstein hair, brown leather apron covered in potion stains, belt of clinking vials, short stature, full body, standing, white background",
+    "B": "a baby dragon hatchling with emerald green scales, stubby wings too small to fly, big curious orange eyes, smoke puffing from nostrils, full body, white background",
+    "C": "a shadow assassin wrapped in living darkness, only glowing white eyes visible, twin curved daggers that absorb light, ephemeral wispy form, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "an alchemist laboratory with bubbling flasks and copper tubes, smoke and colored vapors, ingredient cabinets, books piled on every surface, warm candlelight, cinematic, no people",
+    "E": "a dragon's treasure hoard inside a vast cavern, mountains of gold coins and gems, dragon skulls on walls, warm golden light from the treasure, cinematic, no people",
+    "F": "a shadow realm with floating rock platforms, void between islands, purple lightning in a starless sky, gravity-defying waterfalls, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a gnome alchemist with oversized round spectacles, wild white Einstein hair, brown leather apron covered in potion stains, belt of clinking vials, short stature, gnome alchemist adjusts oversized spectacles and examines a bubbling flask carefully, in an alchemist laboratory with bubbling flasks and copper tubes, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a gnome alchemist with oversized round spectacles, wild white Einstein hair, brown leather apron covered in potion stains, belt of clinking vials, short stature gnome alchemist adjusts oversized spectacles and examines a bubbling flask carefully in an alchemist laboratory with bubbling flasks and copper tubes, smoke and colored vapors, ingredient cabinets, books piled on every surface, warm candlelight, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a gnome alchemist with oversized round spectacles, wild white Einstein hair, brown leather apron covered in potion stains, belt of clinking vials, short stature standing on the left, a baby dragon hatchling with emerald green scales, stubby wings too small to fly, big curious orange eyes, smoke puffing from nostrils standing on the right, baby dragon hatchling waddles in, puffing tiny smoke rings and chirping excitedly, in an alchemist laboratory with bubbling flasks and copper tubes, cinematic still frame, high quality, detailed",
+      "motion_prompt": "baby dragon hatchling waddles in, puffing tiny smoke rings and chirping excitedly in an alchemist laboratory with bubbling flasks and copper tubes, smoke and colored vapors, ingredient cabinets, books piled on every surface, warm candlelight, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a gnome alchemist with oversized round spectacles, wild white Einstein hair, brown leather apron covered in potion stains, belt of clinking vials, short stature standing on the left, a baby dragon hatchling with emerald green scales, stubby wings too small to fly, big curious orange eyes, smoke puffing from nostrils standing on the right, gnome alchemist and baby dragon hatchling venture into the dragon's treasure cavern together, in a dragon's treasure hoard inside a vast cavern, cinematic still frame, high quality, detailed",
+      "motion_prompt": "gnome alchemist and baby dragon hatchling venture into the dragon's treasure cavern together in a dragon's treasure hoard inside a vast cavern, mountains of gold coins and gems, dragon skulls on walls, warm golden light from the treasure, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a gnome alchemist with oversized round spectacles, wild white Einstein hair, brown leather apron covered in potion stains, belt of clinking vials, short stature, gnome alchemist steps alone through a portal into the shadow realm, in a shadow realm with floating rock platforms, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a gnome alchemist with oversized round spectacles, wild white Einstein hair, brown leather apron covered in potion stains, belt of clinking vials, short stature gnome alchemist steps alone through a portal into the shadow realm in a shadow realm with floating rock platforms, void between islands, purple lightning in a starless sky, gravity-defying waterfalls, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a gnome alchemist with oversized round spectacles, wild white Einstein hair, brown leather apron covered in potion stains, belt of clinking vials, short stature, gnome alchemist studies floating rock platforms, calculating distances to jump, in a shadow realm with floating rock platforms, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a gnome alchemist with oversized round spectacles, wild white Einstein hair, brown leather apron covered in potion stains, belt of clinking vials, short stature gnome alchemist studies floating rock platforms, calculating distances to jump in a shadow realm with floating rock platforms, void between islands, purple lightning in a starless sky, gravity-defying waterfalls, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a gnome alchemist with oversized round spectacles, wild white Einstein hair, brown leather apron covered in potion stains, belt of clinking vials, short stature standing on the left, a baby dragon hatchling with emerald green scales, stubby wings too small to fly, big curious orange eyes, smoke puffing from nostrils standing on the right, gnome alchemist leaps back through the portal and finds baby dragon hatchling chewing on gold coins, in a dragon's treasure hoard inside a vast cavern, cinematic still frame, high quality, detailed",
+      "motion_prompt": "gnome alchemist leaps back through the portal and finds baby dragon hatchling chewing on gold coins in a dragon's treasure hoard inside a vast cavern, mountains of gold coins and gems, dragon skulls on walls, warm golden light from the treasure, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a shadow assassin wrapped in living darkness, only glowing white eyes visible, twin curved daggers that absorb light, ephemeral wispy form, shadow assassin wrapped in living darkness melts out of the living darkness, twin daggers absorbing all light, in a dragon's treasure hoard inside a vast cavern, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a shadow assassin wrapped in living darkness, only glowing white eyes visible, twin curved daggers that absorb light, ephemeral wispy form shadow assassin wrapped in living darkness melts out of the living darkness, twin daggers absorbing all light in a dragon's treasure hoard inside a vast cavern, mountains of gold coins and gems, dragon skulls on walls, warm golden light from the treasure, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a gnome alchemist with oversized round spectacles, wild white Einstein hair, brown leather apron covered in potion stains, belt of clinking vials, short stature standing on the left, a shadow assassin wrapped in living darkness, only glowing white eyes visible, twin curved daggers that absorb light, ephemeral wispy form standing on the right, gnome alchemist hurls a potion and faces shadow assassin wrapped in living darkness amid exploding alchemical sparks, in a dragon's treasure hoard inside a vast cavern, cinematic still frame, high quality, detailed",
+      "motion_prompt": "gnome alchemist hurls a potion and faces shadow assassin wrapped in living darkness amid exploding alchemical sparks in a dragon's treasure hoard inside a vast cavern, mountains of gold coins and gems, dragon skulls on walls, warm golden light from the treasure, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a gnome alchemist with oversized round spectacles, wild white Einstein hair, brown leather apron covered in potion stains, belt of clinking vials, short stature standing on the left, a baby dragon hatchling with emerald green scales, stubby wings too small to fly, big curious orange eyes, smoke puffing from nostrils standing on the right, gnome alchemist and baby dragon hatchling scramble together back to the safety of the laboratory, in an alchemist laboratory with bubbling flasks and copper tubes, cinematic still frame, high quality, detailed",
+      "motion_prompt": "gnome alchemist and baby dragon hatchling scramble together back to the safety of the laboratory in an alchemist laboratory with bubbling flasks and copper tubes, smoke and colored vapors, ingredient cabinets, books piled on every surface, warm candlelight, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a gnome alchemist with oversized round spectacles, wild white Einstein hair, brown leather apron covered in potion stains, belt of clinking vials, short stature, gnome alchemist slumps at the workbench, baby dragon hatchling curled up asleep on a pile of notes, in an alchemist laboratory with bubbling flasks and copper tubes, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a gnome alchemist with oversized round spectacles, wild white Einstein hair, brown leather apron covered in potion stains, belt of clinking vials, short stature gnome alchemist slumps at the workbench, baby dragon hatchling curled up asleep on a pile of notes in an alchemist laboratory with bubbling flasks and copper tubes, smoke and colored vapors, ingredient cabinets, books piled on every surface, warm candlelight, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

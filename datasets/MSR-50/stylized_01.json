@@ -1,0 +1,122 @@
+{
+  "scenario_id": "stylized_01",
+  "domain": "Stylized / Animation",
+  "entities": {
+    "A": "a cheerful cartoon robot with a round blue body, antenna with a lightbulb tip, wide friendly LED eyes, roller-wheel feet, waving one claw hand, 3D Pixar style, full body, standing, white background",
+    "B": "a fluffy orange cartoon cat with enormous green eyes, striped tabby markings, oversized head on small body, curly tail, mischievous grin, 3D Pixar style, full body, white background",
+    "C": "a grumpy cartoon villain mad scientist with wild white hair, oversized purple goggles, lab coat with burn marks, tiny legs under big torso, 3D Pixar style, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a colorful cartoon laboratory with bubbling beakers, spinning gears, and blinking control panels, polished tiled floor, cheerful warm lighting, 3D Pixar style, cinematic, no people",
+    "E": "a cartoon candy factory interior with rivers of chocolate, gumdrop machines, lollipop columns, rainbow conveyor belts, sweet warm lighting, 3D Pixar style, cinematic, no people",
+    "F": "a narrow cartoon ventilation duct with visible rivets, tiny cobwebs, a distant light at the end, metallic walls, 3D Pixar style, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a cheerful cartoon robot with a round blue body, antenna with a lightbulb tip, wide friendly LED eyes, roller-wheel feet, waving one claw hand, 3D Pixar style, cheerful cartoon robot blinks LED eyes curiously, scanning the laboratory with antenna buzzing, in a colorful cartoon laboratory with bubbling beakers, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cheerful cartoon robot with a round blue body, antenna with a lightbulb tip, wide friendly LED eyes, roller-wheel feet, waving one claw hand, 3D Pixar style cheerful cartoon robot blinks LED eyes curiously, scanning the laboratory with antenna buzzing in a colorful cartoon laboratory with bubbling beakers, spinning gears, and blinking control panels, polished tiled floor, cheerful warm lighting, 3D Pixar style, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cheerful cartoon robot with a round blue body, antenna with a lightbulb tip, wide friendly LED eyes, roller-wheel feet, waving one claw hand, 3D Pixar style standing on the left, a fluffy orange cartoon cat with enormous green eyes, striped tabby markings, oversized head on small body, curly tail, mischievous grin, 3D Pixar style standing on the right, fluffy orange cartoon cat leaps in with oversized eyes wide and sits beside cheerful cartoon robot, in a colorful cartoon laboratory with bubbling beakers, cinematic still frame, high quality, detailed",
+      "motion_prompt": "fluffy orange cartoon cat leaps in with oversized eyes wide and sits beside cheerful cartoon robot in a colorful cartoon laboratory with bubbling beakers, spinning gears, and blinking control panels, polished tiled floor, cheerful warm lighting, 3D Pixar style, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cheerful cartoon robot with a round blue body, antenna with a lightbulb tip, wide friendly LED eyes, roller-wheel feet, waving one claw hand, 3D Pixar style standing on the left, a fluffy orange cartoon cat with enormous green eyes, striped tabby markings, oversized head on small body, curly tail, mischievous grin, 3D Pixar style standing on the right, cheerful cartoon robot and fluffy orange cartoon cat march together into the candy factory, mouths agape, in a cartoon candy factory interior with rivers of chocolate, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cheerful cartoon robot and fluffy orange cartoon cat march together into the candy factory, mouths agape in a cartoon candy factory interior with rivers of chocolate, gumdrop machines, lollipop columns, rainbow conveyor belts, sweet warm lighting, 3D Pixar style, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a cheerful cartoon robot with a round blue body, antenna with a lightbulb tip, wide friendly LED eyes, roller-wheel feet, waving one claw hand, 3D Pixar style, cheerful cartoon robot rolls alone into the narrow ventilation duct, antenna scraping the ceiling, in a narrow cartoon ventilation duct with visible rivets, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cheerful cartoon robot with a round blue body, antenna with a lightbulb tip, wide friendly LED eyes, roller-wheel feet, waving one claw hand, 3D Pixar style cheerful cartoon robot rolls alone into the narrow ventilation duct, antenna scraping the ceiling in a narrow cartoon ventilation duct with visible rivets, tiny cobwebs, a distant light at the end, metallic walls, 3D Pixar style, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a cheerful cartoon robot with a round blue body, antenna with a lightbulb tip, wide friendly LED eyes, roller-wheel feet, waving one claw hand, 3D Pixar style, cheerful cartoon robot discovers a hidden button and presses it with one claw hand, in a narrow cartoon ventilation duct with visible rivets, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cheerful cartoon robot with a round blue body, antenna with a lightbulb tip, wide friendly LED eyes, roller-wheel feet, waving one claw hand, 3D Pixar style cheerful cartoon robot discovers a hidden button and presses it with one claw hand in a narrow cartoon ventilation duct with visible rivets, tiny cobwebs, a distant light at the end, metallic walls, 3D Pixar style, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cheerful cartoon robot with a round blue body, antenna with a lightbulb tip, wide friendly LED eyes, roller-wheel feet, waving one claw hand, 3D Pixar style standing on the left, a fluffy orange cartoon cat with enormous green eyes, striped tabby markings, oversized head on small body, curly tail, mischievous grin, 3D Pixar style standing on the right, cheerful cartoon robot zooms back and finds fluffy orange cartoon cat licking a candy conveyor belt, in a cartoon candy factory interior with rivers of chocolate, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cheerful cartoon robot zooms back and finds fluffy orange cartoon cat licking a candy conveyor belt in a cartoon candy factory interior with rivers of chocolate, gumdrop machines, lollipop columns, rainbow conveyor belts, sweet warm lighting, 3D Pixar style, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a grumpy cartoon villain mad scientist with wild white hair, oversized purple goggles, lab coat with burn marks, tiny legs under big torso, 3D Pixar style, grumpy cartoon villain mad scientist bursts through the wall in a cloud of purple smoke, cackling, in a cartoon candy factory interior with rivers of chocolate, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a grumpy cartoon villain mad scientist with wild white hair, oversized purple goggles, lab coat with burn marks, tiny legs under big torso, 3D Pixar style grumpy cartoon villain mad scientist bursts through the wall in a cloud of purple smoke, cackling in a cartoon candy factory interior with rivers of chocolate, gumdrop machines, lollipop columns, rainbow conveyor belts, sweet warm lighting, 3D Pixar style, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cheerful cartoon robot with a round blue body, antenna with a lightbulb tip, wide friendly LED eyes, roller-wheel feet, waving one claw hand, 3D Pixar style standing on the left, a grumpy cartoon villain mad scientist with wild white hair, oversized purple goggles, lab coat with burn marks, tiny legs under big torso, 3D Pixar style standing on the right, cheerful cartoon robot puffs up bravely and rolls toward grumpy cartoon villain mad scientist with claws raised, in a cartoon candy factory interior with rivers of chocolate, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cheerful cartoon robot puffs up bravely and rolls toward grumpy cartoon villain mad scientist with claws raised in a cartoon candy factory interior with rivers of chocolate, gumdrop machines, lollipop columns, rainbow conveyor belts, sweet warm lighting, 3D Pixar style, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cheerful cartoon robot with a round blue body, antenna with a lightbulb tip, wide friendly LED eyes, roller-wheel feet, waving one claw hand, 3D Pixar style standing on the left, a fluffy orange cartoon cat with enormous green eyes, striped tabby markings, oversized head on small body, curly tail, mischievous grin, 3D Pixar style standing on the right, cheerful cartoon robot and fluffy orange cartoon cat run away together, leaving cartoon dust clouds behind, in a colorful cartoon laboratory with bubbling beakers, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cheerful cartoon robot and fluffy orange cartoon cat run away together, leaving cartoon dust clouds behind in a colorful cartoon laboratory with bubbling beakers, spinning gears, and blinking control panels, polished tiled floor, cheerful warm lighting, 3D Pixar style, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a cheerful cartoon robot with a round blue body, antenna with a lightbulb tip, wide friendly LED eyes, roller-wheel feet, waving one claw hand, 3D Pixar style, cheerful cartoon robot does a happy robot dance alone, lightbulb antenna flashing, in a colorful cartoon laboratory with bubbling beakers, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cheerful cartoon robot with a round blue body, antenna with a lightbulb tip, wide friendly LED eyes, roller-wheel feet, waving one claw hand, 3D Pixar style cheerful cartoon robot does a happy robot dance alone, lightbulb antenna flashing in a colorful cartoon laboratory with bubbling beakers, spinning gears, and blinking control panels, polished tiled floor, cheerful warm lighting, 3D Pixar style, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

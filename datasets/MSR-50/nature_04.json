@@ -1,0 +1,122 @@
+{
+  "scenario_id": "nature_04",
+  "domain": "Nature / Animals",
+  "entities": {
+    "A": "a Bengal tiger with vivid orange coat and black stripes, white chest, powerful muscular build, intense green eyes, stalking low stance, full body, white background",
+    "B": "a red panda with russet fur and ringed bushy tail, black belly, white face markings, round ears, cute small build perched on hind legs, full body, white background",
+    "C": "an Indian rhinoceros with thick grey armored skin, single horn on snout, massive barrel body, folds resembling plate armor, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a lush bamboo forest in Asia with tall green stalks creating natural corridor, filtered sunlight, carpet of fallen leaves, misty humid atmosphere, cinematic, no people",
+    "E": "an ancient stone temple courtyard overgrown with jungle vegetation, moss on carved stone, golden light through canopy, exotic flowers, cinematic, no people",
+    "F": "a narrow river gorge with steep rock walls, rushing white water below, tropical ferns clinging to rock face, spray mist, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a Bengal tiger with vivid orange coat and black stripes, white chest, powerful muscular build, intense green eyes, stalking low stance, Bengal tiger stalks silently through the bamboo forest, stripes melting into shadows, in a lush bamboo forest in Asia with tall green stalks creating natural corridor, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a Bengal tiger with vivid orange coat and black stripes, white chest, powerful muscular build, intense green eyes, stalking low stance Bengal tiger stalks silently through the bamboo forest, stripes melting into shadows in a lush bamboo forest in Asia with tall green stalks creating natural corridor, filtered sunlight, carpet of fallen leaves, misty humid atmosphere, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a Bengal tiger with vivid orange coat and black stripes, white chest, powerful muscular build, intense green eyes, stalking low stance standing on the left, a red panda with russet fur and ringed bushy tail, black belly, white face markings, round ears, cute small build perched on hind legs standing on the right, red panda scampers along a branch and drops down beside Bengal tiger, in a lush bamboo forest in Asia with tall green stalks creating natural corridor, cinematic still frame, high quality, detailed",
+      "motion_prompt": "red panda scampers along a branch and drops down beside Bengal tiger in a lush bamboo forest in Asia with tall green stalks creating natural corridor, filtered sunlight, carpet of fallen leaves, misty humid atmosphere, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a Bengal tiger with vivid orange coat and black stripes, white chest, powerful muscular build, intense green eyes, stalking low stance standing on the left, a red panda with russet fur and ringed bushy tail, black belly, white face markings, round ears, cute small build perched on hind legs standing on the right, Bengal tiger and red panda explore the ancient temple courtyard together, in an ancient stone temple courtyard overgrown with jungle vegetation, cinematic still frame, high quality, detailed",
+      "motion_prompt": "Bengal tiger and red panda explore the ancient temple courtyard together in an ancient stone temple courtyard overgrown with jungle vegetation, moss on carved stone, golden light through canopy, exotic flowers, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a Bengal tiger with vivid orange coat and black stripes, white chest, powerful muscular build, intense green eyes, stalking low stance, Bengal tiger squeezes alone into the narrow river gorge, water rushing below, in a narrow river gorge with steep rock walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a Bengal tiger with vivid orange coat and black stripes, white chest, powerful muscular build, intense green eyes, stalking low stance Bengal tiger squeezes alone into the narrow river gorge, water rushing below in a narrow river gorge with steep rock walls, rushing white water below, tropical ferns clinging to rock face, spray mist, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a Bengal tiger with vivid orange coat and black stripes, white chest, powerful muscular build, intense green eyes, stalking low stance, Bengal tiger balances on the rocks, watching the white water intently, in a narrow river gorge with steep rock walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a Bengal tiger with vivid orange coat and black stripes, white chest, powerful muscular build, intense green eyes, stalking low stance Bengal tiger balances on the rocks, watching the white water intently in a narrow river gorge with steep rock walls, rushing white water below, tropical ferns clinging to rock face, spray mist, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a Bengal tiger with vivid orange coat and black stripes, white chest, powerful muscular build, intense green eyes, stalking low stance standing on the left, a red panda with russet fur and ringed bushy tail, black belly, white face markings, round ears, cute small build perched on hind legs standing on the right, Bengal tiger leaps back and finds red panda nibbling bamboo at the temple steps, in an ancient stone temple courtyard overgrown with jungle vegetation, cinematic still frame, high quality, detailed",
+      "motion_prompt": "Bengal tiger leaps back and finds red panda nibbling bamboo at the temple steps in an ancient stone temple courtyard overgrown with jungle vegetation, moss on carved stone, golden light through canopy, exotic flowers, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "an Indian rhinoceros with thick grey armored skin, single horn on snout, massive barrel body, folds resembling plate armor, Indian rhinoceros charges through the vegetation, armored body crashing through ferns, in an ancient stone temple courtyard overgrown with jungle vegetation, cinematic still frame, high quality, detailed",
+      "motion_prompt": "an Indian rhinoceros with thick grey armored skin, single horn on snout, massive barrel body, folds resembling plate armor Indian rhinoceros charges through the vegetation, armored body crashing through ferns in an ancient stone temple courtyard overgrown with jungle vegetation, moss on carved stone, golden light through canopy, exotic flowers, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a Bengal tiger with vivid orange coat and black stripes, white chest, powerful muscular build, intense green eyes, stalking low stance standing on the left, an Indian rhinoceros with thick grey armored skin, single horn on snout, massive barrel body, folds resembling plate armor standing on the right, Bengal tiger lowers into a crouch and faces Indian rhinoceros across the mossy stones, in an ancient stone temple courtyard overgrown with jungle vegetation, cinematic still frame, high quality, detailed",
+      "motion_prompt": "Bengal tiger lowers into a crouch and faces Indian rhinoceros across the mossy stones in an ancient stone temple courtyard overgrown with jungle vegetation, moss on carved stone, golden light through canopy, exotic flowers, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a Bengal tiger with vivid orange coat and black stripes, white chest, powerful muscular build, intense green eyes, stalking low stance standing on the left, a red panda with russet fur and ringed bushy tail, black belly, white face markings, round ears, cute small build perched on hind legs standing on the right, Bengal tiger and red panda retreat together into the thick bamboo forest, in a lush bamboo forest in Asia with tall green stalks creating natural corridor, cinematic still frame, high quality, detailed",
+      "motion_prompt": "Bengal tiger and red panda retreat together into the thick bamboo forest in a lush bamboo forest in Asia with tall green stalks creating natural corridor, filtered sunlight, carpet of fallen leaves, misty humid atmosphere, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a Bengal tiger with vivid orange coat and black stripes, white chest, powerful muscular build, intense green eyes, stalking low stance, Bengal tiger lies alone on a sun-warmed temple stone, tail flicking lazily, in a lush bamboo forest in Asia with tall green stalks creating natural corridor, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a Bengal tiger with vivid orange coat and black stripes, white chest, powerful muscular build, intense green eyes, stalking low stance Bengal tiger lies alone on a sun-warmed temple stone, tail flicking lazily in a lush bamboo forest in Asia with tall green stalks creating natural corridor, filtered sunlight, carpet of fallen leaves, misty humid atmosphere, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

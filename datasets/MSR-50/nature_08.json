@@ -1,0 +1,122 @@
+{
+  "scenario_id": "nature_08",
+  "domain": "Nature / Animals",
+  "entities": {
+    "A": "an Arctic fox with pure white winter coat, small rounded ears, bushy tail wrapped around body, black nose, compact body, alert standing pose, full body, white background",
+    "B": "a walrus with brown wrinkled skin, long ivory tusks, thick whiskers, massive blubbery body, flippers visible, resting pose, full body, white background",
+    "C": "a polar bear with thick white fur, black nose and eyes, massive paws, powerful muscular build, walking stance, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "an Arctic tundra landscape with flat snowy terrain stretching to horizon, sparse low vegetation poking through snow, pale winter sun, cinematic, no people",
+    "E": "a rocky Arctic coastline with ice floes in dark cold water, snow-covered cliffs, distant glaciers, grey overcast sky, cinematic, no people",
+    "F": "inside an ice cave with translucent blue walls, frozen formations, light filtering through ice ceiling, subzero stillness, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "an Arctic fox with pure white winter coat, small rounded ears, bushy tail wrapped around body, black nose, compact body, alert standing pose, Arctic fox stands on the frozen tundra, white coat perfectly camouflaged against the snow, in an Arctic tundra landscape with flat snowy terrain stretching to horizon, cinematic still frame, high quality, detailed",
+      "motion_prompt": "an Arctic fox with pure white winter coat, small rounded ears, bushy tail wrapped around body, black nose, compact body, alert standing pose Arctic fox stands on the frozen tundra, white coat perfectly camouflaged against the snow in an Arctic tundra landscape with flat snowy terrain stretching to horizon, sparse low vegetation poking through snow, pale winter sun, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "an Arctic fox with pure white winter coat, small rounded ears, bushy tail wrapped around body, black nose, compact body, alert standing pose standing on the left, a walrus with brown wrinkled skin, long ivory tusks, thick whiskers, massive blubbery body, flippers visible, resting pose standing on the right, walrus hauls out of the dark water onto an ice floe, tusks gleaming, in an Arctic tundra landscape with flat snowy terrain stretching to horizon, cinematic still frame, high quality, detailed",
+      "motion_prompt": "walrus hauls out of the dark water onto an ice floe, tusks gleaming in an Arctic tundra landscape with flat snowy terrain stretching to horizon, sparse low vegetation poking through snow, pale winter sun, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "an Arctic fox with pure white winter coat, small rounded ears, bushy tail wrapped around body, black nose, compact body, alert standing pose standing on the left, a walrus with brown wrinkled skin, long ivory tusks, thick whiskers, massive blubbery body, flippers visible, resting pose standing on the right, Arctic fox and walrus move together along the rocky Arctic coastline, in a rocky Arctic coastline with ice floes in dark cold water, cinematic still frame, high quality, detailed",
+      "motion_prompt": "Arctic fox and walrus move together along the rocky Arctic coastline in a rocky Arctic coastline with ice floes in dark cold water, snow-covered cliffs, distant glaciers, grey overcast sky, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "an Arctic fox with pure white winter coat, small rounded ears, bushy tail wrapped around body, black nose, compact body, alert standing pose, Arctic fox enters the ice cave alone, blue translucent walls all around, in inside an ice cave with translucent blue walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "an Arctic fox with pure white winter coat, small rounded ears, bushy tail wrapped around body, black nose, compact body, alert standing pose Arctic fox enters the ice cave alone, blue translucent walls all around in inside an ice cave with translucent blue walls, frozen formations, light filtering through ice ceiling, subzero stillness, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "an Arctic fox with pure white winter coat, small rounded ears, bushy tail wrapped around body, black nose, compact body, alert standing pose, Arctic fox explores the frozen formations, nose twitching at the stillness, in inside an ice cave with translucent blue walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "an Arctic fox with pure white winter coat, small rounded ears, bushy tail wrapped around body, black nose, compact body, alert standing pose Arctic fox explores the frozen formations, nose twitching at the stillness in inside an ice cave with translucent blue walls, frozen formations, light filtering through ice ceiling, subzero stillness, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "an Arctic fox with pure white winter coat, small rounded ears, bushy tail wrapped around body, black nose, compact body, alert standing pose standing on the left, a walrus with brown wrinkled skin, long ivory tusks, thick whiskers, massive blubbery body, flippers visible, resting pose standing on the right, Arctic fox trots back out and finds walrus basking on the sun-warmed rocks, in a rocky Arctic coastline with ice floes in dark cold water, cinematic still frame, high quality, detailed",
+      "motion_prompt": "Arctic fox trots back out and finds walrus basking on the sun-warmed rocks in a rocky Arctic coastline with ice floes in dark cold water, snow-covered cliffs, distant glaciers, grey overcast sky, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a polar bear with thick white fur, black nose and eyes, massive paws, powerful muscular build, walking stance, polar bear rises on hind legs, massive silhouette against the grey sky, in a rocky Arctic coastline with ice floes in dark cold water, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a polar bear with thick white fur, black nose and eyes, massive paws, powerful muscular build, walking stance polar bear rises on hind legs, massive silhouette against the grey sky in a rocky Arctic coastline with ice floes in dark cold water, snow-covered cliffs, distant glaciers, grey overcast sky, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "an Arctic fox with pure white winter coat, small rounded ears, bushy tail wrapped around body, black nose, compact body, alert standing pose standing on the left, a polar bear with thick white fur, black nose and eyes, massive paws, powerful muscular build, walking stance standing on the right, Arctic fox lowers body and faces polar bear across the snow-covered ice, in a rocky Arctic coastline with ice floes in dark cold water, cinematic still frame, high quality, detailed",
+      "motion_prompt": "Arctic fox lowers body and faces polar bear across the snow-covered ice in a rocky Arctic coastline with ice floes in dark cold water, snow-covered cliffs, distant glaciers, grey overcast sky, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "an Arctic fox with pure white winter coat, small rounded ears, bushy tail wrapped around body, black nose, compact body, alert standing pose standing on the left, a walrus with brown wrinkled skin, long ivory tusks, thick whiskers, massive blubbery body, flippers visible, resting pose standing on the right, Arctic fox and walrus lumber together back across the barren tundra, in an Arctic tundra landscape with flat snowy terrain stretching to horizon, cinematic still frame, high quality, detailed",
+      "motion_prompt": "Arctic fox and walrus lumber together back across the barren tundra in an Arctic tundra landscape with flat snowy terrain stretching to horizon, sparse low vegetation poking through snow, pale winter sun, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "an Arctic fox with pure white winter coat, small rounded ears, bushy tail wrapped around body, black nose, compact body, alert standing pose, Arctic fox curls up alone in a snow hollow, bushy tail wrapped tight, in an Arctic tundra landscape with flat snowy terrain stretching to horizon, cinematic still frame, high quality, detailed",
+      "motion_prompt": "an Arctic fox with pure white winter coat, small rounded ears, bushy tail wrapped around body, black nose, compact body, alert standing pose Arctic fox curls up alone in a snow hollow, bushy tail wrapped tight in an Arctic tundra landscape with flat snowy terrain stretching to horizon, sparse low vegetation poking through snow, pale winter sun, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

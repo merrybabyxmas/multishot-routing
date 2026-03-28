@@ -1,0 +1,122 @@
+{
+  "scenario_id": "scifi_01",
+  "domain": "Sci-Fi / Cyberpunk",
+  "entities": {
+    "A": "a cyberpunk hacker wearing a neon-blue holographic visor and a long dark trenchcoat, lean athletic build, short messy silver hair, fingerless gloves with circuit patterns, full body, standing, white background",
+    "B": "a combat android dog with a sleek metallic silver body and glowing blue optical eyes, armored plating on legs and back, antenna ears, quadruped aggressive stance, full body, white background",
+    "C": "a massive armored security mech with a single red optical sensor visor, heavy cannon arms, bulky dark-grey titanium plating, imposing bipedal stance, full body, white background"
+  },
+  "backgrounds": {
+    "D": "a rain-soaked neon-lit cyberpunk back alley at night with flickering holographic signs, puddle reflections of pink and blue neon, steam rising from grates, dark moody atmosphere, cinematic, no people",
+    "E": "a vast high-tech server core room with towering rows of glowing cyan data columns, holographic displays floating in mid-air, polished reflective floor, cold blue ambient lighting, cinematic, no people",
+    "F": "a narrow dark ventilation shaft with exposed cables and conduits, dim red emergency lights, metal grate flooring, claustrophobic tight space with industrial pipes, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a cyberpunk hacker wearing a neon-blue holographic visor and a long dark trenchcoat, lean athletic build, short messy silver hair, fingerless gloves with circuit patterns, cyberpunk hacker stands still in the rain, slowly scanning the neon-lit surroundings, in a rain-soaked neon-lit cyberpunk back alley at night with flickering holographic signs, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cyberpunk hacker wearing a neon-blue holographic visor and a long dark trenchcoat, lean athletic build, short messy silver hair, fingerless gloves with circuit patterns cyberpunk hacker stands still in the rain, slowly scanning the neon-lit surroundings in a rain-soaked neon-lit cyberpunk back alley at night with flickering holographic signs, puddle reflections of pink and blue neon, steam rising from grates, dark moody atmosphere, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cyberpunk hacker wearing a neon-blue holographic visor and a long dark trenchcoat, lean athletic build, short messy silver hair, fingerless gloves with circuit patterns standing on the left, a combat android dog with a sleek metallic silver body and glowing blue optical eyes, armored plating on legs and back, antenna ears, quadruped aggressive stance standing on the right, combat android dog trots through the puddles and stops beside cyberpunk hacker, in a rain-soaked neon-lit cyberpunk back alley at night with flickering holographic signs, cinematic still frame, high quality, detailed",
+      "motion_prompt": "combat android dog trots through the puddles and stops beside cyberpunk hacker in a rain-soaked neon-lit cyberpunk back alley at night with flickering holographic signs, puddle reflections of pink and blue neon, steam rising from grates, dark moody atmosphere, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cyberpunk hacker wearing a neon-blue holographic visor and a long dark trenchcoat, lean athletic build, short messy silver hair, fingerless gloves with circuit patterns standing on the left, a combat android dog with a sleek metallic silver body and glowing blue optical eyes, armored plating on legs and back, antenna ears, quadruped aggressive stance standing on the right, cyberpunk hacker and combat android dog cautiously advance into the glowing room together, in a vast high-tech server core room with towering rows of glowing cyan data columns, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cyberpunk hacker and combat android dog cautiously advance into the glowing room together in a vast high-tech server core room with towering rows of glowing cyan data columns, holographic displays floating in mid-air, polished reflective floor, cold blue ambient lighting, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a cyberpunk hacker wearing a neon-blue holographic visor and a long dark trenchcoat, lean athletic build, short messy silver hair, fingerless gloves with circuit patterns, cyberpunk hacker drops to hands and knees and crawls into the shaft alone, in a narrow dark ventilation shaft with exposed cables and conduits, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cyberpunk hacker wearing a neon-blue holographic visor and a long dark trenchcoat, lean athletic build, short messy silver hair, fingerless gloves with circuit patterns cyberpunk hacker drops to hands and knees and crawls into the shaft alone in a narrow dark ventilation shaft with exposed cables and conduits, dim red emergency lights, metal grate flooring, claustrophobic tight space with industrial pipes, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a cyberpunk hacker wearing a neon-blue holographic visor and a long dark trenchcoat, lean athletic build, short messy silver hair, fingerless gloves with circuit patterns, cyberpunk hacker crouches and taps rapidly on a holographic hacking interface, in a narrow dark ventilation shaft with exposed cables and conduits, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cyberpunk hacker wearing a neon-blue holographic visor and a long dark trenchcoat, lean athletic build, short messy silver hair, fingerless gloves with circuit patterns cyberpunk hacker crouches and taps rapidly on a holographic hacking interface in a narrow dark ventilation shaft with exposed cables and conduits, dim red emergency lights, metal grate flooring, claustrophobic tight space with industrial pipes, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cyberpunk hacker wearing a neon-blue holographic visor and a long dark trenchcoat, lean athletic build, short messy silver hair, fingerless gloves with circuit patterns standing on the left, a combat android dog with a sleek metallic silver body and glowing blue optical eyes, armored plating on legs and back, antenna ears, quadruped aggressive stance standing on the right, cyberpunk hacker steps out and reunites with combat android dog who runs up to greet, in a vast high-tech server core room with towering rows of glowing cyan data columns, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cyberpunk hacker steps out and reunites with combat android dog who runs up to greet in a vast high-tech server core room with towering rows of glowing cyan data columns, holographic displays floating in mid-air, polished reflective floor, cold blue ambient lighting, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a massive armored security mech with a single red optical sensor visor, heavy cannon arms, bulky dark-grey titanium plating, imposing bipedal stance, massive armored security mech powers up and emerges menacingly from the deep shadows, in a vast high-tech server core room with towering rows of glowing cyan data columns, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a massive armored security mech with a single red optical sensor visor, heavy cannon arms, bulky dark-grey titanium plating, imposing bipedal stance massive armored security mech powers up and emerges menacingly from the deep shadows in a vast high-tech server core room with towering rows of glowing cyan data columns, holographic displays floating in mid-air, polished reflective floor, cold blue ambient lighting, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cyberpunk hacker wearing a neon-blue holographic visor and a long dark trenchcoat, lean athletic build, short messy silver hair, fingerless gloves with circuit patterns standing on the left, a massive armored security mech with a single red optical sensor visor, heavy cannon arms, bulky dark-grey titanium plating, imposing bipedal stance standing on the right, cyberpunk hacker stands defiantly as massive armored security mech locks its sensor onto the hacker, in a vast high-tech server core room with towering rows of glowing cyan data columns, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cyberpunk hacker stands defiantly as massive armored security mech locks its sensor onto the hacker in a vast high-tech server core room with towering rows of glowing cyan data columns, holographic displays floating in mid-air, polished reflective floor, cold blue ambient lighting, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cyberpunk hacker wearing a neon-blue holographic visor and a long dark trenchcoat, lean athletic build, short messy silver hair, fingerless gloves with circuit patterns standing on the left, a combat android dog with a sleek metallic silver body and glowing blue optical eyes, armored plating on legs and back, antenna ears, quadruped aggressive stance standing on the right, cyberpunk hacker and combat android dog burst through the door and sprint away together, in a rain-soaked neon-lit cyberpunk back alley at night with flickering holographic signs, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cyberpunk hacker and combat android dog burst through the door and sprint away together in a rain-soaked neon-lit cyberpunk back alley at night with flickering holographic signs, puddle reflections of pink and blue neon, steam rising from grates, dark moody atmosphere, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a cyberpunk hacker wearing a neon-blue holographic visor and a long dark trenchcoat, lean athletic build, short messy silver hair, fingerless gloves with circuit patterns, cyberpunk hacker leans against the wet wall, exhaling with visible relief, in a rain-soaked neon-lit cyberpunk back alley at night with flickering holographic signs, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cyberpunk hacker wearing a neon-blue holographic visor and a long dark trenchcoat, lean athletic build, short messy silver hair, fingerless gloves with circuit patterns cyberpunk hacker leans against the wet wall, exhaling with visible relief in a rain-soaked neon-lit cyberpunk back alley at night with flickering holographic signs, puddle reflections of pink and blue neon, steam rising from grates, dark moody atmosphere, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

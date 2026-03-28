@@ -1,0 +1,122 @@
+{
+  "scenario_id": "nature_01",
+  "domain": "Nature / Animals",
+  "entities": {
+    "A": "a male African lion with a full dark mane, golden tawny fur, muscular build, proud regal stance, intense amber eyes, full body, standing, white background",
+    "B": "a spotted cheetah with sleek build and characteristic tear-mark face lines, golden coat with black spots, alert crouching stance, full body, white background",
+    "C": "a massive African elephant bull with large tusks, wrinkled grey skin, flared ears, powerful towering stance, dust on hide, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "the African savanna at golden hour with acacia trees silhouetted, tall golden grass swaying, distant mountains, warm amber light, cinematic, no people",
+    "E": "a rocky kopje outcrop on the savanna with flat warm stones, scattered bushes, panoramic view of plains below, harsh midday sun, cinematic, no people",
+    "F": "a dense riverine thicket along a muddy African river, tangled roots and overhanging branches, dappled shade, crocodile-still water nearby, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a male African lion with a full dark mane, golden tawny fur, muscular build, proud regal stance, intense amber eyes, male African lion stands on a rocky outcrop, mane blowing in the warm wind, surveying the golden savanna, in the African savanna at golden hour with acacia trees silhouetted, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a male African lion with a full dark mane, golden tawny fur, muscular build, proud regal stance, intense amber eyes male African lion stands on a rocky outcrop, mane blowing in the warm wind, surveying the golden savanna in the African savanna at golden hour with acacia trees silhouetted, tall golden grass swaying, distant mountains, warm amber light, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a male African lion with a full dark mane, golden tawny fur, muscular build, proud regal stance, intense amber eyes standing on the left, a spotted cheetah with sleek build and characteristic tear-mark face lines, golden coat with black spots, alert crouching stance standing on the right, spotted cheetah slinks through the tall grass and crouches low beside male African lion, in the African savanna at golden hour with acacia trees silhouetted, cinematic still frame, high quality, detailed",
+      "motion_prompt": "spotted cheetah slinks through the tall grass and crouches low beside male African lion in the African savanna at golden hour with acacia trees silhouetted, tall golden grass swaying, distant mountains, warm amber light, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a male African lion with a full dark mane, golden tawny fur, muscular build, proud regal stance, intense amber eyes standing on the left, a spotted cheetah with sleek build and characteristic tear-mark face lines, golden coat with black spots, alert crouching stance standing on the right, male African lion and spotted cheetah climb together onto the sun-warmed kopje rocks, in a rocky kopje outcrop on the savanna with flat warm stones, cinematic still frame, high quality, detailed",
+      "motion_prompt": "male African lion and spotted cheetah climb together onto the sun-warmed kopje rocks in a rocky kopje outcrop on the savanna with flat warm stones, scattered bushes, panoramic view of plains below, harsh midday sun, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a male African lion with a full dark mane, golden tawny fur, muscular build, proud regal stance, intense amber eyes, male African lion pushes alone through the dense riverine thicket, in a dense riverine thicket along a muddy African river, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a male African lion with a full dark mane, golden tawny fur, muscular build, proud regal stance, intense amber eyes male African lion pushes alone through the dense riverine thicket in a dense riverine thicket along a muddy African river, tangled roots and overhanging branches, dappled shade, crocodile-still water nearby, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a male African lion with a full dark mane, golden tawny fur, muscular build, proud regal stance, intense amber eyes, male African lion drinks cautiously from the muddy river, ears pivoting, in a dense riverine thicket along a muddy African river, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a male African lion with a full dark mane, golden tawny fur, muscular build, proud regal stance, intense amber eyes male African lion drinks cautiously from the muddy river, ears pivoting in a dense riverine thicket along a muddy African river, tangled roots and overhanging branches, dappled shade, crocodile-still water nearby, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a male African lion with a full dark mane, golden tawny fur, muscular build, proud regal stance, intense amber eyes standing on the left, a spotted cheetah with sleek build and characteristic tear-mark face lines, golden coat with black spots, alert crouching stance standing on the right, male African lion emerges from the thicket and finds spotted cheetah resting in the shade, in a rocky kopje outcrop on the savanna with flat warm stones, cinematic still frame, high quality, detailed",
+      "motion_prompt": "male African lion emerges from the thicket and finds spotted cheetah resting in the shade in a rocky kopje outcrop on the savanna with flat warm stones, scattered bushes, panoramic view of plains below, harsh midday sun, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a massive African elephant bull with large tusks, wrinkled grey skin, flared ears, powerful towering stance, dust on hide, massive African elephant bull appears on the horizon, massive silhouette against the setting sun, in a rocky kopje outcrop on the savanna with flat warm stones, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a massive African elephant bull with large tusks, wrinkled grey skin, flared ears, powerful towering stance, dust on hide massive African elephant bull appears on the horizon, massive silhouette against the setting sun in a rocky kopje outcrop on the savanna with flat warm stones, scattered bushes, panoramic view of plains below, harsh midday sun, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a male African lion with a full dark mane, golden tawny fur, muscular build, proud regal stance, intense amber eyes standing on the left, a massive African elephant bull with large tusks, wrinkled grey skin, flared ears, powerful towering stance, dust on hide standing on the right, male African lion stands ground and faces massive African elephant bull across the open savanna, in a rocky kopje outcrop on the savanna with flat warm stones, cinematic still frame, high quality, detailed",
+      "motion_prompt": "male African lion stands ground and faces massive African elephant bull across the open savanna in a rocky kopje outcrop on the savanna with flat warm stones, scattered bushes, panoramic view of plains below, harsh midday sun, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a male African lion with a full dark mane, golden tawny fur, muscular build, proud regal stance, intense amber eyes standing on the left, a spotted cheetah with sleek build and characteristic tear-mark face lines, golden coat with black spots, alert crouching stance standing on the right, male African lion and spotted cheetah bound together through the tall golden grass, in the African savanna at golden hour with acacia trees silhouetted, cinematic still frame, high quality, detailed",
+      "motion_prompt": "male African lion and spotted cheetah bound together through the tall golden grass in the African savanna at golden hour with acacia trees silhouetted, tall golden grass swaying, distant mountains, warm amber light, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a male African lion with a full dark mane, golden tawny fur, muscular build, proud regal stance, intense amber eyes, male African lion lies alone under an acacia tree, breathing deeply in the dusk, in the African savanna at golden hour with acacia trees silhouetted, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a male African lion with a full dark mane, golden tawny fur, muscular build, proud regal stance, intense amber eyes male African lion lies alone under an acacia tree, breathing deeply in the dusk in the African savanna at golden hour with acacia trees silhouetted, tall golden grass swaying, distant mountains, warm amber light, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

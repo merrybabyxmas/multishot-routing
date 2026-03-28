@@ -1,0 +1,122 @@
+{
+  "scenario_id": "scifi_08",
+  "domain": "Sci-Fi / Cyberpunk",
+  "entities": {
+    "A": "a neon-punk street samurai with katana on back, face tattoos glowing cyan, black leather armor with neon piping, muscular build, shaved head, full body, standing, white background",
+    "B": "a compact wheeled security turret with twin barrels, matte black with red LED strip, treaded base, sensor dome on top, full body, white background",
+    "C": "a genetically modified hulking brute with bulging muscles and grey-green skin, metal jaw implant, chains wrapped around fists, torn pants only, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a rain-drenched mega-city street at night with towering skyscrapers covered in holographic ads, cars with light trails, crowded elevated walkways, vivid neon reflections, cinematic, no people",
+    "E": "an illegal underground fighting arena with chain-link cage, harsh spotlights from above, concrete walls covered in graffiti, smoke-filled atmosphere, cinematic, no people",
+    "F": "a flooded subway tunnel with emergency lights half-submerged, water reflections on ceiling, abandoned train cars, eerie echo atmosphere, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a neon-punk street samurai with katana on back, face tattoos glowing cyan, black leather armor with neon piping, muscular build, shaved head, neon-punk street samurai stands under a holographic ad, rain streaming off the katana, in a rain-drenched mega-city street at night with towering skyscrapers covered in holographic ads, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a neon-punk street samurai with katana on back, face tattoos glowing cyan, black leather armor with neon piping, muscular build, shaved head neon-punk street samurai stands under a holographic ad, rain streaming off the katana in a rain-drenched mega-city street at night with towering skyscrapers covered in holographic ads, cars with light trails, crowded elevated walkways, vivid neon reflections, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a neon-punk street samurai with katana on back, face tattoos glowing cyan, black leather armor with neon piping, muscular build, shaved head standing on the left, a compact wheeled security turret with twin barrels, matte black with red LED strip, treaded base, sensor dome on top standing on the right, compact wheeled security turret rolls in on treaded base, twin barrels tracking for threats, in a rain-drenched mega-city street at night with towering skyscrapers covered in holographic ads, cinematic still frame, high quality, detailed",
+      "motion_prompt": "compact wheeled security turret rolls in on treaded base, twin barrels tracking for threats in a rain-drenched mega-city street at night with towering skyscrapers covered in holographic ads, cars with light trails, crowded elevated walkways, vivid neon reflections, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a neon-punk street samurai with katana on back, face tattoos glowing cyan, black leather armor with neon piping, muscular build, shaved head standing on the left, a compact wheeled security turret with twin barrels, matte black with red LED strip, treaded base, sensor dome on top standing on the right, neon-punk street samurai and compact wheeled security turret descend the stairs into the underground arena, in an illegal underground fighting arena with chain-link cage, cinematic still frame, high quality, detailed",
+      "motion_prompt": "neon-punk street samurai and compact wheeled security turret descend the stairs into the underground arena in an illegal underground fighting arena with chain-link cage, harsh spotlights from above, concrete walls covered in graffiti, smoke-filled atmosphere, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a neon-punk street samurai with katana on back, face tattoos glowing cyan, black leather armor with neon piping, muscular build, shaved head, neon-punk street samurai wades alone through the flooded subway tunnel, in a flooded subway tunnel with emergency lights half-submerged, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a neon-punk street samurai with katana on back, face tattoos glowing cyan, black leather armor with neon piping, muscular build, shaved head neon-punk street samurai wades alone through the flooded subway tunnel in a flooded subway tunnel with emergency lights half-submerged, water reflections on ceiling, abandoned train cars, eerie echo atmosphere, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a neon-punk street samurai with katana on back, face tattoos glowing cyan, black leather armor with neon piping, muscular build, shaved head, neon-punk street samurai checks reflections in the dark water for any movement, in a flooded subway tunnel with emergency lights half-submerged, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a neon-punk street samurai with katana on back, face tattoos glowing cyan, black leather armor with neon piping, muscular build, shaved head neon-punk street samurai checks reflections in the dark water for any movement in a flooded subway tunnel with emergency lights half-submerged, water reflections on ceiling, abandoned train cars, eerie echo atmosphere, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a neon-punk street samurai with katana on back, face tattoos glowing cyan, black leather armor with neon piping, muscular build, shaved head standing on the left, a compact wheeled security turret with twin barrels, matte black with red LED strip, treaded base, sensor dome on top standing on the right, neon-punk street samurai emerges from the tunnel and finds compact wheeled security turret standing guard, in an illegal underground fighting arena with chain-link cage, cinematic still frame, high quality, detailed",
+      "motion_prompt": "neon-punk street samurai emerges from the tunnel and finds compact wheeled security turret standing guard in an illegal underground fighting arena with chain-link cage, harsh spotlights from above, concrete walls covered in graffiti, smoke-filled atmosphere, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a genetically modified hulking brute with bulging muscles and grey-green skin, metal jaw implant, chains wrapped around fists, torn pants only, genetically modified hulking brute smashes through the cage wall, chains dragging behind, in an illegal underground fighting arena with chain-link cage, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a genetically modified hulking brute with bulging muscles and grey-green skin, metal jaw implant, chains wrapped around fists, torn pants only genetically modified hulking brute smashes through the cage wall, chains dragging behind in an illegal underground fighting arena with chain-link cage, harsh spotlights from above, concrete walls covered in graffiti, smoke-filled atmosphere, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a neon-punk street samurai with katana on back, face tattoos glowing cyan, black leather armor with neon piping, muscular build, shaved head standing on the left, a genetically modified hulking brute with bulging muscles and grey-green skin, metal jaw implant, chains wrapped around fists, torn pants only standing on the right, neon-punk street samurai draws the katana and faces genetically modified hulking brute under the harsh spotlights, in an illegal underground fighting arena with chain-link cage, cinematic still frame, high quality, detailed",
+      "motion_prompt": "neon-punk street samurai draws the katana and faces genetically modified hulking brute under the harsh spotlights in an illegal underground fighting arena with chain-link cage, harsh spotlights from above, concrete walls covered in graffiti, smoke-filled atmosphere, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a neon-punk street samurai with katana on back, face tattoos glowing cyan, black leather armor with neon piping, muscular build, shaved head standing on the left, a compact wheeled security turret with twin barrels, matte black with red LED strip, treaded base, sensor dome on top standing on the right, neon-punk street samurai and compact wheeled security turret fight their way back to the rain-soaked street, in a rain-drenched mega-city street at night with towering skyscrapers covered in holographic ads, cinematic still frame, high quality, detailed",
+      "motion_prompt": "neon-punk street samurai and compact wheeled security turret fight their way back to the rain-soaked street in a rain-drenched mega-city street at night with towering skyscrapers covered in holographic ads, cars with light trails, crowded elevated walkways, vivid neon reflections, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a neon-punk street samurai with katana on back, face tattoos glowing cyan, black leather armor with neon piping, muscular build, shaved head, neon-punk street samurai sheathes the katana and stands alone in the neon rain, in a rain-drenched mega-city street at night with towering skyscrapers covered in holographic ads, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a neon-punk street samurai with katana on back, face tattoos glowing cyan, black leather armor with neon piping, muscular build, shaved head neon-punk street samurai sheathes the katana and stands alone in the neon rain in a rain-drenched mega-city street at night with towering skyscrapers covered in holographic ads, cars with light trails, crowded elevated walkways, vivid neon reflections, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

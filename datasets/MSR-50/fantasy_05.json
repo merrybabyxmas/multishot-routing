@@ -1,0 +1,122 @@
+{
+  "scenario_id": "fantasy_05",
+  "domain": "High Fantasy",
+  "entities": {
+    "A": "a paladin priestess in gleaming silver armor with golden sun emblems, flowing white cape, short-cropped blonde hair, carrying a radiant mace, full body, standing, white background",
+    "B": "a clockwork automaton butler in a tuxedo-styled brass body, monocle-like lens eye, top hat welded on head, jerky articulated movements, full body, standing, white background",
+    "C": "a lich queen with a jeweled crown fused to exposed skull, flowing spectral robes of deep violet, chains of soul gems around neck, hovering slightly, full body, white background"
+  },
+  "backgrounds": {
+    "D": "a sunlit cathedral with stained glass windows casting rainbow light, marble pillars, golden altar with divine radiance, soaring vaulted ceiling, cinematic, no people",
+    "E": "a necropolis city of the dead stretching to the horizon, crumbling mausoleums and obelisks, perpetual grey overcast sky, ghostly mist between graves, cinematic, no people",
+    "F": "a narrow mine shaft with wooden support beams, glittering gem deposits in walls, mine cart tracks, lantern light revealing depth, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a paladin priestess in gleaming silver armor with golden sun emblems, flowing white cape, short-cropped blonde hair, carrying a radiant mace, paladin priestess in gleaming silver armor stands in the cathedral, golden sunlight streaming through stained glass, in a sunlit cathedral with stained glass windows casting rainbow light, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a paladin priestess in gleaming silver armor with golden sun emblems, flowing white cape, short-cropped blonde hair, carrying a radiant mace paladin priestess in gleaming silver armor stands in the cathedral, golden sunlight streaming through stained glass in a sunlit cathedral with stained glass windows casting rainbow light, marble pillars, golden altar with divine radiance, soaring vaulted ceiling, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a paladin priestess in gleaming silver armor with golden sun emblems, flowing white cape, short-cropped blonde hair, carrying a radiant mace standing on the left, a clockwork automaton butler in a tuxedo-styled brass body, monocle-like lens eye, top hat welded on head, jerky articulated movements standing on the right, clockwork automaton butler clanks forward on brass joints and bows beside paladin priestess in gleaming silver armor, in a sunlit cathedral with stained glass windows casting rainbow light, cinematic still frame, high quality, detailed",
+      "motion_prompt": "clockwork automaton butler clanks forward on brass joints and bows beside paladin priestess in gleaming silver armor in a sunlit cathedral with stained glass windows casting rainbow light, marble pillars, golden altar with divine radiance, soaring vaulted ceiling, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a paladin priestess in gleaming silver armor with golden sun emblems, flowing white cape, short-cropped blonde hair, carrying a radiant mace standing on the left, a clockwork automaton butler in a tuxedo-styled brass body, monocle-like lens eye, top hat welded on head, jerky articulated movements standing on the right, paladin priestess in gleaming silver armor and clockwork automaton butler descend together into the necropolis city of the dead, in a necropolis city of the dead stretching to the horizon, cinematic still frame, high quality, detailed",
+      "motion_prompt": "paladin priestess in gleaming silver armor and clockwork automaton butler descend together into the necropolis city of the dead in a necropolis city of the dead stretching to the horizon, crumbling mausoleums and obelisks, perpetual grey overcast sky, ghostly mist between graves, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a paladin priestess in gleaming silver armor with golden sun emblems, flowing white cape, short-cropped blonde hair, carrying a radiant mace, paladin priestess in gleaming silver armor enters the narrow mine shaft alone, lantern held high, in a narrow mine shaft with wooden support beams, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a paladin priestess in gleaming silver armor with golden sun emblems, flowing white cape, short-cropped blonde hair, carrying a radiant mace paladin priestess in gleaming silver armor enters the narrow mine shaft alone, lantern held high in a narrow mine shaft with wooden support beams, glittering gem deposits in walls, mine cart tracks, lantern light revealing depth, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a paladin priestess in gleaming silver armor with golden sun emblems, flowing white cape, short-cropped blonde hair, carrying a radiant mace, paladin priestess in gleaming silver armor discovers a vein of rare crystals and examines them carefully, in a narrow mine shaft with wooden support beams, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a paladin priestess in gleaming silver armor with golden sun emblems, flowing white cape, short-cropped blonde hair, carrying a radiant mace paladin priestess in gleaming silver armor discovers a vein of rare crystals and examines them carefully in a narrow mine shaft with wooden support beams, glittering gem deposits in walls, mine cart tracks, lantern light revealing depth, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a paladin priestess in gleaming silver armor with golden sun emblems, flowing white cape, short-cropped blonde hair, carrying a radiant mace standing on the left, a clockwork automaton butler in a tuxedo-styled brass body, monocle-like lens eye, top hat welded on head, jerky articulated movements standing on the right, paladin priestess in gleaming silver armor emerges and finds clockwork automaton butler polishing its monocle at the entrance, in a necropolis city of the dead stretching to the horizon, cinematic still frame, high quality, detailed",
+      "motion_prompt": "paladin priestess in gleaming silver armor emerges and finds clockwork automaton butler polishing its monocle at the entrance in a necropolis city of the dead stretching to the horizon, crumbling mausoleums and obelisks, perpetual grey overcast sky, ghostly mist between graves, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a lich queen with a jeweled crown fused to exposed skull, flowing spectral robes of deep violet, chains of soul gems around neck, hovering slightly, lich queen floats out of a mausoleum, soul gems rattling on spectral chains, in a necropolis city of the dead stretching to the horizon, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a lich queen with a jeweled crown fused to exposed skull, flowing spectral robes of deep violet, chains of soul gems around neck, hovering slightly lich queen floats out of a mausoleum, soul gems rattling on spectral chains in a necropolis city of the dead stretching to the horizon, crumbling mausoleums and obelisks, perpetual grey overcast sky, ghostly mist between graves, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a paladin priestess in gleaming silver armor with golden sun emblems, flowing white cape, short-cropped blonde hair, carrying a radiant mace standing on the left, a lich queen with a jeweled crown fused to exposed skull, flowing spectral robes of deep violet, chains of soul gems around neck, hovering slightly standing on the right, paladin priestess in gleaming silver armor raises the radiant mace which blazes with divine light against lich queen, in a necropolis city of the dead stretching to the horizon, cinematic still frame, high quality, detailed",
+      "motion_prompt": "paladin priestess in gleaming silver armor raises the radiant mace which blazes with divine light against lich queen in a necropolis city of the dead stretching to the horizon, crumbling mausoleums and obelisks, perpetual grey overcast sky, ghostly mist between graves, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a paladin priestess in gleaming silver armor with golden sun emblems, flowing white cape, short-cropped blonde hair, carrying a radiant mace standing on the left, a clockwork automaton butler in a tuxedo-styled brass body, monocle-like lens eye, top hat welded on head, jerky articulated movements standing on the right, paladin priestess in gleaming silver armor and clockwork automaton butler retreat together up the cathedral steps, in a sunlit cathedral with stained glass windows casting rainbow light, cinematic still frame, high quality, detailed",
+      "motion_prompt": "paladin priestess in gleaming silver armor and clockwork automaton butler retreat together up the cathedral steps in a sunlit cathedral with stained glass windows casting rainbow light, marble pillars, golden altar with divine radiance, soaring vaulted ceiling, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a paladin priestess in gleaming silver armor with golden sun emblems, flowing white cape, short-cropped blonde hair, carrying a radiant mace, paladin priestess in gleaming silver armor kneels alone at the golden altar, whispering a prayer of thanks, in a sunlit cathedral with stained glass windows casting rainbow light, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a paladin priestess in gleaming silver armor with golden sun emblems, flowing white cape, short-cropped blonde hair, carrying a radiant mace paladin priestess in gleaming silver armor kneels alone at the golden altar, whispering a prayer of thanks in a sunlit cathedral with stained glass windows casting rainbow light, marble pillars, golden altar with divine radiance, soaring vaulted ceiling, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

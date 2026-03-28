@@ -1,0 +1,122 @@
+{
+  "scenario_id": "scifi_07",
+  "domain": "Sci-Fi / Cyberpunk",
+  "entities": {
+    "A": "a bounty hunter in desert-worn power armor, sand-blasted orange and brown coloring, helmet with T-shaped visor, shoulder-mounted scanner, full body, standing, white background",
+    "B": "a trained cyber-falcon with metallic feathers and glowing red eye implants, razor-sharp talons, wingspan visible, perched on handler's arm, full body, white background",
+    "C": "a massive sand wurm creature partially emerged from ground, segmented armored body, concentric ring of teeth, dust cloud around it, full body, white background"
+  },
+  "backgrounds": {
+    "D": "a scorched desert canyon at high noon with heat haze and red rock formations, distant mesa plateaus, cracked earth with sparse dead vegetation, harsh sunlight, cinematic, no people",
+    "E": "a fortified desert outpost with sandbag walls and antenna arrays, solar panels on roof, dust devils in background, stark shadows under blazing sun, cinematic, no people",
+    "F": "inside a dark cave system with stalactites and glowing mineral veins, underground stream reflecting blue light, narrow passage opening to larger cavern, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a bounty hunter in desert-worn power armor, sand-blasted orange and brown coloring, helmet with T-shaped visor, shoulder-mounted scanner, bounty hunter in desert-worn power armor crouches behind a red rock formation, scanning the canyon, in a scorched desert canyon at high noon with heat haze and red rock formations, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a bounty hunter in desert-worn power armor, sand-blasted orange and brown coloring, helmet with T-shaped visor, shoulder-mounted scanner bounty hunter in desert-worn power armor crouches behind a red rock formation, scanning the canyon in a scorched desert canyon at high noon with heat haze and red rock formations, distant mesa plateaus, cracked earth with sparse dead vegetation, harsh sunlight, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a bounty hunter in desert-worn power armor, sand-blasted orange and brown coloring, helmet with T-shaped visor, shoulder-mounted scanner standing on the left, a trained cyber-falcon with metallic feathers and glowing red eye implants, razor-sharp talons, wingspan visible, perched on handler's arm standing on the right, trained cyber-falcon swoops in on metallic wings and perches on bounty hunter in desert-worn power armor's shoulder, in a scorched desert canyon at high noon with heat haze and red rock formations, cinematic still frame, high quality, detailed",
+      "motion_prompt": "trained cyber-falcon swoops in on metallic wings and perches on bounty hunter in desert-worn power armor's shoulder in a scorched desert canyon at high noon with heat haze and red rock formations, distant mesa plateaus, cracked earth with sparse dead vegetation, harsh sunlight, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a bounty hunter in desert-worn power armor, sand-blasted orange and brown coloring, helmet with T-shaped visor, shoulder-mounted scanner standing on the left, a trained cyber-falcon with metallic feathers and glowing red eye implants, razor-sharp talons, wingspan visible, perched on handler's arm standing on the right, bounty hunter in desert-worn power armor and trained cyber-falcon advance together toward the fortified desert outpost, in a fortified desert outpost with sandbag walls and antenna arrays, cinematic still frame, high quality, detailed",
+      "motion_prompt": "bounty hunter in desert-worn power armor and trained cyber-falcon advance together toward the fortified desert outpost in a fortified desert outpost with sandbag walls and antenna arrays, solar panels on roof, dust devils in background, stark shadows under blazing sun, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a bounty hunter in desert-worn power armor, sand-blasted orange and brown coloring, helmet with T-shaped visor, shoulder-mounted scanner, bounty hunter in desert-worn power armor enters the dark cave system alone, stepping carefully, in inside a dark cave system with stalactites and glowing mineral veins, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a bounty hunter in desert-worn power armor, sand-blasted orange and brown coloring, helmet with T-shaped visor, shoulder-mounted scanner bounty hunter in desert-worn power armor enters the dark cave system alone, stepping carefully in inside a dark cave system with stalactites and glowing mineral veins, underground stream reflecting blue light, narrow passage opening to larger cavern, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a bounty hunter in desert-worn power armor, sand-blasted orange and brown coloring, helmet with T-shaped visor, shoulder-mounted scanner, bounty hunter in desert-worn power armor examines glowing mineral veins along the cave wall, in inside a dark cave system with stalactites and glowing mineral veins, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a bounty hunter in desert-worn power armor, sand-blasted orange and brown coloring, helmet with T-shaped visor, shoulder-mounted scanner bounty hunter in desert-worn power armor examines glowing mineral veins along the cave wall in inside a dark cave system with stalactites and glowing mineral veins, underground stream reflecting blue light, narrow passage opening to larger cavern, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a bounty hunter in desert-worn power armor, sand-blasted orange and brown coloring, helmet with T-shaped visor, shoulder-mounted scanner standing on the left, a trained cyber-falcon with metallic feathers and glowing red eye implants, razor-sharp talons, wingspan visible, perched on handler's arm standing on the right, bounty hunter in desert-worn power armor emerges from the cave to find trained cyber-falcon circling overhead, in a fortified desert outpost with sandbag walls and antenna arrays, cinematic still frame, high quality, detailed",
+      "motion_prompt": "bounty hunter in desert-worn power armor emerges from the cave to find trained cyber-falcon circling overhead in a fortified desert outpost with sandbag walls and antenna arrays, solar panels on roof, dust devils in background, stark shadows under blazing sun, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a massive sand wurm creature partially emerged from ground, segmented armored body, concentric ring of teeth, dust cloud around it, massive sand wurm creature partially emerged from ground erupts from the sand in a massive cloud of dust, in a fortified desert outpost with sandbag walls and antenna arrays, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a massive sand wurm creature partially emerged from ground, segmented armored body, concentric ring of teeth, dust cloud around it massive sand wurm creature partially emerged from ground erupts from the sand in a massive cloud of dust in a fortified desert outpost with sandbag walls and antenna arrays, solar panels on roof, dust devils in background, stark shadows under blazing sun, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a bounty hunter in desert-worn power armor, sand-blasted orange and brown coloring, helmet with T-shaped visor, shoulder-mounted scanner standing on the left, a massive sand wurm creature partially emerged from ground, segmented armored body, concentric ring of teeth, dust cloud around it standing on the right, bounty hunter in desert-worn power armor raises the scanner and braces against massive sand wurm creature partially emerged from ground's thundering advance, in a fortified desert outpost with sandbag walls and antenna arrays, cinematic still frame, high quality, detailed",
+      "motion_prompt": "bounty hunter in desert-worn power armor raises the scanner and braces against massive sand wurm creature partially emerged from ground's thundering advance in a fortified desert outpost with sandbag walls and antenna arrays, solar panels on roof, dust devils in background, stark shadows under blazing sun, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a bounty hunter in desert-worn power armor, sand-blasted orange and brown coloring, helmet with T-shaped visor, shoulder-mounted scanner standing on the left, a trained cyber-falcon with metallic feathers and glowing red eye implants, razor-sharp talons, wingspan visible, perched on handler's arm standing on the right, bounty hunter in desert-worn power armor and trained cyber-falcon retreat rapidly across the scorched canyon floor, in a scorched desert canyon at high noon with heat haze and red rock formations, cinematic still frame, high quality, detailed",
+      "motion_prompt": "bounty hunter in desert-worn power armor and trained cyber-falcon retreat rapidly across the scorched canyon floor in a scorched desert canyon at high noon with heat haze and red rock formations, distant mesa plateaus, cracked earth with sparse dead vegetation, harsh sunlight, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a bounty hunter in desert-worn power armor, sand-blasted orange and brown coloring, helmet with T-shaped visor, shoulder-mounted scanner, bounty hunter in desert-worn power armor takes shelter under a mesa overhang as dust settles, in a scorched desert canyon at high noon with heat haze and red rock formations, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a bounty hunter in desert-worn power armor, sand-blasted orange and brown coloring, helmet with T-shaped visor, shoulder-mounted scanner bounty hunter in desert-worn power armor takes shelter under a mesa overhang as dust settles in a scorched desert canyon at high noon with heat haze and red rock formations, distant mesa plateaus, cracked earth with sparse dead vegetation, harsh sunlight, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

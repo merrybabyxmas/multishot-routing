@@ -1,0 +1,122 @@
+{
+  "scenario_id": "stylized_06",
+  "domain": "Stylized / Animation",
+  "entities": {
+    "A": "a cartoon fox detective in a brown trenchcoat and fedora, magnifying glass in paw, sharp amber eyes, bushy red tail, sly knowing expression, 3D Pixar style, full body, standing, white background",
+    "B": "a cartoon owl assistant with enormous round spectacles, scholarly bowtie, grey feathers, sitting on a stack of tiny books, wise expression, 3D Pixar style, full body, white background",
+    "C": "a cartoon rat crime boss in a pinstripe suit, slicked-back fur, gold tooth, cigar in mouth, tiny but menacing, 3D Pixar style, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a cartoon noir city street at night with dramatic shadows, old brick buildings, fire escape ladders, single streetlight cone of light, moody atmosphere, 3D Pixar style, cinematic, no people",
+    "E": "a cartoon police evidence room with shelves of labeled boxes, bulletin board with string connections, desk with lamp, cluttered detective atmosphere, 3D Pixar style, cinematic, no people",
+    "F": "a narrow cartoon sewer tunnel with arched brick ceiling, shallow water stream, distant manhole light above, echo-chamber feel, 3D Pixar style, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a cartoon fox detective in a brown trenchcoat and fedora, magnifying glass in paw, sharp amber eyes, bushy red tail, sly knowing expression, 3D Pixar style, cartoon fox detective adjusts the fedora and examines the noir street through narrowed amber eyes, in a cartoon noir city street at night with dramatic shadows, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon fox detective in a brown trenchcoat and fedora, magnifying glass in paw, sharp amber eyes, bushy red tail, sly knowing expression, 3D Pixar style cartoon fox detective adjusts the fedora and examines the noir street through narrowed amber eyes in a cartoon noir city street at night with dramatic shadows, old brick buildings, fire escape ladders, single streetlight cone of light, moody atmosphere, 3D Pixar style, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon fox detective in a brown trenchcoat and fedora, magnifying glass in paw, sharp amber eyes, bushy red tail, sly knowing expression, 3D Pixar style standing on the left, a cartoon owl assistant with enormous round spectacles, scholarly bowtie, grey feathers, sitting on a stack of tiny books, wise expression, 3D Pixar style standing on the right, cartoon owl assistant flutters down from a fire escape and perches on cartoon fox detective's shoulder, in a cartoon noir city street at night with dramatic shadows, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon owl assistant flutters down from a fire escape and perches on cartoon fox detective's shoulder in a cartoon noir city street at night with dramatic shadows, old brick buildings, fire escape ladders, single streetlight cone of light, moody atmosphere, 3D Pixar style, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon fox detective in a brown trenchcoat and fedora, magnifying glass in paw, sharp amber eyes, bushy red tail, sly knowing expression, 3D Pixar style standing on the left, a cartoon owl assistant with enormous round spectacles, scholarly bowtie, grey feathers, sitting on a stack of tiny books, wise expression, 3D Pixar style standing on the right, cartoon fox detective and cartoon owl assistant enter the evidence room together, scanning the bulletin board, in a cartoon police evidence room with shelves of labeled boxes, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon fox detective and cartoon owl assistant enter the evidence room together, scanning the bulletin board in a cartoon police evidence room with shelves of labeled boxes, bulletin board with string connections, desk with lamp, cluttered detective atmosphere, 3D Pixar style, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a cartoon fox detective in a brown trenchcoat and fedora, magnifying glass in paw, sharp amber eyes, bushy red tail, sly knowing expression, 3D Pixar style, cartoon fox detective pads alone into the narrow sewer tunnel, tail held high above the water, in a narrow cartoon sewer tunnel with arched brick ceiling, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon fox detective in a brown trenchcoat and fedora, magnifying glass in paw, sharp amber eyes, bushy red tail, sly knowing expression, 3D Pixar style cartoon fox detective pads alone into the narrow sewer tunnel, tail held high above the water in a narrow cartoon sewer tunnel with arched brick ceiling, shallow water stream, distant manhole light above, echo-chamber feel, 3D Pixar style, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a cartoon fox detective in a brown trenchcoat and fedora, magnifying glass in paw, sharp amber eyes, bushy red tail, sly knowing expression, 3D Pixar style, cartoon fox detective sniffs at footprints in the shallow water, following the trail, in a narrow cartoon sewer tunnel with arched brick ceiling, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon fox detective in a brown trenchcoat and fedora, magnifying glass in paw, sharp amber eyes, bushy red tail, sly knowing expression, 3D Pixar style cartoon fox detective sniffs at footprints in the shallow water, following the trail in a narrow cartoon sewer tunnel with arched brick ceiling, shallow water stream, distant manhole light above, echo-chamber feel, 3D Pixar style, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon fox detective in a brown trenchcoat and fedora, magnifying glass in paw, sharp amber eyes, bushy red tail, sly knowing expression, 3D Pixar style standing on the left, a cartoon owl assistant with enormous round spectacles, scholarly bowtie, grey feathers, sitting on a stack of tiny books, wise expression, 3D Pixar style standing on the right, cartoon fox detective climbs back out and finds cartoon owl assistant organizing tiny evidence notes, in a cartoon police evidence room with shelves of labeled boxes, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon fox detective climbs back out and finds cartoon owl assistant organizing tiny evidence notes in a cartoon police evidence room with shelves of labeled boxes, bulletin board with string connections, desk with lamp, cluttered detective atmosphere, 3D Pixar style, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a cartoon rat crime boss in a pinstripe suit, slicked-back fur, gold tooth, cigar in mouth, tiny but menacing, 3D Pixar style, cartoon rat crime boss emerges from the shadows in a pinstripe suit, gold tooth glinting, in a cartoon police evidence room with shelves of labeled boxes, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon rat crime boss in a pinstripe suit, slicked-back fur, gold tooth, cigar in mouth, tiny but menacing, 3D Pixar style cartoon rat crime boss emerges from the shadows in a pinstripe suit, gold tooth glinting in a cartoon police evidence room with shelves of labeled boxes, bulletin board with string connections, desk with lamp, cluttered detective atmosphere, 3D Pixar style, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon fox detective in a brown trenchcoat and fedora, magnifying glass in paw, sharp amber eyes, bushy red tail, sly knowing expression, 3D Pixar style standing on the left, a cartoon rat crime boss in a pinstripe suit, slicked-back fur, gold tooth, cigar in mouth, tiny but menacing, 3D Pixar style standing on the right, cartoon fox detective raises the magnifying glass and faces cartoon rat crime boss under the single streetlight, in a cartoon police evidence room with shelves of labeled boxes, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon fox detective raises the magnifying glass and faces cartoon rat crime boss under the single streetlight in a cartoon police evidence room with shelves of labeled boxes, bulletin board with string connections, desk with lamp, cluttered detective atmosphere, 3D Pixar style, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon fox detective in a brown trenchcoat and fedora, magnifying glass in paw, sharp amber eyes, bushy red tail, sly knowing expression, 3D Pixar style standing on the left, a cartoon owl assistant with enormous round spectacles, scholarly bowtie, grey feathers, sitting on a stack of tiny books, wise expression, 3D Pixar style standing on the right, cartoon fox detective and cartoon owl assistant sprint together through the noir streets, shadows stretching, in a cartoon noir city street at night with dramatic shadows, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon fox detective and cartoon owl assistant sprint together through the noir streets, shadows stretching in a cartoon noir city street at night with dramatic shadows, old brick buildings, fire escape ladders, single streetlight cone of light, moody atmosphere, 3D Pixar style, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a cartoon fox detective in a brown trenchcoat and fedora, magnifying glass in paw, sharp amber eyes, bushy red tail, sly knowing expression, 3D Pixar style, cartoon fox detective sits alone at the detective desk, case file closed, a satisfied smirk, in a cartoon noir city street at night with dramatic shadows, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon fox detective in a brown trenchcoat and fedora, magnifying glass in paw, sharp amber eyes, bushy red tail, sly knowing expression, 3D Pixar style cartoon fox detective sits alone at the detective desk, case file closed, a satisfied smirk in a cartoon noir city street at night with dramatic shadows, old brick buildings, fire escape ladders, single streetlight cone of light, moody atmosphere, 3D Pixar style, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

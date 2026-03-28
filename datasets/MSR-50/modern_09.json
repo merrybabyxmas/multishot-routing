@@ -1,0 +1,122 @@
+{
+  "scenario_id": "modern_09",
+  "domain": "Modern Realistic",
+  "entities": {
+    "A": "a teenage skateboarder with baggy jeans and graphic tee, colorful skateboard under arm, beanie hat, band-aid on knee, carefree grin, full body, standing, white background",
+    "B": "a German Shepherd police dog in a tactical vest, alert ears, intelligent dark eyes, powerful muscular build, on-duty stance, full body, white background",
+    "C": "a park ranger in khaki uniform with wide-brimmed hat, binoculars around neck, sun-weathered friendly face, hiking boots, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a concrete skatepark with ramps and rails, graffiti-covered walls, late afternoon golden hour light, city skyline in background, urban energy, cinematic, no people",
+    "E": "a wooded nature trail in a city park with dappled sunlight, wooden boardwalk through wetlands, bird feeders along path, peaceful green atmosphere, cinematic, no people",
+    "F": "a dark underpass tunnel with concrete walls, puddles on ground, distant streetlight at end, echo-chamber atmosphere, urban grit, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a teenage skateboarder with baggy jeans and graphic tee, colorful skateboard under arm, beanie hat, band-aid on knee, carefree grin, teenage skateboarder grinds down a rail, skateboard sparking, in the golden hour light, in a concrete skatepark with ramps and rails, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a teenage skateboarder with baggy jeans and graphic tee, colorful skateboard under arm, beanie hat, band-aid on knee, carefree grin teenage skateboarder grinds down a rail, skateboard sparking, in the golden hour light in a concrete skatepark with ramps and rails, graffiti-covered walls, late afternoon golden hour light, city skyline in background, urban energy, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a teenage skateboarder with baggy jeans and graphic tee, colorful skateboard under arm, beanie hat, band-aid on knee, carefree grin standing on the left, a German Shepherd police dog in a tactical vest, alert ears, intelligent dark eyes, powerful muscular build, on-duty stance standing on the right, German Shepherd police dog runs alongside in the tactical vest, matching pace precisely, in a concrete skatepark with ramps and rails, cinematic still frame, high quality, detailed",
+      "motion_prompt": "German Shepherd police dog runs alongside in the tactical vest, matching pace precisely in a concrete skatepark with ramps and rails, graffiti-covered walls, late afternoon golden hour light, city skyline in background, urban energy, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a teenage skateboarder with baggy jeans and graphic tee, colorful skateboard under arm, beanie hat, band-aid on knee, carefree grin standing on the left, a German Shepherd police dog in a tactical vest, alert ears, intelligent dark eyes, powerful muscular build, on-duty stance standing on the right, teenage skateboarder and German Shepherd police dog walk together onto the wooded nature trail, in a wooded nature trail in a city park with dappled sunlight, cinematic still frame, high quality, detailed",
+      "motion_prompt": "teenage skateboarder and German Shepherd police dog walk together onto the wooded nature trail in a wooded nature trail in a city park with dappled sunlight, wooden boardwalk through wetlands, bird feeders along path, peaceful green atmosphere, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a teenage skateboarder with baggy jeans and graphic tee, colorful skateboard under arm, beanie hat, band-aid on knee, carefree grin, teenage skateboarder ducks alone into the dark underpass tunnel, skateboard tucked, in a dark underpass tunnel with concrete walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a teenage skateboarder with baggy jeans and graphic tee, colorful skateboard under arm, beanie hat, band-aid on knee, carefree grin teenage skateboarder ducks alone into the dark underpass tunnel, skateboard tucked in a dark underpass tunnel with concrete walls, puddles on ground, distant streetlight at end, echo-chamber atmosphere, urban grit, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a teenage skateboarder with baggy jeans and graphic tee, colorful skateboard under arm, beanie hat, band-aid on knee, carefree grin, teenage skateboarder examines graffiti on the concrete walls, looking for a tag, in a dark underpass tunnel with concrete walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a teenage skateboarder with baggy jeans and graphic tee, colorful skateboard under arm, beanie hat, band-aid on knee, carefree grin teenage skateboarder examines graffiti on the concrete walls, looking for a tag in a dark underpass tunnel with concrete walls, puddles on ground, distant streetlight at end, echo-chamber atmosphere, urban grit, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a teenage skateboarder with baggy jeans and graphic tee, colorful skateboard under arm, beanie hat, band-aid on knee, carefree grin standing on the left, a German Shepherd police dog in a tactical vest, alert ears, intelligent dark eyes, powerful muscular build, on-duty stance standing on the right, teenage skateboarder emerges from the tunnel and finds German Shepherd police dog waiting at the entrance, in a wooded nature trail in a city park with dappled sunlight, cinematic still frame, high quality, detailed",
+      "motion_prompt": "teenage skateboarder emerges from the tunnel and finds German Shepherd police dog waiting at the entrance in a wooded nature trail in a city park with dappled sunlight, wooden boardwalk through wetlands, bird feeders along path, peaceful green atmosphere, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a park ranger in khaki uniform with wide-brimmed hat, binoculars around neck, sun-weathered friendly face, hiking boots, park ranger in khaki uniform appears on the trail in khaki uniform, binoculars around neck, in a wooded nature trail in a city park with dappled sunlight, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a park ranger in khaki uniform with wide-brimmed hat, binoculars around neck, sun-weathered friendly face, hiking boots park ranger in khaki uniform appears on the trail in khaki uniform, binoculars around neck in a wooded nature trail in a city park with dappled sunlight, wooden boardwalk through wetlands, bird feeders along path, peaceful green atmosphere, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a teenage skateboarder with baggy jeans and graphic tee, colorful skateboard under arm, beanie hat, band-aid on knee, carefree grin standing on the left, a park ranger in khaki uniform with wide-brimmed hat, binoculars around neck, sun-weathered friendly face, hiking boots standing on the right, teenage skateboarder stops and faces park ranger in khaki uniform, skateboard resting against one hip, in a wooded nature trail in a city park with dappled sunlight, cinematic still frame, high quality, detailed",
+      "motion_prompt": "teenage skateboarder stops and faces park ranger in khaki uniform, skateboard resting against one hip in a wooded nature trail in a city park with dappled sunlight, wooden boardwalk through wetlands, bird feeders along path, peaceful green atmosphere, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a teenage skateboarder with baggy jeans and graphic tee, colorful skateboard under arm, beanie hat, band-aid on knee, carefree grin standing on the left, a German Shepherd police dog in a tactical vest, alert ears, intelligent dark eyes, powerful muscular build, on-duty stance standing on the right, teenage skateboarder and German Shepherd police dog jog together back through the skatepark, in a concrete skatepark with ramps and rails, cinematic still frame, high quality, detailed",
+      "motion_prompt": "teenage skateboarder and German Shepherd police dog jog together back through the skatepark in a concrete skatepark with ramps and rails, graffiti-covered walls, late afternoon golden hour light, city skyline in background, urban energy, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a teenage skateboarder with baggy jeans and graphic tee, colorful skateboard under arm, beanie hat, band-aid on knee, carefree grin, teenage skateboarder sits alone on a ramp edge, watching the sunset over the city, in a concrete skatepark with ramps and rails, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a teenage skateboarder with baggy jeans and graphic tee, colorful skateboard under arm, beanie hat, band-aid on knee, carefree grin teenage skateboarder sits alone on a ramp edge, watching the sunset over the city in a concrete skatepark with ramps and rails, graffiti-covered walls, late afternoon golden hour light, city skyline in background, urban energy, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

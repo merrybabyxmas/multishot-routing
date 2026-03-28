@@ -1,0 +1,122 @@
+{
+  "scenario_id": "modern_05",
+  "domain": "Modern Realistic",
+  "entities": {
+    "A": "a elderly Japanese grandmother in a floral kimono-style top and dark pants, silver hair in a neat bun, kind wrinkled face, carrying a cloth shopping bag, full body, standing, white background",
+    "B": "a small white Shiba Inu dog with curled tail, fox-like face, orange leash, alert curious expression, compact fluffy body, full body, white background",
+    "C": "a delivery driver in brown uniform with cap, carrying a large cardboard box, tired but friendly expression, sneakers, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a traditional Japanese shopping street with paper lanterns, small storefronts with noren curtains, stone-paved walkway, soft evening light, cinematic, no people",
+    "E": "a modern minimalist apartment interior with tatami-style flooring, sliding paper screens, ikebana flower arrangement, natural soft lighting through shoji, cinematic, no people",
+    "F": "a narrow alley between traditional buildings with potted plants, hanging laundry above, bicycle parked against wall, quiet afternoon sunlight, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a elderly Japanese grandmother in a floral kimono-style top and dark pants, silver hair in a neat bun, kind wrinkled face, carrying a cloth shopping bag, elderly Japanese grandmother walks slowly down the lantern-lit shopping street, carrying the cloth bag, in a traditional Japanese shopping street with paper lanterns, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a elderly Japanese grandmother in a floral kimono-style top and dark pants, silver hair in a neat bun, kind wrinkled face, carrying a cloth shopping bag elderly Japanese grandmother walks slowly down the lantern-lit shopping street, carrying the cloth bag in a traditional Japanese shopping street with paper lanterns, small storefronts with noren curtains, stone-paved walkway, soft evening light, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a elderly Japanese grandmother in a floral kimono-style top and dark pants, silver hair in a neat bun, kind wrinkled face, carrying a cloth shopping bag standing on the left, a small white Shiba Inu dog with curled tail, fox-like face, orange leash, alert curious expression, compact fluffy body standing on the right, small white Shiba Inu dog trots alongside on the orange leash, curly tail wagging, in a traditional Japanese shopping street with paper lanterns, cinematic still frame, high quality, detailed",
+      "motion_prompt": "small white Shiba Inu dog trots alongside on the orange leash, curly tail wagging in a traditional Japanese shopping street with paper lanterns, small storefronts with noren curtains, stone-paved walkway, soft evening light, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a elderly Japanese grandmother in a floral kimono-style top and dark pants, silver hair in a neat bun, kind wrinkled face, carrying a cloth shopping bag standing on the left, a small white Shiba Inu dog with curled tail, fox-like face, orange leash, alert curious expression, compact fluffy body standing on the right, elderly Japanese grandmother and small white Shiba Inu dog enter the minimalist apartment through the sliding screen, in a modern minimalist apartment interior with tatami-style flooring, cinematic still frame, high quality, detailed",
+      "motion_prompt": "elderly Japanese grandmother and small white Shiba Inu dog enter the minimalist apartment through the sliding screen in a modern minimalist apartment interior with tatami-style flooring, sliding paper screens, ikebana flower arrangement, natural soft lighting through shoji, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a elderly Japanese grandmother in a floral kimono-style top and dark pants, silver hair in a neat bun, kind wrinkled face, carrying a cloth shopping bag, elderly Japanese grandmother turns into the narrow alley between buildings alone, in a narrow alley between traditional buildings with potted plants, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a elderly Japanese grandmother in a floral kimono-style top and dark pants, silver hair in a neat bun, kind wrinkled face, carrying a cloth shopping bag elderly Japanese grandmother turns into the narrow alley between buildings alone in a narrow alley between traditional buildings with potted plants, hanging laundry above, bicycle parked against wall, quiet afternoon sunlight, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a elderly Japanese grandmother in a floral kimono-style top and dark pants, silver hair in a neat bun, kind wrinkled face, carrying a cloth shopping bag, elderly Japanese grandmother pauses to admire potted plants along the quiet alley wall, in a narrow alley between traditional buildings with potted plants, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a elderly Japanese grandmother in a floral kimono-style top and dark pants, silver hair in a neat bun, kind wrinkled face, carrying a cloth shopping bag elderly Japanese grandmother pauses to admire potted plants along the quiet alley wall in a narrow alley between traditional buildings with potted plants, hanging laundry above, bicycle parked against wall, quiet afternoon sunlight, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a elderly Japanese grandmother in a floral kimono-style top and dark pants, silver hair in a neat bun, kind wrinkled face, carrying a cloth shopping bag standing on the left, a small white Shiba Inu dog with curled tail, fox-like face, orange leash, alert curious expression, compact fluffy body standing on the right, elderly Japanese grandmother returns and finds small white Shiba Inu dog sitting neatly outside the apartment door, in a modern minimalist apartment interior with tatami-style flooring, cinematic still frame, high quality, detailed",
+      "motion_prompt": "elderly Japanese grandmother returns and finds small white Shiba Inu dog sitting neatly outside the apartment door in a modern minimalist apartment interior with tatami-style flooring, sliding paper screens, ikebana flower arrangement, natural soft lighting through shoji, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a delivery driver in brown uniform with cap, carrying a large cardboard box, tired but friendly expression, sneakers, delivery driver in brown uniform arrives with the large cardboard box, slightly out of breath, in a modern minimalist apartment interior with tatami-style flooring, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a delivery driver in brown uniform with cap, carrying a large cardboard box, tired but friendly expression, sneakers delivery driver in brown uniform arrives with the large cardboard box, slightly out of breath in a modern minimalist apartment interior with tatami-style flooring, sliding paper screens, ikebana flower arrangement, natural soft lighting through shoji, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a elderly Japanese grandmother in a floral kimono-style top and dark pants, silver hair in a neat bun, kind wrinkled face, carrying a cloth shopping bag standing on the left, a delivery driver in brown uniform with cap, carrying a large cardboard box, tired but friendly expression, sneakers standing on the right, elderly Japanese grandmother bows politely and accepts the delivery from delivery driver in brown uniform, in a modern minimalist apartment interior with tatami-style flooring, cinematic still frame, high quality, detailed",
+      "motion_prompt": "elderly Japanese grandmother bows politely and accepts the delivery from delivery driver in brown uniform in a modern minimalist apartment interior with tatami-style flooring, sliding paper screens, ikebana flower arrangement, natural soft lighting through shoji, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a elderly Japanese grandmother in a floral kimono-style top and dark pants, silver hair in a neat bun, kind wrinkled face, carrying a cloth shopping bag standing on the left, a small white Shiba Inu dog with curled tail, fox-like face, orange leash, alert curious expression, compact fluffy body standing on the right, elderly Japanese grandmother and small white Shiba Inu dog walk together back down the lamplit shopping street, in a traditional Japanese shopping street with paper lanterns, cinematic still frame, high quality, detailed",
+      "motion_prompt": "elderly Japanese grandmother and small white Shiba Inu dog walk together back down the lamplit shopping street in a traditional Japanese shopping street with paper lanterns, small storefronts with noren curtains, stone-paved walkway, soft evening light, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a elderly Japanese grandmother in a floral kimono-style top and dark pants, silver hair in a neat bun, kind wrinkled face, carrying a cloth shopping bag, elderly Japanese grandmother sits on a stone bench alone, watching the evening sky darken, in a traditional Japanese shopping street with paper lanterns, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a elderly Japanese grandmother in a floral kimono-style top and dark pants, silver hair in a neat bun, kind wrinkled face, carrying a cloth shopping bag elderly Japanese grandmother sits on a stone bench alone, watching the evening sky darken in a traditional Japanese shopping street with paper lanterns, small storefronts with noren curtains, stone-paved walkway, soft evening light, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

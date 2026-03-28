@@ -1,0 +1,122 @@
+{
+  "scenario_id": "scifi_04",
+  "domain": "Sci-Fi / Cyberpunk",
+  "entities": {
+    "A": "a grizzled starship captain in a weathered grey naval uniform, salt-and-pepper beard, cybernetic right eye glowing amber, tall imposing build, full body, standing, white background",
+    "B": "a small floating AI companion sphere with a glowing cyan core, translucent blue shell, holographic antenna ring, hovering at chest height, full body, white background",
+    "C": "a biomechanical alien creature with elongated limbs, bioluminescent green veins under translucent grey skin, eyeless head with mandibles, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "the vast hangar bay of a space station with docked ships and fuel lines, orange work lights illuminating metal catwalks, viewport showing planet below, cinematic, no people",
+    "E": "an alien jungle planet with bioluminescent purple vegetation, giant fern-like trees with glowing sap, misty humid atmosphere, two moons visible, cinematic, no people",
+    "F": "inside a decompressing airlock chamber, red warning strobes flashing, frost forming on metal walls, emergency pressure gauge, small window showing space, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a grizzled starship captain in a weathered grey naval uniform, salt-and-pepper beard, cybernetic right eye glowing amber, tall imposing build, grizzled starship captain stands at the railing, gazing down at the planet below, in the vast hangar bay of a space station with docked ships and fuel lines, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a grizzled starship captain in a weathered grey naval uniform, salt-and-pepper beard, cybernetic right eye glowing amber, tall imposing build grizzled starship captain stands at the railing, gazing down at the planet below in the vast hangar bay of a space station with docked ships and fuel lines, orange work lights illuminating metal catwalks, viewport showing planet below, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a grizzled starship captain in a weathered grey naval uniform, salt-and-pepper beard, cybernetic right eye glowing amber, tall imposing build standing on the left, a small floating AI companion sphere with a glowing cyan core, translucent blue shell, holographic antenna ring, hovering at chest height standing on the right, small floating AI companion sphere drifts in glowing softly and hovers beside grizzled starship captain, in the vast hangar bay of a space station with docked ships and fuel lines, cinematic still frame, high quality, detailed",
+      "motion_prompt": "small floating AI companion sphere drifts in glowing softly and hovers beside grizzled starship captain in the vast hangar bay of a space station with docked ships and fuel lines, orange work lights illuminating metal catwalks, viewport showing planet below, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a grizzled starship captain in a weathered grey naval uniform, salt-and-pepper beard, cybernetic right eye glowing amber, tall imposing build standing on the left, a small floating AI companion sphere with a glowing cyan core, translucent blue shell, holographic antenna ring, hovering at chest height standing on the right, grizzled starship captain and small floating AI companion sphere push through bioluminescent jungle vegetation, in an alien jungle planet with bioluminescent purple vegetation, cinematic still frame, high quality, detailed",
+      "motion_prompt": "grizzled starship captain and small floating AI companion sphere push through bioluminescent jungle vegetation in an alien jungle planet with bioluminescent purple vegetation, giant fern-like trees with glowing sap, misty humid atmosphere, two moons visible, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a grizzled starship captain in a weathered grey naval uniform, salt-and-pepper beard, cybernetic right eye glowing amber, tall imposing build, grizzled starship captain seals the airlock door and waits alone inside, in inside a decompressing airlock chamber, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a grizzled starship captain in a weathered grey naval uniform, salt-and-pepper beard, cybernetic right eye glowing amber, tall imposing build grizzled starship captain seals the airlock door and waits alone inside in inside a decompressing airlock chamber, red warning strobes flashing, frost forming on metal walls, emergency pressure gauge, small window showing space, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a grizzled starship captain in a weathered grey naval uniform, salt-and-pepper beard, cybernetic right eye glowing amber, tall imposing build, grizzled starship captain monitors the pressure gauge with jaw clenched, in inside a decompressing airlock chamber, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a grizzled starship captain in a weathered grey naval uniform, salt-and-pepper beard, cybernetic right eye glowing amber, tall imposing build grizzled starship captain monitors the pressure gauge with jaw clenched in inside a decompressing airlock chamber, red warning strobes flashing, frost forming on metal walls, emergency pressure gauge, small window showing space, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a grizzled starship captain in a weathered grey naval uniform, salt-and-pepper beard, cybernetic right eye glowing amber, tall imposing build standing on the left, a small floating AI companion sphere with a glowing cyan core, translucent blue shell, holographic antenna ring, hovering at chest height standing on the right, grizzled starship captain steps out of the airlock to find small floating AI companion sphere orbiting nearby, in an alien jungle planet with bioluminescent purple vegetation, cinematic still frame, high quality, detailed",
+      "motion_prompt": "grizzled starship captain steps out of the airlock to find small floating AI companion sphere orbiting nearby in an alien jungle planet with bioluminescent purple vegetation, giant fern-like trees with glowing sap, misty humid atmosphere, two moons visible, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a biomechanical alien creature with elongated limbs, bioluminescent green veins under translucent grey skin, eyeless head with mandibles, biomechanical alien creature crawls out of the vegetation, bioluminescent veins pulsing, in an alien jungle planet with bioluminescent purple vegetation, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a biomechanical alien creature with elongated limbs, bioluminescent green veins under translucent grey skin, eyeless head with mandibles biomechanical alien creature crawls out of the vegetation, bioluminescent veins pulsing in an alien jungle planet with bioluminescent purple vegetation, giant fern-like trees with glowing sap, misty humid atmosphere, two moons visible, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a grizzled starship captain in a weathered grey naval uniform, salt-and-pepper beard, cybernetic right eye glowing amber, tall imposing build standing on the left, a biomechanical alien creature with elongated limbs, bioluminescent green veins under translucent grey skin, eyeless head with mandibles standing on the right, grizzled starship captain pulls a sidearm and faces biomechanical alien creature across the clearing, in an alien jungle planet with bioluminescent purple vegetation, cinematic still frame, high quality, detailed",
+      "motion_prompt": "grizzled starship captain pulls a sidearm and faces biomechanical alien creature across the clearing in an alien jungle planet with bioluminescent purple vegetation, giant fern-like trees with glowing sap, misty humid atmosphere, two moons visible, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a grizzled starship captain in a weathered grey naval uniform, salt-and-pepper beard, cybernetic right eye glowing amber, tall imposing build standing on the left, a small floating AI companion sphere with a glowing cyan core, translucent blue shell, holographic antenna ring, hovering at chest height standing on the right, grizzled starship captain and small floating AI companion sphere sprint together back across the hangar catwalks, in the vast hangar bay of a space station with docked ships and fuel lines, cinematic still frame, high quality, detailed",
+      "motion_prompt": "grizzled starship captain and small floating AI companion sphere sprint together back across the hangar catwalks in the vast hangar bay of a space station with docked ships and fuel lines, orange work lights illuminating metal catwalks, viewport showing planet below, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a grizzled starship captain in a weathered grey naval uniform, salt-and-pepper beard, cybernetic right eye glowing amber, tall imposing build, grizzled starship captain slumps against a fuel line, finally safe, in the vast hangar bay of a space station with docked ships and fuel lines, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a grizzled starship captain in a weathered grey naval uniform, salt-and-pepper beard, cybernetic right eye glowing amber, tall imposing build grizzled starship captain slumps against a fuel line, finally safe in the vast hangar bay of a space station with docked ships and fuel lines, orange work lights illuminating metal catwalks, viewport showing planet below, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

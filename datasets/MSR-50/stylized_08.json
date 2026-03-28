@@ -1,0 +1,122 @@
+{
+  "scenario_id": "stylized_08",
+  "domain": "Stylized / Animation",
+  "entities": {
+    "A": "a cartoon witch girl with purple hair in twin buns, oversized witch hat, striped stockings, riding a tiny broom, mischievous wink, 3D Pixar style, full body, standing, white background",
+    "B": "a cartoon black cat familiar with crescent moon marking on forehead, big yellow eyes, sleek body with curled tail, sitting primly, 3D Pixar style, full body, white background",
+    "C": "a cartoon pumpkin-headed scarecrow with stitched smile, straw poking from patched clothes, crow on shoulder, lanky awkward stance, 3D Pixar style, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a cartoon spooky forest at twilight with twisted trees, jack-o-lantern path lights, bats in purple sky, leaf-covered ground, Halloween atmosphere, 3D Pixar style, cinematic, no people",
+    "E": "a cartoon witch's cottage interior with bubbling cauldron, spell books, potion bottles on shelves, black cat basket by fire, cozy spooky, 3D Pixar style, cinematic, no people",
+    "F": "a narrow cartoon secret passage behind bookshelf, stone steps going down, cobwebs, faint green glow from below, 3D Pixar style, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a cartoon witch girl with purple hair in twin buns, oversized witch hat, striped stockings, riding a tiny broom, mischievous wink, 3D Pixar style, cartoon witch girl rides the tiny broom low over the spooky forest, cackling with glee, in a cartoon spooky forest at twilight with twisted trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon witch girl with purple hair in twin buns, oversized witch hat, striped stockings, riding a tiny broom, mischievous wink, 3D Pixar style cartoon witch girl rides the tiny broom low over the spooky forest, cackling with glee in a cartoon spooky forest at twilight with twisted trees, jack-o-lantern path lights, bats in purple sky, leaf-covered ground, Halloween atmosphere, 3D Pixar style, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon witch girl with purple hair in twin buns, oversized witch hat, striped stockings, riding a tiny broom, mischievous wink, 3D Pixar style standing on the left, a cartoon black cat familiar with crescent moon marking on forehead, big yellow eyes, sleek body with curled tail, sitting primly, 3D Pixar style standing on the right, cartoon black cat familiar slinks out from behind a twisted tree, crescent moon marking glowing, in a cartoon spooky forest at twilight with twisted trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon black cat familiar slinks out from behind a twisted tree, crescent moon marking glowing in a cartoon spooky forest at twilight with twisted trees, jack-o-lantern path lights, bats in purple sky, leaf-covered ground, Halloween atmosphere, 3D Pixar style, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon witch girl with purple hair in twin buns, oversized witch hat, striped stockings, riding a tiny broom, mischievous wink, 3D Pixar style standing on the left, a cartoon black cat familiar with crescent moon marking on forehead, big yellow eyes, sleek body with curled tail, sitting primly, 3D Pixar style standing on the right, cartoon witch girl and cartoon black cat familiar creep together into the witch's cottage, cauldron bubbling, in a cartoon witch's cottage interior with bubbling cauldron, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon witch girl and cartoon black cat familiar creep together into the witch's cottage, cauldron bubbling in a cartoon witch's cottage interior with bubbling cauldron, spell books, potion bottles on shelves, black cat basket by fire, cozy spooky, 3D Pixar style, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a cartoon witch girl with purple hair in twin buns, oversized witch hat, striped stockings, riding a tiny broom, mischievous wink, 3D Pixar style, cartoon witch girl slides alone into the secret passage behind the bookshelf, in a narrow cartoon secret passage behind bookshelf, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon witch girl with purple hair in twin buns, oversized witch hat, striped stockings, riding a tiny broom, mischievous wink, 3D Pixar style cartoon witch girl slides alone into the secret passage behind the bookshelf in a narrow cartoon secret passage behind bookshelf, stone steps going down, cobwebs, faint green glow from below, 3D Pixar style, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a cartoon witch girl with purple hair in twin buns, oversized witch hat, striped stockings, riding a tiny broom, mischievous wink, 3D Pixar style, cartoon witch girl descends the stone steps, wand lighting the way with faint green glow, in a narrow cartoon secret passage behind bookshelf, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon witch girl with purple hair in twin buns, oversized witch hat, striped stockings, riding a tiny broom, mischievous wink, 3D Pixar style cartoon witch girl descends the stone steps, wand lighting the way with faint green glow in a narrow cartoon secret passage behind bookshelf, stone steps going down, cobwebs, faint green glow from below, 3D Pixar style, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon witch girl with purple hair in twin buns, oversized witch hat, striped stockings, riding a tiny broom, mischievous wink, 3D Pixar style standing on the left, a cartoon black cat familiar with crescent moon marking on forehead, big yellow eyes, sleek body with curled tail, sitting primly, 3D Pixar style standing on the right, cartoon witch girl flies back up and finds cartoon black cat familiar batting at a floating spell book, in a cartoon witch's cottage interior with bubbling cauldron, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon witch girl flies back up and finds cartoon black cat familiar batting at a floating spell book in a cartoon witch's cottage interior with bubbling cauldron, spell books, potion bottles on shelves, black cat basket by fire, cozy spooky, 3D Pixar style, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a cartoon pumpkin-headed scarecrow with stitched smile, straw poking from patched clothes, crow on shoulder, lanky awkward stance, 3D Pixar style, cartoon pumpkin-headed scarecrow lurches into the clearing, stitched pumpkin grin widening unnervingly, in a cartoon witch's cottage interior with bubbling cauldron, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon pumpkin-headed scarecrow with stitched smile, straw poking from patched clothes, crow on shoulder, lanky awkward stance, 3D Pixar style cartoon pumpkin-headed scarecrow lurches into the clearing, stitched pumpkin grin widening unnervingly in a cartoon witch's cottage interior with bubbling cauldron, spell books, potion bottles on shelves, black cat basket by fire, cozy spooky, 3D Pixar style, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon witch girl with purple hair in twin buns, oversized witch hat, striped stockings, riding a tiny broom, mischievous wink, 3D Pixar style standing on the left, a cartoon pumpkin-headed scarecrow with stitched smile, straw poking from patched clothes, crow on shoulder, lanky awkward stance, 3D Pixar style standing on the right, cartoon witch girl aims the wand and casts a spell at cartoon pumpkin-headed scarecrow, sparks flying everywhere, in a cartoon witch's cottage interior with bubbling cauldron, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon witch girl aims the wand and casts a spell at cartoon pumpkin-headed scarecrow, sparks flying everywhere in a cartoon witch's cottage interior with bubbling cauldron, spell books, potion bottles on shelves, black cat basket by fire, cozy spooky, 3D Pixar style, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon witch girl with purple hair in twin buns, oversized witch hat, striped stockings, riding a tiny broom, mischievous wink, 3D Pixar style standing on the left, a cartoon black cat familiar with crescent moon marking on forehead, big yellow eyes, sleek body with curled tail, sitting primly, 3D Pixar style standing on the right, cartoon witch girl and cartoon black cat familiar zoom together through the spooky forest on the broom, in a cartoon spooky forest at twilight with twisted trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon witch girl and cartoon black cat familiar zoom together through the spooky forest on the broom in a cartoon spooky forest at twilight with twisted trees, jack-o-lantern path lights, bats in purple sky, leaf-covered ground, Halloween atmosphere, 3D Pixar style, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a cartoon witch girl with purple hair in twin buns, oversized witch hat, striped stockings, riding a tiny broom, mischievous wink, 3D Pixar style, cartoon witch girl lands in the cottage, hanging the hat up, cozy fire crackling, in a cartoon spooky forest at twilight with twisted trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon witch girl with purple hair in twin buns, oversized witch hat, striped stockings, riding a tiny broom, mischievous wink, 3D Pixar style cartoon witch girl lands in the cottage, hanging the hat up, cozy fire crackling in a cartoon spooky forest at twilight with twisted trees, jack-o-lantern path lights, bats in purple sky, leaf-covered ground, Halloween atmosphere, 3D Pixar style, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "scenario_id": "stylized_05",
+  "domain": "Stylized / Animation",
+  "entities": {
+    "A": "a cartoon bear cub wearing a yellow raincoat and red boots, round tummy, small round ears, holding a tiny umbrella, wide innocent eyes, 3D Pixar style, full body, standing, white background",
+    "B": "a cartoon baby penguin with fluffy grey down, oversized feet, tiny flippers, curious head tilt, round body, 3D Pixar style, full body, white background",
+    "C": "a cartoon storm cloud with an angry face, dark grey puffy body, tiny lightning bolts for arms, rain drops as tears, floating menacingly, 3D Pixar style, full body, white background"
+  },
+  "backgrounds": {
+    "D": "a cartoon rainy city street with puddles reflecting streetlights, colorful umbrellas in distance, old-fashioned lampposts, cobblestone wet sheen, moody but charming, 3D Pixar style, cinematic, no people",
+    "E": "a cartoon sunny meadow with rolling green hills, white fluffy clouds, rainbow in distance, wildflowers everywhere, cheerful bright, 3D Pixar style, cinematic, no people",
+    "F": "a cartoon dark hollow inside a tree with cozy furniture, tiny windows, acorn cups on table, warm fireplace glow, 3D Pixar style, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a cartoon bear cub wearing a yellow raincoat and red boots, round tummy, small round ears, holding a tiny umbrella, wide innocent eyes, 3D Pixar style, cartoon bear cub splashes through a puddle on the rainy cartoon street, boots squeaking, in a cartoon rainy city street with puddles reflecting streetlights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon bear cub wearing a yellow raincoat and red boots, round tummy, small round ears, holding a tiny umbrella, wide innocent eyes, 3D Pixar style cartoon bear cub splashes through a puddle on the rainy cartoon street, boots squeaking in a cartoon rainy city street with puddles reflecting streetlights, colorful umbrellas in distance, old-fashioned lampposts, cobblestone wet sheen, moody but charming, 3D Pixar style, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon bear cub wearing a yellow raincoat and red boots, round tummy, small round ears, holding a tiny umbrella, wide innocent eyes, 3D Pixar style standing on the left, a cartoon baby penguin with fluffy grey down, oversized feet, tiny flippers, curious head tilt, round body, 3D Pixar style standing on the right, cartoon baby penguin waddles through the rain on oversized feet, flippers spread for balance, in a cartoon rainy city street with puddles reflecting streetlights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon baby penguin waddles through the rain on oversized feet, flippers spread for balance in a cartoon rainy city street with puddles reflecting streetlights, colorful umbrellas in distance, old-fashioned lampposts, cobblestone wet sheen, moody but charming, 3D Pixar style, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon bear cub wearing a yellow raincoat and red boots, round tummy, small round ears, holding a tiny umbrella, wide innocent eyes, 3D Pixar style standing on the left, a cartoon baby penguin with fluffy grey down, oversized feet, tiny flippers, curious head tilt, round body, 3D Pixar style standing on the right, cartoon bear cub and cartoon baby penguin step together into the warm sunny meadow, blinking at the rainbow, in a cartoon sunny meadow with rolling green hills, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon bear cub and cartoon baby penguin step together into the warm sunny meadow, blinking at the rainbow in a cartoon sunny meadow with rolling green hills, white fluffy clouds, rainbow in distance, wildflowers everywhere, cheerful bright, 3D Pixar style, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a cartoon bear cub wearing a yellow raincoat and red boots, round tummy, small round ears, holding a tiny umbrella, wide innocent eyes, 3D Pixar style, cartoon bear cub squeezes alone into the dark tree hollow, yellow raincoat glowing, in a cartoon dark hollow inside a tree with cozy furniture, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon bear cub wearing a yellow raincoat and red boots, round tummy, small round ears, holding a tiny umbrella, wide innocent eyes, 3D Pixar style cartoon bear cub squeezes alone into the dark tree hollow, yellow raincoat glowing in a cartoon dark hollow inside a tree with cozy furniture, tiny windows, acorn cups on table, warm fireplace glow, 3D Pixar style, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a cartoon bear cub wearing a yellow raincoat and red boots, round tummy, small round ears, holding a tiny umbrella, wide innocent eyes, 3D Pixar style, cartoon bear cub explores the cozy interior, touching tiny acorn cups on the table, in a cartoon dark hollow inside a tree with cozy furniture, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon bear cub wearing a yellow raincoat and red boots, round tummy, small round ears, holding a tiny umbrella, wide innocent eyes, 3D Pixar style cartoon bear cub explores the cozy interior, touching tiny acorn cups on the table in a cartoon dark hollow inside a tree with cozy furniture, tiny windows, acorn cups on table, warm fireplace glow, 3D Pixar style, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon bear cub wearing a yellow raincoat and red boots, round tummy, small round ears, holding a tiny umbrella, wide innocent eyes, 3D Pixar style standing on the left, a cartoon baby penguin with fluffy grey down, oversized feet, tiny flippers, curious head tilt, round body, 3D Pixar style standing on the right, cartoon bear cub pops out and finds cartoon baby penguin sliding belly-first down a wet hill nearby, in a cartoon sunny meadow with rolling green hills, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon bear cub pops out and finds cartoon baby penguin sliding belly-first down a wet hill nearby in a cartoon sunny meadow with rolling green hills, white fluffy clouds, rainbow in distance, wildflowers everywhere, cheerful bright, 3D Pixar style, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a cartoon storm cloud with an angry face, dark grey puffy body, tiny lightning bolts for arms, rain drops as tears, floating menacingly, 3D Pixar style, cartoon storm cloud rumbles overhead, angry face darkening the sunny meadow, in a cartoon sunny meadow with rolling green hills, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon storm cloud with an angry face, dark grey puffy body, tiny lightning bolts for arms, rain drops as tears, floating menacingly, 3D Pixar style cartoon storm cloud rumbles overhead, angry face darkening the sunny meadow in a cartoon sunny meadow with rolling green hills, white fluffy clouds, rainbow in distance, wildflowers everywhere, cheerful bright, 3D Pixar style, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon bear cub wearing a yellow raincoat and red boots, round tummy, small round ears, holding a tiny umbrella, wide innocent eyes, 3D Pixar style standing on the left, a cartoon storm cloud with an angry face, dark grey puffy body, tiny lightning bolts for arms, rain drops as tears, floating menacingly, 3D Pixar style standing on the right, cartoon bear cub opens the tiny umbrella and stands bravely beneath cartoon storm cloud's thundering, in a cartoon sunny meadow with rolling green hills, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon bear cub opens the tiny umbrella and stands bravely beneath cartoon storm cloud's thundering in a cartoon sunny meadow with rolling green hills, white fluffy clouds, rainbow in distance, wildflowers everywhere, cheerful bright, 3D Pixar style, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon bear cub wearing a yellow raincoat and red boots, round tummy, small round ears, holding a tiny umbrella, wide innocent eyes, 3D Pixar style standing on the left, a cartoon baby penguin with fluffy grey down, oversized feet, tiny flippers, curious head tilt, round body, 3D Pixar style standing on the right, cartoon bear cub and cartoon baby penguin waddle-run together back to the lamplit street, in a cartoon rainy city street with puddles reflecting streetlights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon bear cub and cartoon baby penguin waddle-run together back to the lamplit street in a cartoon rainy city street with puddles reflecting streetlights, colorful umbrellas in distance, old-fashioned lampposts, cobblestone wet sheen, moody but charming, 3D Pixar style, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a cartoon bear cub wearing a yellow raincoat and red boots, round tummy, small round ears, holding a tiny umbrella, wide innocent eyes, 3D Pixar style, cartoon bear cub sits alone under the umbrella, watching the storm pass with a smile, in a cartoon rainy city street with puddles reflecting streetlights, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon bear cub wearing a yellow raincoat and red boots, round tummy, small round ears, holding a tiny umbrella, wide innocent eyes, 3D Pixar style cartoon bear cub sits alone under the umbrella, watching the storm pass with a smile in a cartoon rainy city street with puddles reflecting streetlights, colorful umbrellas in distance, old-fashioned lampposts, cobblestone wet sheen, moody but charming, 3D Pixar style, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

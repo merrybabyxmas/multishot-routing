@@ -1,0 +1,122 @@
+{
+  "scenario_id": "stylized_09",
+  "domain": "Stylized / Animation",
+  "entities": {
+    "A": "a cartoon toy soldier with red uniform and tall bearskin hat, stiff wooden limbs, painted rosy cheeks, drum strapped to front, marching pose, 3D Pixar style, full body, standing, white background",
+    "B": "a cartoon wind-up ballerina with a key in her back, pink tutu, porcelain-like skin, pointe shoes, graceful pose, 3D Pixar style, full body, white background",
+    "C": "a cartoon jack-in-the-box with spring body, jester hat with bells, maniacal grin, popping out of a decorative box, 3D Pixar style, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a cartoon toy shop interior with shelves of colorful toys, wooden floor, display cases, warm window light, magical sparkles in air, 3D Pixar style, cinematic, no people",
+    "E": "a cartoon child's bedroom at night with star projector on ceiling, toy castle on floor, bed with canopy, soft moonlight through curtains, 3D Pixar style, cinematic, no people",
+    "F": "inside a cartoon toy box with jumbled toys, dark except for lid crack of light, cramped colorful space, fabric lining walls, 3D Pixar style, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a cartoon toy soldier with red uniform and tall bearskin hat, stiff wooden limbs, painted rosy cheeks, drum strapped to front, marching pose, 3D Pixar style, cartoon toy soldier marches stiffly through the toy shop, drum beating with each step, in a cartoon toy shop interior with shelves of colorful toys, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon toy soldier with red uniform and tall bearskin hat, stiff wooden limbs, painted rosy cheeks, drum strapped to front, marching pose, 3D Pixar style cartoon toy soldier marches stiffly through the toy shop, drum beating with each step in a cartoon toy shop interior with shelves of colorful toys, wooden floor, display cases, warm window light, magical sparkles in air, 3D Pixar style, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon toy soldier with red uniform and tall bearskin hat, stiff wooden limbs, painted rosy cheeks, drum strapped to front, marching pose, 3D Pixar style standing on the left, a cartoon wind-up ballerina with a key in her back, pink tutu, porcelain-like skin, pointe shoes, graceful pose, 3D Pixar style standing on the right, cartoon wind-up ballerina twirls gracefully beside cartoon toy soldier, key in back slowly winding down, in a cartoon toy shop interior with shelves of colorful toys, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon wind-up ballerina twirls gracefully beside cartoon toy soldier, key in back slowly winding down in a cartoon toy shop interior with shelves of colorful toys, wooden floor, display cases, warm window light, magical sparkles in air, 3D Pixar style, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon toy soldier with red uniform and tall bearskin hat, stiff wooden limbs, painted rosy cheeks, drum strapped to front, marching pose, 3D Pixar style standing on the left, a cartoon wind-up ballerina with a key in her back, pink tutu, porcelain-like skin, pointe shoes, graceful pose, 3D Pixar style standing on the right, cartoon toy soldier and cartoon wind-up ballerina tiptoe together into the child's moonlit bedroom, in a cartoon child's bedroom at night with star projector on ceiling, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon toy soldier and cartoon wind-up ballerina tiptoe together into the child's moonlit bedroom in a cartoon child's bedroom at night with star projector on ceiling, toy castle on floor, bed with canopy, soft moonlight through curtains, 3D Pixar style, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a cartoon toy soldier with red uniform and tall bearskin hat, stiff wooden limbs, painted rosy cheeks, drum strapped to front, marching pose, 3D Pixar style, cartoon toy soldier topples alone into the dark toy box through the lid crack, in inside a cartoon toy box with jumbled toys, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon toy soldier with red uniform and tall bearskin hat, stiff wooden limbs, painted rosy cheeks, drum strapped to front, marching pose, 3D Pixar style cartoon toy soldier topples alone into the dark toy box through the lid crack in inside a cartoon toy box with jumbled toys, dark except for lid crack of light, cramped colorful space, fabric lining walls, 3D Pixar style, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a cartoon toy soldier with red uniform and tall bearskin hat, stiff wooden limbs, painted rosy cheeks, drum strapped to front, marching pose, 3D Pixar style, cartoon toy soldier navigates between jumbled toys, painted eyes wide in the dark, in inside a cartoon toy box with jumbled toys, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon toy soldier with red uniform and tall bearskin hat, stiff wooden limbs, painted rosy cheeks, drum strapped to front, marching pose, 3D Pixar style cartoon toy soldier navigates between jumbled toys, painted eyes wide in the dark in inside a cartoon toy box with jumbled toys, dark except for lid crack of light, cramped colorful space, fabric lining walls, 3D Pixar style, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon toy soldier with red uniform and tall bearskin hat, stiff wooden limbs, painted rosy cheeks, drum strapped to front, marching pose, 3D Pixar style standing on the left, a cartoon wind-up ballerina with a key in her back, pink tutu, porcelain-like skin, pointe shoes, graceful pose, 3D Pixar style standing on the right, cartoon toy soldier climbs back out and finds cartoon wind-up ballerina frozen mid-pose on the nightstand, in a cartoon child's bedroom at night with star projector on ceiling, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon toy soldier climbs back out and finds cartoon wind-up ballerina frozen mid-pose on the nightstand in a cartoon child's bedroom at night with star projector on ceiling, toy castle on floor, bed with canopy, soft moonlight through curtains, 3D Pixar style, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a cartoon jack-in-the-box with spring body, jester hat with bells, maniacal grin, popping out of a decorative box, 3D Pixar style, cartoon jack-in-the-box springs up from the decorative box, jester bells jingling maniacally, in a cartoon child's bedroom at night with star projector on ceiling, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon jack-in-the-box with spring body, jester hat with bells, maniacal grin, popping out of a decorative box, 3D Pixar style cartoon jack-in-the-box springs up from the decorative box, jester bells jingling maniacally in a cartoon child's bedroom at night with star projector on ceiling, toy castle on floor, bed with canopy, soft moonlight through curtains, 3D Pixar style, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon toy soldier with red uniform and tall bearskin hat, stiff wooden limbs, painted rosy cheeks, drum strapped to front, marching pose, 3D Pixar style standing on the left, a cartoon jack-in-the-box with spring body, jester hat with bells, maniacal grin, popping out of a decorative box, 3D Pixar style standing on the right, cartoon toy soldier raises drumsticks and stands at attention facing cartoon jack-in-the-box, in a cartoon child's bedroom at night with star projector on ceiling, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon toy soldier raises drumsticks and stands at attention facing cartoon jack-in-the-box in a cartoon child's bedroom at night with star projector on ceiling, toy castle on floor, bed with canopy, soft moonlight through curtains, 3D Pixar style, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon toy soldier with red uniform and tall bearskin hat, stiff wooden limbs, painted rosy cheeks, drum strapped to front, marching pose, 3D Pixar style standing on the left, a cartoon wind-up ballerina with a key in her back, pink tutu, porcelain-like skin, pointe shoes, graceful pose, 3D Pixar style standing on the right, cartoon toy soldier and cartoon wind-up ballerina march together back to the warm toy shop shelf, in a cartoon toy shop interior with shelves of colorful toys, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon toy soldier and cartoon wind-up ballerina march together back to the warm toy shop shelf in a cartoon toy shop interior with shelves of colorful toys, wooden floor, display cases, warm window light, magical sparkles in air, 3D Pixar style, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a cartoon toy soldier with red uniform and tall bearskin hat, stiff wooden limbs, painted rosy cheeks, drum strapped to front, marching pose, 3D Pixar style, cartoon toy soldier stands alone on the shelf, drum still, painted smile content, in a cartoon toy shop interior with shelves of colorful toys, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon toy soldier with red uniform and tall bearskin hat, stiff wooden limbs, painted rosy cheeks, drum strapped to front, marching pose, 3D Pixar style cartoon toy soldier stands alone on the shelf, drum still, painted smile content in a cartoon toy shop interior with shelves of colorful toys, wooden floor, display cases, warm window light, magical sparkles in air, 3D Pixar style, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

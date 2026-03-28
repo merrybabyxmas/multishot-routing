@@ -1,0 +1,122 @@
+{
+  "scenario_id": "fantasy_06",
+  "domain": "High Fantasy",
+  "entities": {
+    "A": "a half-orc ranger with green-tinged skin and small tusks, braided dark hair, leather armor with bone toggles, compound bow on back, scarred muscular build, full body, standing, white background",
+    "B": "a trained battle griffon with eagle head and lion body, golden feathers and tawny fur, leather saddle and reins, fierce proud stance, full body, white background",
+    "C": "a giant frost spider with ice-blue translucent body, eight crystalline legs, mandibles dripping with frost, web patterns visible, full body, white background"
+  },
+  "backgrounds": {
+    "D": "a dense jungle canopy with massive ancient trees, rope bridges between platforms, colorful birds in branches, shafts of golden sunlight, humid atmosphere, cinematic, no people",
+    "E": "a crumbling elven palace overtaken by nature, marble floors cracked with tree roots, shattered crystal chandeliers, bioluminescent ivy on walls, cinematic, no people",
+    "F": "a deep ice cavern with frozen waterfalls, translucent blue ice walls, icicle formations reflecting light, cold mist at floor level, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a half-orc ranger with green-tinged skin and small tusks, braided dark hair, leather armor with bone toggles, compound bow on back, scarred muscular build, half-orc ranger crouches on a jungle platform, scanning the canopy through leaves, in a dense jungle canopy with massive ancient trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a half-orc ranger with green-tinged skin and small tusks, braided dark hair, leather armor with bone toggles, compound bow on back, scarred muscular build half-orc ranger crouches on a jungle platform, scanning the canopy through leaves in a dense jungle canopy with massive ancient trees, rope bridges between platforms, colorful birds in branches, shafts of golden sunlight, humid atmosphere, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a half-orc ranger with green-tinged skin and small tusks, braided dark hair, leather armor with bone toggles, compound bow on back, scarred muscular build standing on the left, a trained battle griffon with eagle head and lion body, golden feathers and tawny fur, leather saddle and reins, fierce proud stance standing on the right, trained battle griffon glides in and lands beside half-orc ranger with a proud screech, in a dense jungle canopy with massive ancient trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "trained battle griffon glides in and lands beside half-orc ranger with a proud screech in a dense jungle canopy with massive ancient trees, rope bridges between platforms, colorful birds in branches, shafts of golden sunlight, humid atmosphere, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a half-orc ranger with green-tinged skin and small tusks, braided dark hair, leather armor with bone toggles, compound bow on back, scarred muscular build standing on the left, a trained battle griffon with eagle head and lion body, golden feathers and tawny fur, leather saddle and reins, fierce proud stance standing on the right, half-orc ranger and trained battle griffon explore the crumbling elven palace interior together, in a crumbling elven palace overtaken by nature, cinematic still frame, high quality, detailed",
+      "motion_prompt": "half-orc ranger and trained battle griffon explore the crumbling elven palace interior together in a crumbling elven palace overtaken by nature, marble floors cracked with tree roots, shattered crystal chandeliers, bioluminescent ivy on walls, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a half-orc ranger with green-tinged skin and small tusks, braided dark hair, leather armor with bone toggles, compound bow on back, scarred muscular build, half-orc ranger enters the deep ice cavern alone, breath visible in the cold, in a deep ice cavern with frozen waterfalls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a half-orc ranger with green-tinged skin and small tusks, braided dark hair, leather armor with bone toggles, compound bow on back, scarred muscular build half-orc ranger enters the deep ice cavern alone, breath visible in the cold in a deep ice cavern with frozen waterfalls, translucent blue ice walls, icicle formations reflecting light, cold mist at floor level, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a half-orc ranger with green-tinged skin and small tusks, braided dark hair, leather armor with bone toggles, compound bow on back, scarred muscular build, half-orc ranger touches a frozen waterfall, studying the ice formations, in a deep ice cavern with frozen waterfalls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a half-orc ranger with green-tinged skin and small tusks, braided dark hair, leather armor with bone toggles, compound bow on back, scarred muscular build half-orc ranger touches a frozen waterfall, studying the ice formations in a deep ice cavern with frozen waterfalls, translucent blue ice walls, icicle formations reflecting light, cold mist at floor level, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a half-orc ranger with green-tinged skin and small tusks, braided dark hair, leather armor with bone toggles, compound bow on back, scarred muscular build standing on the left, a trained battle griffon with eagle head and lion body, golden feathers and tawny fur, leather saddle and reins, fierce proud stance standing on the right, half-orc ranger returns and finds trained battle griffon preening feathers at the palace entrance, in a crumbling elven palace overtaken by nature, cinematic still frame, high quality, detailed",
+      "motion_prompt": "half-orc ranger returns and finds trained battle griffon preening feathers at the palace entrance in a crumbling elven palace overtaken by nature, marble floors cracked with tree roots, shattered crystal chandeliers, bioluminescent ivy on walls, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a giant frost spider with ice-blue translucent body, eight crystalline legs, mandibles dripping with frost, web patterns visible, giant frost spider descends from a web overhead on crystalline ice-blue legs, in a crumbling elven palace overtaken by nature, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a giant frost spider with ice-blue translucent body, eight crystalline legs, mandibles dripping with frost, web patterns visible giant frost spider descends from a web overhead on crystalline ice-blue legs in a crumbling elven palace overtaken by nature, marble floors cracked with tree roots, shattered crystal chandeliers, bioluminescent ivy on walls, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a half-orc ranger with green-tinged skin and small tusks, braided dark hair, leather armor with bone toggles, compound bow on back, scarred muscular build standing on the left, a giant frost spider with ice-blue translucent body, eight crystalline legs, mandibles dripping with frost, web patterns visible standing on the right, half-orc ranger nocks an arrow and faces giant frost spider across the frozen chamber, in a crumbling elven palace overtaken by nature, cinematic still frame, high quality, detailed",
+      "motion_prompt": "half-orc ranger nocks an arrow and faces giant frost spider across the frozen chamber in a crumbling elven palace overtaken by nature, marble floors cracked with tree roots, shattered crystal chandeliers, bioluminescent ivy on walls, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a half-orc ranger with green-tinged skin and small tusks, braided dark hair, leather armor with bone toggles, compound bow on back, scarred muscular build standing on the left, a trained battle griffon with eagle head and lion body, golden feathers and tawny fur, leather saddle and reins, fierce proud stance standing on the right, half-orc ranger and trained battle griffon soar together away through the jungle canopy, in a dense jungle canopy with massive ancient trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "half-orc ranger and trained battle griffon soar together away through the jungle canopy in a dense jungle canopy with massive ancient trees, rope bridges between platforms, colorful birds in branches, shafts of golden sunlight, humid atmosphere, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a half-orc ranger with green-tinged skin and small tusks, braided dark hair, leather armor with bone toggles, compound bow on back, scarred muscular build, half-orc ranger rests on a rope bridge platform, watching the sunset, in a dense jungle canopy with massive ancient trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a half-orc ranger with green-tinged skin and small tusks, braided dark hair, leather armor with bone toggles, compound bow on back, scarred muscular build half-orc ranger rests on a rope bridge platform, watching the sunset in a dense jungle canopy with massive ancient trees, rope bridges between platforms, colorful birds in branches, shafts of golden sunlight, humid atmosphere, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

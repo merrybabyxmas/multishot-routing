@@ -1,0 +1,122 @@
+{
+  "scenario_id": "modern_10",
+  "domain": "Modern Realistic",
+  "entities": {
+    "A": "a female chef in white double-breasted jacket and tall toque, flour dusted on apron, holding a whisk, determined focused expression, full body, standing, white background",
+    "B": "a miniature poodle with an elegant groomed white coat, red bow on head, prancing confident stance, alert dark eyes, full body, white background",
+    "C": "a health inspector in business attire with official badge, carrying a tablet for notes, serious scrutinizing expression, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a high-end restaurant kitchen with copper pots hanging, marble countertops, herb garden windowsill, warm professional lighting, organized mise en place, cinematic, no people",
+    "E": "a bustling farmer's market with colorful produce stalls, canvas canopies, morning dew on vegetables, cheerful outdoor atmosphere, cinematic, no people",
+    "F": "a restaurant walk-in refrigerator with metal shelving, labeled containers, cold mist visible, industrial stainless steel walls, harsh overhead light, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a female chef in white double-breasted jacket and tall toque, flour dusted on apron, holding a whisk, determined focused expression, female chef in white double-breasted jacket and tall toque plates a dish with precise tweezers under the warm kitchen lights, in a high-end restaurant kitchen with copper pots hanging, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a female chef in white double-breasted jacket and tall toque, flour dusted on apron, holding a whisk, determined focused expression female chef in white double-breasted jacket and tall toque plates a dish with precise tweezers under the warm kitchen lights in a high-end restaurant kitchen with copper pots hanging, marble countertops, herb garden windowsill, warm professional lighting, organized mise en place, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a female chef in white double-breasted jacket and tall toque, flour dusted on apron, holding a whisk, determined focused expression standing on the left, a miniature poodle with an elegant groomed white coat, red bow on head, prancing confident stance, alert dark eyes standing on the right, miniature poodle prances through the kitchen in perfectly groomed fashion, in a high-end restaurant kitchen with copper pots hanging, cinematic still frame, high quality, detailed",
+      "motion_prompt": "miniature poodle prances through the kitchen in perfectly groomed fashion in a high-end restaurant kitchen with copper pots hanging, marble countertops, herb garden windowsill, warm professional lighting, organized mise en place, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a female chef in white double-breasted jacket and tall toque, flour dusted on apron, holding a whisk, determined focused expression standing on the left, a miniature poodle with an elegant groomed white coat, red bow on head, prancing confident stance, alert dark eyes standing on the right, female chef in white double-breasted jacket and tall toque and miniature poodle walk together through the colorful farmer's market, in a bustling farmer's market with colorful produce stalls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "female chef in white double-breasted jacket and tall toque and miniature poodle walk together through the colorful farmer's market in a bustling farmer's market with colorful produce stalls, canvas canopies, morning dew on vegetables, cheerful outdoor atmosphere, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a female chef in white double-breasted jacket and tall toque, flour dusted on apron, holding a whisk, determined focused expression, female chef in white double-breasted jacket and tall toque enters the walk-in refrigerator alone, pulling the heavy door shut, in a restaurant walk-in refrigerator with metal shelving, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a female chef in white double-breasted jacket and tall toque, flour dusted on apron, holding a whisk, determined focused expression female chef in white double-breasted jacket and tall toque enters the walk-in refrigerator alone, pulling the heavy door shut in a restaurant walk-in refrigerator with metal shelving, labeled containers, cold mist visible, industrial stainless steel walls, harsh overhead light, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a female chef in white double-breasted jacket and tall toque, flour dusted on apron, holding a whisk, determined focused expression, female chef in white double-breasted jacket and tall toque checks labeled containers, breath misting in the cold air, in a restaurant walk-in refrigerator with metal shelving, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a female chef in white double-breasted jacket and tall toque, flour dusted on apron, holding a whisk, determined focused expression female chef in white double-breasted jacket and tall toque checks labeled containers, breath misting in the cold air in a restaurant walk-in refrigerator with metal shelving, labeled containers, cold mist visible, industrial stainless steel walls, harsh overhead light, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a female chef in white double-breasted jacket and tall toque, flour dusted on apron, holding a whisk, determined focused expression standing on the left, a miniature poodle with an elegant groomed white coat, red bow on head, prancing confident stance, alert dark eyes standing on the right, female chef in white double-breasted jacket and tall toque exits the fridge and finds miniature poodle sitting daintily by the herb garden, in a bustling farmer's market with colorful produce stalls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "female chef in white double-breasted jacket and tall toque exits the fridge and finds miniature poodle sitting daintily by the herb garden in a bustling farmer's market with colorful produce stalls, canvas canopies, morning dew on vegetables, cheerful outdoor atmosphere, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a health inspector in business attire with official badge, carrying a tablet for notes, serious scrutinizing expression, health inspector in business attire enters with the official badge, already scanning the premises, in a bustling farmer's market with colorful produce stalls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a health inspector in business attire with official badge, carrying a tablet for notes, serious scrutinizing expression health inspector in business attire enters with the official badge, already scanning the premises in a bustling farmer's market with colorful produce stalls, canvas canopies, morning dew on vegetables, cheerful outdoor atmosphere, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a female chef in white double-breasted jacket and tall toque, flour dusted on apron, holding a whisk, determined focused expression standing on the left, a health inspector in business attire with official badge, carrying a tablet for notes, serious scrutinizing expression standing on the right, female chef in white double-breasted jacket and tall toque turns to face health inspector in business attire and presents the sanitation records confidently, in a bustling farmer's market with colorful produce stalls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "female chef in white double-breasted jacket and tall toque turns to face health inspector in business attire and presents the sanitation records confidently in a bustling farmer's market with colorful produce stalls, canvas canopies, morning dew on vegetables, cheerful outdoor atmosphere, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a female chef in white double-breasted jacket and tall toque, flour dusted on apron, holding a whisk, determined focused expression standing on the left, a miniature poodle with an elegant groomed white coat, red bow on head, prancing confident stance, alert dark eyes standing on the right, female chef in white double-breasted jacket and tall toque and miniature poodle walk together back to the warm restaurant kitchen, in a high-end restaurant kitchen with copper pots hanging, cinematic still frame, high quality, detailed",
+      "motion_prompt": "female chef in white double-breasted jacket and tall toque and miniature poodle walk together back to the warm restaurant kitchen in a high-end restaurant kitchen with copper pots hanging, marble countertops, herb garden windowsill, warm professional lighting, organized mise en place, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a female chef in white double-breasted jacket and tall toque, flour dusted on apron, holding a whisk, determined focused expression, female chef in white double-breasted jacket and tall toque sits alone at the counter, savoring a quiet moment with espresso, in a high-end restaurant kitchen with copper pots hanging, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a female chef in white double-breasted jacket and tall toque, flour dusted on apron, holding a whisk, determined focused expression female chef in white double-breasted jacket and tall toque sits alone at the counter, savoring a quiet moment with espresso in a high-end restaurant kitchen with copper pots hanging, marble countertops, herb garden windowsill, warm professional lighting, organized mise en place, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

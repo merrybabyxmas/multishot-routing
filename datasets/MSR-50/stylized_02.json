@@ -1,0 +1,122 @@
+{
+  "scenario_id": "stylized_02",
+  "domain": "Stylized / Animation",
+  "entities": {
+    "A": "a brave cartoon mouse knight in tiny silver armor, holding a needle as sword, determined expression, red plume on helmet, standing on hind legs, 3D Pixar style, full body, white background",
+    "B": "a loyal cartoon frog squire with a leaf hat, vest made of woven grass, big bulging kind eyes, carrying a tiny backpack, green skin with spots, 3D Pixar style, full body, white background",
+    "C": "a menacing cartoon snake sorcerer with purple scales, tiny wizard hat between eyes, coiled body with floating spell rings, forked tongue, 3D Pixar style, full body, white background"
+  },
+  "backgrounds": {
+    "D": "a cartoon medieval village square with tiny cobblestone paths, mushroom-shaped houses, hanging flower baskets, warm sunset glow, 3D Pixar style, cinematic, no people",
+    "E": "a dark cartoon dungeon with stone walls, flickering cartoon torches, puddles on floor, chains hanging from ceiling, spooky but charming, 3D Pixar style, cinematic, no people",
+    "F": "a narrow cartoon castle corridor with suits of armor, tapestries, red carpet, candle sconces, slightly spooky but cozy, 3D Pixar style, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a brave cartoon mouse knight in tiny silver armor, holding a needle as sword, determined expression, red plume on helmet, standing on hind legs, 3D Pixar style, brave cartoon mouse knight in tiny silver armor draws the tiny needle-sword and peers cautiously around the village square, in a cartoon medieval village square with tiny cobblestone paths, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a brave cartoon mouse knight in tiny silver armor, holding a needle as sword, determined expression, red plume on helmet, standing on hind legs, 3D Pixar style brave cartoon mouse knight in tiny silver armor draws the tiny needle-sword and peers cautiously around the village square in a cartoon medieval village square with tiny cobblestone paths, mushroom-shaped houses, hanging flower baskets, warm sunset glow, 3D Pixar style, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a brave cartoon mouse knight in tiny silver armor, holding a needle as sword, determined expression, red plume on helmet, standing on hind legs, 3D Pixar style standing on the left, a loyal cartoon frog squire with a leaf hat, vest made of woven grass, big bulging kind eyes, carrying a tiny backpack, green skin with spots, 3D Pixar style standing on the right, loyal cartoon frog squire hops in with a cheerful ribbit and salutes brave cartoon mouse knight in tiny silver armor with a leaf hat tip, in a cartoon medieval village square with tiny cobblestone paths, cinematic still frame, high quality, detailed",
+      "motion_prompt": "loyal cartoon frog squire hops in with a cheerful ribbit and salutes brave cartoon mouse knight in tiny silver armor with a leaf hat tip in a cartoon medieval village square with tiny cobblestone paths, mushroom-shaped houses, hanging flower baskets, warm sunset glow, 3D Pixar style, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a brave cartoon mouse knight in tiny silver armor, holding a needle as sword, determined expression, red plume on helmet, standing on hind legs, 3D Pixar style standing on the left, a loyal cartoon frog squire with a leaf hat, vest made of woven grass, big bulging kind eyes, carrying a tiny backpack, green skin with spots, 3D Pixar style standing on the right, brave cartoon mouse knight in tiny silver armor and loyal cartoon frog squire tiptoe together down the dark dungeon stairs, in a dark cartoon dungeon with stone walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "brave cartoon mouse knight in tiny silver armor and loyal cartoon frog squire tiptoe together down the dark dungeon stairs in a dark cartoon dungeon with stone walls, flickering cartoon torches, puddles on floor, chains hanging from ceiling, spooky but charming, 3D Pixar style, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a brave cartoon mouse knight in tiny silver armor, holding a needle as sword, determined expression, red plume on helmet, standing on hind legs, 3D Pixar style, brave cartoon mouse knight in tiny silver armor marches alone into the narrow castle corridor, armor clanking, in a narrow cartoon castle corridor with suits of armor, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a brave cartoon mouse knight in tiny silver armor, holding a needle as sword, determined expression, red plume on helmet, standing on hind legs, 3D Pixar style brave cartoon mouse knight in tiny silver armor marches alone into the narrow castle corridor, armor clanking in a narrow cartoon castle corridor with suits of armor, tapestries, red carpet, candle sconces, slightly spooky but cozy, 3D Pixar style, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a brave cartoon mouse knight in tiny silver armor, holding a needle as sword, determined expression, red plume on helmet, standing on hind legs, 3D Pixar style, brave cartoon mouse knight in tiny silver armor examines a suspicious tapestry, pushing it aside to reveal a passage, in a narrow cartoon castle corridor with suits of armor, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a brave cartoon mouse knight in tiny silver armor, holding a needle as sword, determined expression, red plume on helmet, standing on hind legs, 3D Pixar style brave cartoon mouse knight in tiny silver armor examines a suspicious tapestry, pushing it aside to reveal a passage in a narrow cartoon castle corridor with suits of armor, tapestries, red carpet, candle sconces, slightly spooky but cozy, 3D Pixar style, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a brave cartoon mouse knight in tiny silver armor, holding a needle as sword, determined expression, red plume on helmet, standing on hind legs, 3D Pixar style standing on the left, a loyal cartoon frog squire with a leaf hat, vest made of woven grass, big bulging kind eyes, carrying a tiny backpack, green skin with spots, 3D Pixar style standing on the right, brave cartoon mouse knight in tiny silver armor rushes back and finds loyal cartoon frog squire nervously peeking from behind a torch, in a dark cartoon dungeon with stone walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "brave cartoon mouse knight in tiny silver armor rushes back and finds loyal cartoon frog squire nervously peeking from behind a torch in a dark cartoon dungeon with stone walls, flickering cartoon torches, puddles on floor, chains hanging from ceiling, spooky but charming, 3D Pixar style, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a menacing cartoon snake sorcerer with purple scales, tiny wizard hat between eyes, coiled body with floating spell rings, forked tongue, 3D Pixar style, menacing cartoon snake sorcerer slithers around a corner, tiny wizard hat glowing with dark magic, in a dark cartoon dungeon with stone walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a menacing cartoon snake sorcerer with purple scales, tiny wizard hat between eyes, coiled body with floating spell rings, forked tongue, 3D Pixar style menacing cartoon snake sorcerer slithers around a corner, tiny wizard hat glowing with dark magic in a dark cartoon dungeon with stone walls, flickering cartoon torches, puddles on floor, chains hanging from ceiling, spooky but charming, 3D Pixar style, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a brave cartoon mouse knight in tiny silver armor, holding a needle as sword, determined expression, red plume on helmet, standing on hind legs, 3D Pixar style standing on the left, a menacing cartoon snake sorcerer with purple scales, tiny wizard hat between eyes, coiled body with floating spell rings, forked tongue, 3D Pixar style standing on the right, brave cartoon mouse knight in tiny silver armor points the needle-sword and faces menacing cartoon snake sorcerer with knees trembling but resolute, in a dark cartoon dungeon with stone walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "brave cartoon mouse knight in tiny silver armor points the needle-sword and faces menacing cartoon snake sorcerer with knees trembling but resolute in a dark cartoon dungeon with stone walls, flickering cartoon torches, puddles on floor, chains hanging from ceiling, spooky but charming, 3D Pixar style, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a brave cartoon mouse knight in tiny silver armor, holding a needle as sword, determined expression, red plume on helmet, standing on hind legs, 3D Pixar style standing on the left, a loyal cartoon frog squire with a leaf hat, vest made of woven grass, big bulging kind eyes, carrying a tiny backpack, green skin with spots, 3D Pixar style standing on the right, brave cartoon mouse knight in tiny silver armor and loyal cartoon frog squire dash together out of the dungeon into the warm sunset, in a cartoon medieval village square with tiny cobblestone paths, cinematic still frame, high quality, detailed",
+      "motion_prompt": "brave cartoon mouse knight in tiny silver armor and loyal cartoon frog squire dash together out of the dungeon into the warm sunset in a cartoon medieval village square with tiny cobblestone paths, mushroom-shaped houses, hanging flower baskets, warm sunset glow, 3D Pixar style, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a brave cartoon mouse knight in tiny silver armor, holding a needle as sword, determined expression, red plume on helmet, standing on hind legs, 3D Pixar style, brave cartoon mouse knight in tiny silver armor plants the needle-sword in the cobblestones triumphantly, standing tall, in a cartoon medieval village square with tiny cobblestone paths, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a brave cartoon mouse knight in tiny silver armor, holding a needle as sword, determined expression, red plume on helmet, standing on hind legs, 3D Pixar style brave cartoon mouse knight in tiny silver armor plants the needle-sword in the cobblestones triumphantly, standing tall in a cartoon medieval village square with tiny cobblestone paths, mushroom-shaped houses, hanging flower baskets, warm sunset glow, 3D Pixar style, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

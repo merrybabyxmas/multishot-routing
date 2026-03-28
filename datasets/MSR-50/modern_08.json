@@ -1,0 +1,122 @@
+{
+  "scenario_id": "modern_08",
+  "domain": "Modern Realistic",
+  "entities": {
+    "A": "a female yoga instructor in athletic wear, toned build, dark skin, braided hair, carrying a rolled yoga mat, serene balanced posture, full body, standing, white background",
+    "B": "a Maine Coon cat with magnificent flowing tabby fur, lynx-like ear tufts, large plumed tail, regal sitting pose, full body, white background",
+    "C": "a construction foreman in orange safety vest and hard hat, holding rolled blueprints, weathered tan face, steel-toed boots, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a bright modern yoga studio with bamboo floors and mirror walls, natural light from skylights, plants in corners, meditation cushions, serene atmosphere, cinematic, no people",
+    "E": "a bustling urban construction site with steel framework, crane in background, gravel and equipment, orange safety barriers, morning light, cinematic, no people",
+    "F": "a narrow building maintenance corridor with exposed pipes and junction boxes, concrete floor, dim industrial lighting, utility access doors, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a female yoga instructor in athletic wear, toned build, dark skin, braided hair, carrying a rolled yoga mat, serene balanced posture, female yoga instructor in athletic wear flows through a sun salutation pose in the bright yoga studio, in a bright modern yoga studio with bamboo floors and mirror walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a female yoga instructor in athletic wear, toned build, dark skin, braided hair, carrying a rolled yoga mat, serene balanced posture female yoga instructor in athletic wear flows through a sun salutation pose in the bright yoga studio in a bright modern yoga studio with bamboo floors and mirror walls, natural light from skylights, plants in corners, meditation cushions, serene atmosphere, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a female yoga instructor in athletic wear, toned build, dark skin, braided hair, carrying a rolled yoga mat, serene balanced posture standing on the left, a Maine Coon cat with magnificent flowing tabby fur, lynx-like ear tufts, large plumed tail, regal sitting pose standing on the right, Maine Coon cat lounges on a meditation cushion, watching with half-closed eyes, in a bright modern yoga studio with bamboo floors and mirror walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "Maine Coon cat lounges on a meditation cushion, watching with half-closed eyes in a bright modern yoga studio with bamboo floors and mirror walls, natural light from skylights, plants in corners, meditation cushions, serene atmosphere, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a female yoga instructor in athletic wear, toned build, dark skin, braided hair, carrying a rolled yoga mat, serene balanced posture standing on the left, a Maine Coon cat with magnificent flowing tabby fur, lynx-like ear tufts, large plumed tail, regal sitting pose standing on the right, female yoga instructor in athletic wear and Maine Coon cat walk together into the bustling construction site, in a bustling urban construction site with steel framework, cinematic still frame, high quality, detailed",
+      "motion_prompt": "female yoga instructor in athletic wear and Maine Coon cat walk together into the bustling construction site in a bustling urban construction site with steel framework, crane in background, gravel and equipment, orange safety barriers, morning light, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a female yoga instructor in athletic wear, toned build, dark skin, braided hair, carrying a rolled yoga mat, serene balanced posture, female yoga instructor in athletic wear enters the building maintenance corridor alone, mat under arm, in a narrow building maintenance corridor with exposed pipes and junction boxes, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a female yoga instructor in athletic wear, toned build, dark skin, braided hair, carrying a rolled yoga mat, serene balanced posture female yoga instructor in athletic wear enters the building maintenance corridor alone, mat under arm in a narrow building maintenance corridor with exposed pipes and junction boxes, concrete floor, dim industrial lighting, utility access doors, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a female yoga instructor in athletic wear, toned build, dark skin, braided hair, carrying a rolled yoga mat, serene balanced posture, female yoga instructor in athletic wear pauses to stretch in the narrow space, breathing deeply, in a narrow building maintenance corridor with exposed pipes and junction boxes, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a female yoga instructor in athletic wear, toned build, dark skin, braided hair, carrying a rolled yoga mat, serene balanced posture female yoga instructor in athletic wear pauses to stretch in the narrow space, breathing deeply in a narrow building maintenance corridor with exposed pipes and junction boxes, concrete floor, dim industrial lighting, utility access doors, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a female yoga instructor in athletic wear, toned build, dark skin, braided hair, carrying a rolled yoga mat, serene balanced posture standing on the left, a Maine Coon cat with magnificent flowing tabby fur, lynx-like ear tufts, large plumed tail, regal sitting pose standing on the right, female yoga instructor in athletic wear returns and finds Maine Coon cat batting at a hard hat left on the ground, in a bustling urban construction site with steel framework, cinematic still frame, high quality, detailed",
+      "motion_prompt": "female yoga instructor in athletic wear returns and finds Maine Coon cat batting at a hard hat left on the ground in a bustling urban construction site with steel framework, crane in background, gravel and equipment, orange safety barriers, morning light, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a construction foreman in orange safety vest and hard hat, holding rolled blueprints, weathered tan face, steel-toed boots, construction foreman in orange safety vest and hard hat walks over in the orange safety vest, rolling up the blueprints, in a bustling urban construction site with steel framework, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a construction foreman in orange safety vest and hard hat, holding rolled blueprints, weathered tan face, steel-toed boots construction foreman in orange safety vest and hard hat walks over in the orange safety vest, rolling up the blueprints in a bustling urban construction site with steel framework, crane in background, gravel and equipment, orange safety barriers, morning light, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a female yoga instructor in athletic wear, toned build, dark skin, braided hair, carrying a rolled yoga mat, serene balanced posture standing on the left, a construction foreman in orange safety vest and hard hat, holding rolled blueprints, weathered tan face, steel-toed boots standing on the right, female yoga instructor in athletic wear turns and discusses something with construction foreman in orange safety vest and hard hat, gesturing at the site, in a bustling urban construction site with steel framework, cinematic still frame, high quality, detailed",
+      "motion_prompt": "female yoga instructor in athletic wear turns and discusses something with construction foreman in orange safety vest and hard hat, gesturing at the site in a bustling urban construction site with steel framework, crane in background, gravel and equipment, orange safety barriers, morning light, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a female yoga instructor in athletic wear, toned build, dark skin, braided hair, carrying a rolled yoga mat, serene balanced posture standing on the left, a Maine Coon cat with magnificent flowing tabby fur, lynx-like ear tufts, large plumed tail, regal sitting pose standing on the right, female yoga instructor in athletic wear and Maine Coon cat walk together back to the peaceful yoga studio, in a bright modern yoga studio with bamboo floors and mirror walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "female yoga instructor in athletic wear and Maine Coon cat walk together back to the peaceful yoga studio in a bright modern yoga studio with bamboo floors and mirror walls, natural light from skylights, plants in corners, meditation cushions, serene atmosphere, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a female yoga instructor in athletic wear, toned build, dark skin, braided hair, carrying a rolled yoga mat, serene balanced posture, female yoga instructor in athletic wear sits alone in lotus pose, eyes closed, completely centered, in a bright modern yoga studio with bamboo floors and mirror walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a female yoga instructor in athletic wear, toned build, dark skin, braided hair, carrying a rolled yoga mat, serene balanced posture female yoga instructor in athletic wear sits alone in lotus pose, eyes closed, completely centered in a bright modern yoga studio with bamboo floors and mirror walls, natural light from skylights, plants in corners, meditation cushions, serene atmosphere, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

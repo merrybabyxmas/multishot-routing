@@ -1,0 +1,122 @@
+{
+  "scenario_id": "stylized_07",
+  "domain": "Stylized / Animation",
+  "entities": {
+    "A": "a cartoon dinosaur kid with green scaly skin and tiny T-Rex arms, oversized head with big toothy grin, wearing a red baseball cap backwards, stubby tail, 3D Pixar style, full body, standing, white background",
+    "B": "a cartoon butterfly with rainbow gradient wings, tiny human-like face with button nose, delicate antenna, sparkling trail behind, 3D Pixar style, full body, white background",
+    "C": "a cartoon volcano monster with rocky body, lava cracks glowing orange, angry crater head with smoke coming out, stubby stone feet, 3D Pixar style, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a cartoon prehistoric landscape with giant ferns and palm trees, erupting volcano in distance, lava rivers, pterodactyls in sky, vibrant primordial, 3D Pixar style, cinematic, no people",
+    "E": "a cartoon crystal cave interior with multicolored gemstone formations, sparkling reflections, underground lake, magical ambient glow, 3D Pixar style, cinematic, no people",
+    "F": "a narrow cartoon lava tube tunnel with glowing magma walls, obsidian floor, heat shimmer, tiny stalactites, 3D Pixar style, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a cartoon dinosaur kid with green scaly skin and tiny T-Rex arms, oversized head with big toothy grin, wearing a red baseball cap backwards, stubby tail, 3D Pixar style, cartoon dinosaur kid stomps through the prehistoric landscape, tiny arms waving at pterodactyls, in a cartoon prehistoric landscape with giant ferns and palm trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon dinosaur kid with green scaly skin and tiny T-Rex arms, oversized head with big toothy grin, wearing a red baseball cap backwards, stubby tail, 3D Pixar style cartoon dinosaur kid stomps through the prehistoric landscape, tiny arms waving at pterodactyls in a cartoon prehistoric landscape with giant ferns and palm trees, erupting volcano in distance, lava rivers, pterodactyls in sky, vibrant primordial, 3D Pixar style, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon dinosaur kid with green scaly skin and tiny T-Rex arms, oversized head with big toothy grin, wearing a red baseball cap backwards, stubby tail, 3D Pixar style standing on the left, a cartoon butterfly with rainbow gradient wings, tiny human-like face with button nose, delicate antenna, sparkling trail behind, 3D Pixar style standing on the right, cartoon butterfly glides in on rainbow wings and lands on cartoon dinosaur kid's baseball cap, in a cartoon prehistoric landscape with giant ferns and palm trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon butterfly glides in on rainbow wings and lands on cartoon dinosaur kid's baseball cap in a cartoon prehistoric landscape with giant ferns and palm trees, erupting volcano in distance, lava rivers, pterodactyls in sky, vibrant primordial, 3D Pixar style, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon dinosaur kid with green scaly skin and tiny T-Rex arms, oversized head with big toothy grin, wearing a red baseball cap backwards, stubby tail, 3D Pixar style standing on the left, a cartoon butterfly with rainbow gradient wings, tiny human-like face with button nose, delicate antenna, sparkling trail behind, 3D Pixar style standing on the right, cartoon dinosaur kid and cartoon butterfly wander together into the sparkling crystal cave, in a cartoon crystal cave interior with multicolored gemstone formations, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon dinosaur kid and cartoon butterfly wander together into the sparkling crystal cave in a cartoon crystal cave interior with multicolored gemstone formations, sparkling reflections, underground lake, magical ambient glow, 3D Pixar style, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a cartoon dinosaur kid with green scaly skin and tiny T-Rex arms, oversized head with big toothy grin, wearing a red baseball cap backwards, stubby tail, 3D Pixar style, cartoon dinosaur kid squeezes alone into the narrow lava tube, obsidian crunching underfoot, in a narrow cartoon lava tube tunnel with glowing magma walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon dinosaur kid with green scaly skin and tiny T-Rex arms, oversized head with big toothy grin, wearing a red baseball cap backwards, stubby tail, 3D Pixar style cartoon dinosaur kid squeezes alone into the narrow lava tube, obsidian crunching underfoot in a narrow cartoon lava tube tunnel with glowing magma walls, obsidian floor, heat shimmer, tiny stalactites, 3D Pixar style, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a cartoon dinosaur kid with green scaly skin and tiny T-Rex arms, oversized head with big toothy grin, wearing a red baseball cap backwards, stubby tail, 3D Pixar style, cartoon dinosaur kid examines glowing magma behind the tunnel wall with big curious eyes, in a narrow cartoon lava tube tunnel with glowing magma walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon dinosaur kid with green scaly skin and tiny T-Rex arms, oversized head with big toothy grin, wearing a red baseball cap backwards, stubby tail, 3D Pixar style cartoon dinosaur kid examines glowing magma behind the tunnel wall with big curious eyes in a narrow cartoon lava tube tunnel with glowing magma walls, obsidian floor, heat shimmer, tiny stalactites, 3D Pixar style, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon dinosaur kid with green scaly skin and tiny T-Rex arms, oversized head with big toothy grin, wearing a red baseball cap backwards, stubby tail, 3D Pixar style standing on the left, a cartoon butterfly with rainbow gradient wings, tiny human-like face with button nose, delicate antenna, sparkling trail behind, 3D Pixar style standing on the right, cartoon dinosaur kid stomps back out and finds cartoon butterfly admiring crystal reflections, in a cartoon crystal cave interior with multicolored gemstone formations, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon dinosaur kid stomps back out and finds cartoon butterfly admiring crystal reflections in a cartoon crystal cave interior with multicolored gemstone formations, sparkling reflections, underground lake, magical ambient glow, 3D Pixar style, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a cartoon volcano monster with rocky body, lava cracks glowing orange, angry crater head with smoke coming out, stubby stone feet, 3D Pixar style, cartoon volcano monster erupts from the crater head smoking, stubby stone feet shaking the ground, in a cartoon crystal cave interior with multicolored gemstone formations, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon volcano monster with rocky body, lava cracks glowing orange, angry crater head with smoke coming out, stubby stone feet, 3D Pixar style cartoon volcano monster erupts from the crater head smoking, stubby stone feet shaking the ground in a cartoon crystal cave interior with multicolored gemstone formations, sparkling reflections, underground lake, magical ambient glow, 3D Pixar style, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon dinosaur kid with green scaly skin and tiny T-Rex arms, oversized head with big toothy grin, wearing a red baseball cap backwards, stubby tail, 3D Pixar style standing on the left, a cartoon volcano monster with rocky body, lava cracks glowing orange, angry crater head with smoke coming out, stubby stone feet, 3D Pixar style standing on the right, cartoon dinosaur kid opens the big toothy grin and roars right back at cartoon volcano monster, in a cartoon crystal cave interior with multicolored gemstone formations, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon dinosaur kid opens the big toothy grin and roars right back at cartoon volcano monster in a cartoon crystal cave interior with multicolored gemstone formations, sparkling reflections, underground lake, magical ambient glow, 3D Pixar style, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a cartoon dinosaur kid with green scaly skin and tiny T-Rex arms, oversized head with big toothy grin, wearing a red baseball cap backwards, stubby tail, 3D Pixar style standing on the left, a cartoon butterfly with rainbow gradient wings, tiny human-like face with button nose, delicate antenna, sparkling trail behind, 3D Pixar style standing on the right, cartoon dinosaur kid and cartoon butterfly scramble together across the fern-covered landscape, in a cartoon prehistoric landscape with giant ferns and palm trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "cartoon dinosaur kid and cartoon butterfly scramble together across the fern-covered landscape in a cartoon prehistoric landscape with giant ferns and palm trees, erupting volcano in distance, lava rivers, pterodactyls in sky, vibrant primordial, 3D Pixar style, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a cartoon dinosaur kid with green scaly skin and tiny T-Rex arms, oversized head with big toothy grin, wearing a red baseball cap backwards, stubby tail, 3D Pixar style, cartoon dinosaur kid sits alone on a warm rock, tiny arms folded, proudly victorious, in a cartoon prehistoric landscape with giant ferns and palm trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a cartoon dinosaur kid with green scaly skin and tiny T-Rex arms, oversized head with big toothy grin, wearing a red baseball cap backwards, stubby tail, 3D Pixar style cartoon dinosaur kid sits alone on a warm rock, tiny arms folded, proudly victorious in a cartoon prehistoric landscape with giant ferns and palm trees, erupting volcano in distance, lava rivers, pterodactyls in sky, vibrant primordial, 3D Pixar style, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

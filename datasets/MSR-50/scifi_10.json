@@ -1,0 +1,122 @@
+{
+  "scenario_id": "scifi_10",
+  "domain": "Sci-Fi / Cyberpunk",
+  "entities": {
+    "A": "a veteran pilot in a worn flight suit with mission patches, aviator shades, salt-and-pepper crew cut, prosthetic right leg, carrying helmet under arm, full body, standing, white background",
+    "B": "a bipedal combat mech suit standing at half human height, angular olive-drab armor, twin arm-mounted gatlings, visor slit glowing yellow, full body, white background",
+    "C": "a crystalline alien diplomat with transparent body showing internal light structures, geometric head formation, floating crystal fragments orbiting it, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a military aircraft carrier deck at dusk, fighter jets parked with maintenance platforms, orange deck lights, ocean horizon with dramatic clouds, strong wind atmosphere, cinematic, no people",
+    "E": "an orbital space station observation deck with panoramic viewport, Earth visible below with city lights, minimalist white interior with floating holographic panels, cinematic, no people",
+    "F": "a claustrophobic submarine control room with sonar screens and analog gauges, green ambient lighting, periscope in center, pressurized atmosphere, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a veteran pilot in a worn flight suit with mission patches, aviator shades, salt-and-pepper crew cut, prosthetic right leg, carrying helmet under arm, veteran pilot in a worn flight suit walks across the carrier deck, flight suit whipping in the wind, in a military aircraft carrier deck at dusk, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a veteran pilot in a worn flight suit with mission patches, aviator shades, salt-and-pepper crew cut, prosthetic right leg, carrying helmet under arm veteran pilot in a worn flight suit walks across the carrier deck, flight suit whipping in the wind in a military aircraft carrier deck at dusk, fighter jets parked with maintenance platforms, orange deck lights, ocean horizon with dramatic clouds, strong wind atmosphere, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a veteran pilot in a worn flight suit with mission patches, aviator shades, salt-and-pepper crew cut, prosthetic right leg, carrying helmet under arm standing on the left, a bipedal combat mech suit standing at half human height, angular olive-drab armor, twin arm-mounted gatlings, visor slit glowing yellow standing on the right, bipedal combat mech suit standing at half human height marches out of the hangar bay in precise lockstep formation, in a military aircraft carrier deck at dusk, cinematic still frame, high quality, detailed",
+      "motion_prompt": "bipedal combat mech suit standing at half human height marches out of the hangar bay in precise lockstep formation in a military aircraft carrier deck at dusk, fighter jets parked with maintenance platforms, orange deck lights, ocean horizon with dramatic clouds, strong wind atmosphere, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a veteran pilot in a worn flight suit with mission patches, aviator shades, salt-and-pepper crew cut, prosthetic right leg, carrying helmet under arm standing on the left, a bipedal combat mech suit standing at half human height, angular olive-drab armor, twin arm-mounted gatlings, visor slit glowing yellow standing on the right, veteran pilot in a worn flight suit and bipedal combat mech suit standing at half human height enter the orbital observation deck together, in an orbital space station observation deck with panoramic viewport, cinematic still frame, high quality, detailed",
+      "motion_prompt": "veteran pilot in a worn flight suit and bipedal combat mech suit standing at half human height enter the orbital observation deck together in an orbital space station observation deck with panoramic viewport, Earth visible below with city lights, minimalist white interior with floating holographic panels, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a veteran pilot in a worn flight suit with mission patches, aviator shades, salt-and-pepper crew cut, prosthetic right leg, carrying helmet under arm, veteran pilot in a worn flight suit descends alone into the claustrophobic submarine control room, in a claustrophobic submarine control room with sonar screens and analog gauges, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a veteran pilot in a worn flight suit with mission patches, aviator shades, salt-and-pepper crew cut, prosthetic right leg, carrying helmet under arm veteran pilot in a worn flight suit descends alone into the claustrophobic submarine control room in a claustrophobic submarine control room with sonar screens and analog gauges, green ambient lighting, periscope in center, pressurized atmosphere, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a veteran pilot in a worn flight suit with mission patches, aviator shades, salt-and-pepper crew cut, prosthetic right leg, carrying helmet under arm, veteran pilot in a worn flight suit studies the sonar display intently, tracking an anomaly, in a claustrophobic submarine control room with sonar screens and analog gauges, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a veteran pilot in a worn flight suit with mission patches, aviator shades, salt-and-pepper crew cut, prosthetic right leg, carrying helmet under arm veteran pilot in a worn flight suit studies the sonar display intently, tracking an anomaly in a claustrophobic submarine control room with sonar screens and analog gauges, green ambient lighting, periscope in center, pressurized atmosphere, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a veteran pilot in a worn flight suit with mission patches, aviator shades, salt-and-pepper crew cut, prosthetic right leg, carrying helmet under arm standing on the left, a bipedal combat mech suit standing at half human height, angular olive-drab armor, twin arm-mounted gatlings, visor slit glowing yellow standing on the right, veteran pilot in a worn flight suit climbs out and reunites with bipedal combat mech suit standing at half human height on the observation deck, in an orbital space station observation deck with panoramic viewport, cinematic still frame, high quality, detailed",
+      "motion_prompt": "veteran pilot in a worn flight suit climbs out and reunites with bipedal combat mech suit standing at half human height on the observation deck in an orbital space station observation deck with panoramic viewport, Earth visible below with city lights, minimalist white interior with floating holographic panels, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a crystalline alien diplomat with transparent body showing internal light structures, geometric head formation, floating crystal fragments orbiting it, crystalline alien diplomat phases through the viewport, crystal fragments refracting light, in an orbital space station observation deck with panoramic viewport, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a crystalline alien diplomat with transparent body showing internal light structures, geometric head formation, floating crystal fragments orbiting it crystalline alien diplomat phases through the viewport, crystal fragments refracting light in an orbital space station observation deck with panoramic viewport, Earth visible below with city lights, minimalist white interior with floating holographic panels, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a veteran pilot in a worn flight suit with mission patches, aviator shades, salt-and-pepper crew cut, prosthetic right leg, carrying helmet under arm standing on the left, a crystalline alien diplomat with transparent body showing internal light structures, geometric head formation, floating crystal fragments orbiting it standing on the right, veteran pilot in a worn flight suit stands firm and faces crystalline alien diplomat with Earth glowing in the background, in an orbital space station observation deck with panoramic viewport, cinematic still frame, high quality, detailed",
+      "motion_prompt": "veteran pilot in a worn flight suit stands firm and faces crystalline alien diplomat with Earth glowing in the background in an orbital space station observation deck with panoramic viewport, Earth visible below with city lights, minimalist white interior with floating holographic panels, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a veteran pilot in a worn flight suit with mission patches, aviator shades, salt-and-pepper crew cut, prosthetic right leg, carrying helmet under arm standing on the left, a bipedal combat mech suit standing at half human height, angular olive-drab armor, twin arm-mounted gatlings, visor slit glowing yellow standing on the right, veteran pilot in a worn flight suit and bipedal combat mech suit standing at half human height evacuate through the station corridor together, in a military aircraft carrier deck at dusk, cinematic still frame, high quality, detailed",
+      "motion_prompt": "veteran pilot in a worn flight suit and bipedal combat mech suit standing at half human height evacuate through the station corridor together in a military aircraft carrier deck at dusk, fighter jets parked with maintenance platforms, orange deck lights, ocean horizon with dramatic clouds, strong wind atmosphere, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a veteran pilot in a worn flight suit with mission patches, aviator shades, salt-and-pepper crew cut, prosthetic right leg, carrying helmet under arm, veteran pilot in a worn flight suit stands alone on the carrier deck, watching the sunset horizon, in a military aircraft carrier deck at dusk, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a veteran pilot in a worn flight suit with mission patches, aviator shades, salt-and-pepper crew cut, prosthetic right leg, carrying helmet under arm veteran pilot in a worn flight suit stands alone on the carrier deck, watching the sunset horizon in a military aircraft carrier deck at dusk, fighter jets parked with maintenance platforms, orange deck lights, ocean horizon with dramatic clouds, strong wind atmosphere, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

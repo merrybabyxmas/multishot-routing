@@ -1,0 +1,122 @@
+{
+  "scenario_id": "fantasy_10",
+  "domain": "High Fantasy",
+  "entities": {
+    "A": "a tiefling rogue with crimson skin, small curved horns, long black tail, wearing a dark hooded cloak with daggers strapped to thighs, yellow cat-like eyes, full body, standing, white background",
+    "B": "a spectral wolf made of blue ethereal energy, translucent body with visible skeleton, glowing blue eyes, chain collar with a broken leash, full body, white background",
+    "C": "a vampire lord in an ornate black and red coat with high collar, pale aristocratic features, slicked-back dark hair, bat-wing cape clasp, regal pose, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a gothic vampire castle courtyard at midnight, stone gargoyles, dead rose garden, full moon casting silver light, iron gate entrance, cinematic, no people",
+    "E": "a decaying ballroom with dusty chandelier, cracked mirrors, cobweb-covered furniture, faded velvet curtains, ghostly moonlight through windows, cinematic, no people",
+    "F": "a narrow secret passage behind castle walls, torch sconces on stone walls, spider webs, hidden door mechanisms visible, claustrophobic, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a tiefling rogue with crimson skin, small curved horns, long black tail, wearing a dark hooded cloak with daggers strapped to thighs, yellow cat-like eyes, tiefling rogue lurks in the castle courtyard, scanning gargoyles with yellow eyes, in a gothic vampire castle courtyard at midnight, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a tiefling rogue with crimson skin, small curved horns, long black tail, wearing a dark hooded cloak with daggers strapped to thighs, yellow cat-like eyes tiefling rogue lurks in the castle courtyard, scanning gargoyles with yellow eyes in a gothic vampire castle courtyard at midnight, stone gargoyles, dead rose garden, full moon casting silver light, iron gate entrance, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a tiefling rogue with crimson skin, small curved horns, long black tail, wearing a dark hooded cloak with daggers strapped to thighs, yellow cat-like eyes standing on the left, a spectral wolf made of blue ethereal energy, translucent body with visible skeleton, glowing blue eyes, chain collar with a broken leash standing on the right, spectral wolf made of blue ethereal energy materializes from blue ethereal mist and sits beside tiefling rogue, in a gothic vampire castle courtyard at midnight, cinematic still frame, high quality, detailed",
+      "motion_prompt": "spectral wolf made of blue ethereal energy materializes from blue ethereal mist and sits beside tiefling rogue in a gothic vampire castle courtyard at midnight, stone gargoyles, dead rose garden, full moon casting silver light, iron gate entrance, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a tiefling rogue with crimson skin, small curved horns, long black tail, wearing a dark hooded cloak with daggers strapped to thighs, yellow cat-like eyes standing on the left, a spectral wolf made of blue ethereal energy, translucent body with visible skeleton, glowing blue eyes, chain collar with a broken leash standing on the right, tiefling rogue and spectral wolf made of blue ethereal energy creep together into the dusty decaying ballroom, in a decaying ballroom with dusty chandelier, cinematic still frame, high quality, detailed",
+      "motion_prompt": "tiefling rogue and spectral wolf made of blue ethereal energy creep together into the dusty decaying ballroom in a decaying ballroom with dusty chandelier, cracked mirrors, cobweb-covered furniture, faded velvet curtains, ghostly moonlight through windows, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a tiefling rogue with crimson skin, small curved horns, long black tail, wearing a dark hooded cloak with daggers strapped to thighs, yellow cat-like eyes, tiefling rogue slips alone into the narrow secret passage behind the walls, in a narrow secret passage behind castle walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a tiefling rogue with crimson skin, small curved horns, long black tail, wearing a dark hooded cloak with daggers strapped to thighs, yellow cat-like eyes tiefling rogue slips alone into the narrow secret passage behind the walls in a narrow secret passage behind castle walls, torch sconces on stone walls, spider webs, hidden door mechanisms visible, claustrophobic, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a tiefling rogue with crimson skin, small curved horns, long black tail, wearing a dark hooded cloak with daggers strapped to thighs, yellow cat-like eyes, tiefling rogue examines hidden door mechanisms, tail twitching with focus, in a narrow secret passage behind castle walls, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a tiefling rogue with crimson skin, small curved horns, long black tail, wearing a dark hooded cloak with daggers strapped to thighs, yellow cat-like eyes tiefling rogue examines hidden door mechanisms, tail twitching with focus in a narrow secret passage behind castle walls, torch sconces on stone walls, spider webs, hidden door mechanisms visible, claustrophobic, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a tiefling rogue with crimson skin, small curved horns, long black tail, wearing a dark hooded cloak with daggers strapped to thighs, yellow cat-like eyes standing on the left, a spectral wolf made of blue ethereal energy, translucent body with visible skeleton, glowing blue eyes, chain collar with a broken leash standing on the right, tiefling rogue emerges and finds spectral wolf made of blue ethereal energy pacing the ballroom, chain rattling, in a decaying ballroom with dusty chandelier, cinematic still frame, high quality, detailed",
+      "motion_prompt": "tiefling rogue emerges and finds spectral wolf made of blue ethereal energy pacing the ballroom, chain rattling in a decaying ballroom with dusty chandelier, cracked mirrors, cobweb-covered furniture, faded velvet curtains, ghostly moonlight through windows, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a vampire lord in an ornate black and red coat with high collar, pale aristocratic features, slicked-back dark hair, bat-wing cape clasp, regal pose, vampire lord in an ornate black and red coat descends the grand staircase, bat-wing cape billowing, in a decaying ballroom with dusty chandelier, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a vampire lord in an ornate black and red coat with high collar, pale aristocratic features, slicked-back dark hair, bat-wing cape clasp, regal pose vampire lord in an ornate black and red coat descends the grand staircase, bat-wing cape billowing in a decaying ballroom with dusty chandelier, cracked mirrors, cobweb-covered furniture, faded velvet curtains, ghostly moonlight through windows, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a tiefling rogue with crimson skin, small curved horns, long black tail, wearing a dark hooded cloak with daggers strapped to thighs, yellow cat-like eyes standing on the left, a vampire lord in an ornate black and red coat with high collar, pale aristocratic features, slicked-back dark hair, bat-wing cape clasp, regal pose standing on the right, tiefling rogue draws twin daggers and faces vampire lord in an ornate black and red coat under the dusty chandelier, in a decaying ballroom with dusty chandelier, cinematic still frame, high quality, detailed",
+      "motion_prompt": "tiefling rogue draws twin daggers and faces vampire lord in an ornate black and red coat under the dusty chandelier in a decaying ballroom with dusty chandelier, cracked mirrors, cobweb-covered furniture, faded velvet curtains, ghostly moonlight through windows, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a tiefling rogue with crimson skin, small curved horns, long black tail, wearing a dark hooded cloak with daggers strapped to thighs, yellow cat-like eyes standing on the left, a spectral wolf made of blue ethereal energy, translucent body with visible skeleton, glowing blue eyes, chain collar with a broken leash standing on the right, tiefling rogue and spectral wolf made of blue ethereal energy sprint together through the courtyard under moonlight, in a gothic vampire castle courtyard at midnight, cinematic still frame, high quality, detailed",
+      "motion_prompt": "tiefling rogue and spectral wolf made of blue ethereal energy sprint together through the courtyard under moonlight in a gothic vampire castle courtyard at midnight, stone gargoyles, dead rose garden, full moon casting silver light, iron gate entrance, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a tiefling rogue with crimson skin, small curved horns, long black tail, wearing a dark hooded cloak with daggers strapped to thighs, yellow cat-like eyes, tiefling rogue perches alone on a gargoyle, watching dawn break over the castle, in a gothic vampire castle courtyard at midnight, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a tiefling rogue with crimson skin, small curved horns, long black tail, wearing a dark hooded cloak with daggers strapped to thighs, yellow cat-like eyes tiefling rogue perches alone on a gargoyle, watching dawn break over the castle in a gothic vampire castle courtyard at midnight, stone gargoyles, dead rose garden, full moon casting silver light, iron gate entrance, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

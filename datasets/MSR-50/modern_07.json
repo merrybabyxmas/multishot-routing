@@ -1,0 +1,122 @@
+{
+  "scenario_id": "modern_07",
+  "domain": "Modern Realistic",
+  "entities": {
+    "A": "a college student with oversized hoodie and backpack, headphones around neck, messy black hair, holding a coffee cup, casual slouched posture, full body, standing, white background",
+    "B": "a corgi puppy with short legs and big ears, tri-color coat, tongue out, playful bouncing pose, tiny but energetic, full body, white background",
+    "C": "a university professor in tweed jacket with elbow patches, wire glasses, grey beard, holding a thick book, dignified academic posture, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a university campus quad with old brick buildings and ivy, students walking in background blur, autumn trees, bronze statue on pedestal, cinematic, no people",
+    "E": "a large lecture hall with tiered seating, projector screen at front, wooden desks, institutional fluorescent lighting, academic atmosphere, cinematic, no people",
+    "F": "a cramped student dorm room with bunk beds, posters on walls, textbooks and laptop on small desk, warm lamp light, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a college student with oversized hoodie and backpack, headphones around neck, messy black hair, holding a coffee cup, casual slouched posture, college student walks across the university quad, hoodie pulled up against the wind, in a university campus quad with old brick buildings and ivy, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a college student with oversized hoodie and backpack, headphones around neck, messy black hair, holding a coffee cup, casual slouched posture college student walks across the university quad, hoodie pulled up against the wind in a university campus quad with old brick buildings and ivy, students walking in background blur, autumn trees, bronze statue on pedestal, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a college student with oversized hoodie and backpack, headphones around neck, messy black hair, holding a coffee cup, casual slouched posture standing on the left, a corgi puppy with short legs and big ears, tri-color coat, tongue out, playful bouncing pose, tiny but energetic standing on the right, corgi puppy bounces alongside on short legs, ears flapping with each stride, in a university campus quad with old brick buildings and ivy, cinematic still frame, high quality, detailed",
+      "motion_prompt": "corgi puppy bounces alongside on short legs, ears flapping with each stride in a university campus quad with old brick buildings and ivy, students walking in background blur, autumn trees, bronze statue on pedestal, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a college student with oversized hoodie and backpack, headphones around neck, messy black hair, holding a coffee cup, casual slouched posture standing on the left, a corgi puppy with short legs and big ears, tri-color coat, tongue out, playful bouncing pose, tiny but energetic standing on the right, college student and corgi puppy enter the large lecture hall together through the side door, in a large lecture hall with tiered seating, cinematic still frame, high quality, detailed",
+      "motion_prompt": "college student and corgi puppy enter the large lecture hall together through the side door in a large lecture hall with tiered seating, projector screen at front, wooden desks, institutional fluorescent lighting, academic atmosphere, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a college student with oversized hoodie and backpack, headphones around neck, messy black hair, holding a coffee cup, casual slouched posture, college student climbs the stairs to the cramped dorm room alone, in a cramped student dorm room with bunk beds, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a college student with oversized hoodie and backpack, headphones around neck, messy black hair, holding a coffee cup, casual slouched posture college student climbs the stairs to the cramped dorm room alone in a cramped student dorm room with bunk beds, posters on walls, textbooks and laptop on small desk, warm lamp light, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a college student with oversized hoodie and backpack, headphones around neck, messy black hair, holding a coffee cup, casual slouched posture, college student opens the laptop and starts studying at the small desk, in a cramped student dorm room with bunk beds, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a college student with oversized hoodie and backpack, headphones around neck, messy black hair, holding a coffee cup, casual slouched posture college student opens the laptop and starts studying at the small desk in a cramped student dorm room with bunk beds, posters on walls, textbooks and laptop on small desk, warm lamp light, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a college student with oversized hoodie and backpack, headphones around neck, messy black hair, holding a coffee cup, casual slouched posture standing on the left, a corgi puppy with short legs and big ears, tri-color coat, tongue out, playful bouncing pose, tiny but energetic standing on the right, college student comes back down and finds corgi puppy waiting at the lecture hall entrance, in a large lecture hall with tiered seating, cinematic still frame, high quality, detailed",
+      "motion_prompt": "college student comes back down and finds corgi puppy waiting at the lecture hall entrance in a large lecture hall with tiered seating, projector screen at front, wooden desks, institutional fluorescent lighting, academic atmosphere, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a university professor in tweed jacket with elbow patches, wire glasses, grey beard, holding a thick book, dignified academic posture, university professor in tweed jacket enters the lecture hall adjusting wire glasses, holding a thick book, in a large lecture hall with tiered seating, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a university professor in tweed jacket with elbow patches, wire glasses, grey beard, holding a thick book, dignified academic posture university professor in tweed jacket enters the lecture hall adjusting wire glasses, holding a thick book in a large lecture hall with tiered seating, projector screen at front, wooden desks, institutional fluorescent lighting, academic atmosphere, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a college student with oversized hoodie and backpack, headphones around neck, messy black hair, holding a coffee cup, casual slouched posture standing on the left, a university professor in tweed jacket with elbow patches, wire glasses, grey beard, holding a thick book, dignified academic posture standing on the right, college student looks up and meets university professor in tweed jacket's eyes from across the tiered seating, in a large lecture hall with tiered seating, cinematic still frame, high quality, detailed",
+      "motion_prompt": "college student looks up and meets university professor in tweed jacket's eyes from across the tiered seating in a large lecture hall with tiered seating, projector screen at front, wooden desks, institutional fluorescent lighting, academic atmosphere, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a college student with oversized hoodie and backpack, headphones around neck, messy black hair, holding a coffee cup, casual slouched posture standing on the left, a corgi puppy with short legs and big ears, tri-color coat, tongue out, playful bouncing pose, tiny but energetic standing on the right, college student and corgi puppy walk quickly together back across the campus quad, in a university campus quad with old brick buildings and ivy, cinematic still frame, high quality, detailed",
+      "motion_prompt": "college student and corgi puppy walk quickly together back across the campus quad in a university campus quad with old brick buildings and ivy, students walking in background blur, autumn trees, bronze statue on pedestal, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a college student with oversized hoodie and backpack, headphones around neck, messy black hair, holding a coffee cup, casual slouched posture, college student sits alone under the old oak tree, headphones back on, in a university campus quad with old brick buildings and ivy, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a college student with oversized hoodie and backpack, headphones around neck, messy black hair, holding a coffee cup, casual slouched posture college student sits alone under the old oak tree, headphones back on in a university campus quad with old brick buildings and ivy, students walking in background blur, autumn trees, bronze statue on pedestal, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}

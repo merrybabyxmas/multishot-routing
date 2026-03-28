@@ -1,0 +1,122 @@
+{
+  "scenario_id": "nature_03",
+  "domain": "Nature / Animals",
+  "entities": {
+    "A": "a red fox with vivid orange-red fur and white-tipped bushy tail, black leg stockings, pointed ears, intelligent golden eyes, alert standing pose, full body, white background",
+    "B": "a snowy owl with pure white plumage and scattered dark barring, large round yellow eyes, soft fluffy feathers, perched alert stance, full body, white background",
+    "C": "a large bull moose with massive palmate antlers, dark brown coat, long legs, distinctive bell hanging from throat, imposing tall stance, full body, standing, white background"
+  },
+  "backgrounds": {
+    "D": "a snow-covered winter forest with bare birch trees, fresh fox tracks in powder snow, soft grey overcast sky, quiet serene atmosphere, cinematic, no people",
+    "E": "an open frozen lake under northern lights with green and purple aurora, smooth ice surface reflecting sky, distant tree line, cinematic, no people",
+    "F": "a narrow snow-covered animal den entrance among rocks, icicles hanging, warm light visible inside, frost patterns on stone, cinematic, no people"
+  },
+  "negative_prompt": "blurry, low quality, distorted, deformed, watermark, text, static, ugly, bad anatomy, extra limbs, disfigured",
+  "shots": [
+    {
+      "shot_id": "S1",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": -1,
+      "keyframe_prompt": "a red fox with vivid orange-red fur and white-tipped bushy tail, black leg stockings, pointed ears, intelligent golden eyes, alert standing pose, red fox trots across fresh powder snow, leaving delicate tracks behind, in a snow-covered winter forest with bare birch trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a red fox with vivid orange-red fur and white-tipped bushy tail, black leg stockings, pointed ears, intelligent golden eyes, alert standing pose red fox trots across fresh powder snow, leaving delicate tracks behind in a snow-covered winter forest with bare birch trees, fresh fox tracks in powder snow, soft grey overcast sky, quiet serene atmosphere, slow camera pan, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S2",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a red fox with vivid orange-red fur and white-tipped bushy tail, black leg stockings, pointed ears, intelligent golden eyes, alert standing pose standing on the left, a snowy owl with pure white plumage and scattered dark barring, large round yellow eyes, soft fluffy feathers, perched alert stance standing on the right, snowy owl glides silently down from a birch branch and perches near red fox, in a snow-covered winter forest with bare birch trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "snowy owl glides silently down from a birch branch and perches near red fox in a snow-covered winter forest with bare birch trees, fresh fox tracks in powder snow, soft grey overcast sky, quiet serene atmosphere, tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S3",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a red fox with vivid orange-red fur and white-tipped bushy tail, black leg stockings, pointed ears, intelligent golden eyes, alert standing pose standing on the left, a snowy owl with pure white plumage and scattered dark barring, large round yellow eyes, soft fluffy feathers, perched alert stance standing on the right, red fox and snowy owl cross the frozen lake together under the aurora borealis, in an open frozen lake under northern lights with green and purple aurora, cinematic still frame, high quality, detailed",
+      "motion_prompt": "red fox and snowy owl cross the frozen lake together under the aurora borealis in an open frozen lake under northern lights with green and purple aurora, smooth ice surface reflecting sky, distant tree line, slow dolly forward, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S4",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 2,
+      "keyframe_prompt": "a red fox with vivid orange-red fur and white-tipped bushy tail, black leg stockings, pointed ears, intelligent golden eyes, alert standing pose, red fox squeezes alone into the snow-covered den among the rocks, in a narrow snow-covered animal den entrance among rocks, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a red fox with vivid orange-red fur and white-tipped bushy tail, black leg stockings, pointed ears, intelligent golden eyes, alert standing pose red fox squeezes alone into the snow-covered den among the rocks in a narrow snow-covered animal den entrance among rocks, icicles hanging, warm light visible inside, frost patterns on stone, POV tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S5",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "F",
+      "expected_d": 0,
+      "keyframe_prompt": "a red fox with vivid orange-red fur and white-tipped bushy tail, black leg stockings, pointed ears, intelligent golden eyes, alert standing pose, red fox rests in the den, warm breath melting icicles at the entrance, in a narrow snow-covered animal den entrance among rocks, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a red fox with vivid orange-red fur and white-tipped bushy tail, black leg stockings, pointed ears, intelligent golden eyes, alert standing pose red fox rests in the den, warm breath melting icicles at the entrance in a narrow snow-covered animal den entrance among rocks, icicles hanging, warm light visible inside, frost patterns on stone, close-up static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S6",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a red fox with vivid orange-red fur and white-tipped bushy tail, black leg stockings, pointed ears, intelligent golden eyes, alert standing pose standing on the left, a snowy owl with pure white plumage and scattered dark barring, large round yellow eyes, soft fluffy feathers, perched alert stance standing on the right, red fox emerges and finds snowy owl watching from a branch, big yellow eyes unblinking, in an open frozen lake under northern lights with green and purple aurora, cinematic still frame, high quality, detailed",
+      "motion_prompt": "red fox emerges and finds snowy owl watching from a branch, big yellow eyes unblinking in an open frozen lake under northern lights with green and purple aurora, smooth ice surface reflecting sky, distant tree line, medium wide shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S7",
+      "target_entities": [
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 3,
+      "keyframe_prompt": "a large bull moose with massive palmate antlers, dark brown coat, long legs, distinctive bell hanging from throat, imposing tall stance, large bull moose crashes through a snowdrift, antlers towering above the treeline, in an open frozen lake under northern lights with green and purple aurora, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a large bull moose with massive palmate antlers, dark brown coat, long legs, distinctive bell hanging from throat, imposing tall stance large bull moose crashes through a snowdrift, antlers towering above the treeline in an open frozen lake under northern lights with green and purple aurora, smooth ice surface reflecting sky, distant tree line, dramatic low-angle shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S8",
+      "target_entities": [
+        "A",
+        "C"
+      ],
+      "target_bg": "E",
+      "expected_d": 1,
+      "keyframe_prompt": "a red fox with vivid orange-red fur and white-tipped bushy tail, black leg stockings, pointed ears, intelligent golden eyes, alert standing pose standing on the left, a large bull moose with massive palmate antlers, dark brown coat, long legs, distinctive bell hanging from throat, imposing tall stance standing on the right, red fox stands alert and faces large bull moose across the frozen landscape, in an open frozen lake under northern lights with green and purple aurora, cinematic still frame, high quality, detailed",
+      "motion_prompt": "red fox stands alert and faces large bull moose across the frozen landscape in an open frozen lake under northern lights with green and purple aurora, smooth ice surface reflecting sky, distant tree line, wide static shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S9",
+      "target_entities": [
+        "A",
+        "B"
+      ],
+      "target_bg": "D",
+      "expected_d": 1,
+      "keyframe_prompt": "a red fox with vivid orange-red fur and white-tipped bushy tail, black leg stockings, pointed ears, intelligent golden eyes, alert standing pose standing on the left, a snowy owl with pure white plumage and scattered dark barring, large round yellow eyes, soft fluffy feathers, perched alert stance standing on the right, red fox and snowy owl dash together through the birch forest, kicking up snow, in a snow-covered winter forest with bare birch trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "red fox and snowy owl dash together through the birch forest, kicking up snow in a snow-covered winter forest with bare birch trees, fresh fox tracks in powder snow, soft grey overcast sky, quiet serene atmosphere, dynamic tracking shot, cinematic, high quality, detailed"
+    },
+    {
+      "shot_id": "S10",
+      "target_entities": [
+        "A"
+      ],
+      "target_bg": "D",
+      "expected_d": 0,
+      "keyframe_prompt": "a red fox with vivid orange-red fur and white-tipped bushy tail, black leg stockings, pointed ears, intelligent golden eyes, alert standing pose, red fox curls up alone at the den entrance, snow falling softly, in a snow-covered winter forest with bare birch trees, cinematic still frame, high quality, detailed",
+      "motion_prompt": "a red fox with vivid orange-red fur and white-tipped bushy tail, black leg stockings, pointed ears, intelligent golden eyes, alert standing pose red fox curls up alone at the den entrance, snow falling softly in a snow-covered winter forest with bare birch trees, fresh fox tracks in powder snow, soft grey overcast sky, quiet serene atmosphere, slow push-in shot, cinematic, high quality, detailed"
+    }
+  ]
+}
