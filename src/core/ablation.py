@@ -350,6 +350,21 @@ class GlobalInjectGenerator(KeyframeGenerator):
 # Comparison Sheet Builder
 # ═══════════════════════════════════════════════════════════════════════
 
+def _load_font(size: int):
+    """Try to load a TrueType font at the given size, fallback to default."""
+    from PIL import ImageFont
+    for path in [
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+    ]:
+        try:
+            return ImageFont.truetype(path, size)
+        except (OSError, IOError):
+            continue
+    return ImageFont.load_default()
+
+
 def make_comparison_sheet(
     results: dict[str, dict[str, Image.Image]],
     shot_ids: list[str],
@@ -362,9 +377,12 @@ def make_comparison_sheet(
     n_shots = len(shot_ids)
 
     w, h = 512, 512
-    pad = 4
-    label_h = 28
-    header_w = 200
+    pad = 6
+    label_h = 40
+    header_w = 260
+
+    font_label = _load_font(28)
+    font_header = _load_font(32)
 
     sheet_w = header_w + n_shots * (w + pad) + pad
     sheet_h = pad + label_h + n_exps * (h + pad + label_h)
@@ -374,13 +392,13 @@ def make_comparison_sheet(
     # Column headers (shot IDs)
     for j, sid in enumerate(shot_ids):
         x = header_w + pad + j * (w + pad)
-        draw.text((x + w // 2 - 20, pad + 4), sid, fill=(255, 255, 100))
+        draw.text((x + w // 2 - 24, pad + 4), sid, fill=(255, 255, 100), font=font_header)
 
     # Rows
     for i, exp_name in enumerate(exp_names):
         y = pad + label_h + i * (h + pad + label_h)
         # Row label
-        draw.text((pad + 4, y + h // 2 - 8), exp_name, fill=(200, 200, 200))
+        draw.text((pad + 8, y + h // 2 - 14), exp_name, fill=(200, 200, 200), font=font_label)
 
         for j, sid in enumerate(shot_ids):
             x = header_w + pad + j * (w + pad)
@@ -389,7 +407,7 @@ def make_comparison_sheet(
                 sheet.paste(img.resize((w, h)), (x, y))
             else:
                 draw.rectangle([x, y, x + w, y + h], fill=(60, 60, 60))
-                draw.text((x + 10, y + h // 2), "N/A", fill=(150, 150, 150))
+                draw.text((x + 10, y + h // 2), "N/A", fill=(150, 150, 150), font=font_label)
 
     sheet.save(out_path)
     print(f"\nComparison sheet -> {out_path}")
