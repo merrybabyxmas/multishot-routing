@@ -259,7 +259,7 @@ class KeyframeGenerator:
         self.embedding_cache: dict[str, torch.Tensor] = {}
 
     def load_pipeline(self):
-        from diffusers import AutoPipelineForText2Image
+        from diffusers import AutoPipelineForText2Image, AutoPipelineForImage2Image
 
         print("[Pipeline] Loading SDXL-Turbo...")
         self.pipe = AutoPipelineForText2Image.from_pretrained(
@@ -276,6 +276,10 @@ class KeyframeGenerator:
         )
         self.pipe.set_ip_adapter_scale(0.6)
         self.pipe.set_progress_bar_config(disable=True)
+
+        print("[Pipeline] Creating Img2Img pipeline (shared components)...")
+        self.pipe_i2i = AutoPipelineForImage2Image.from_pipe(self.pipe)
+        self.pipe_i2i.set_progress_bar_config(disable=True)
 
         self.image_encoder = self.pipe.image_encoder
         self.clip_processor = self.pipe.feature_extractor
@@ -339,6 +343,69 @@ class KeyframeGenerator:
         tokens.append(self.embedding_cache[node.bg].unsqueeze(0).unsqueeze(0))  # (1,1,1280)
         concat = torch.cat(tokens, dim=1)  # (1, N, 1280)
         return [concat]
+
+    def _ip_embeds_for(self, entities, bg):
+        """Build IP-Adapter embeds for an arbitrary entity set + bg."""
+        tokens = []
+        for ent in sorted(entities):
+            tokens.append(self.embedding_cache[ent].unsqueeze(0).unsqueeze(0))
+        tokens.append(self.embedding_cache[bg].unsqueeze(0).unsqueeze(0))
+        return [torch.cat(tokens, dim=1)]
+
+    def _generate_missing_component(self, added_entities, bg,
+                                     entity_prompts, bg_prompts):
+        """Generate a temporary frame for the missing entity in the target bg."""
+        parts = [entity_prompts[e].split(",")[0] for e in sorted(added_entities)]
+        bg_desc = bg_prompts[bg].split(",")[0]
+        temp_prompt = (f"{', '.join(parts)}, in {bg_desc}, "
+                       f"standing, cinematic still frame, high quality, detailed")
+        temp_ip = self._ip_embeds_for(added_entities, bg)
+
+        seed_offset = sum(ord(c) for c in "".join(sorted(added_entities)))
+        temp_gen = torch.Generator(device=self.device).manual_seed(
+            self.seed + seed_offset
+        )
+
+        self.attn_ctrl.set_mode_bypass()
+        img = self.pipe(
+            prompt=temp_prompt,
+            negative_prompt="blurry, low quality, distorted, deformed",
+            ip_adapter_image_embeds=temp_ip,
+            num_inference_steps=4,
+            guidance_scale=0.0,
+            generator=temp_gen,
+            width=512, height=512,
+        ).images[0]
+        return img
+
+    def _stitch_and_smooth(self, left_img, right_img, prompt, ip_embeds,
+                            gen, out_dir=None, debug_name=None):
+        """Stitch left/right halves and smooth the seam via low-strength img2img.
+
+        Compositional Generation: forces D=0 by spatial composition,
+        then smooths the seam boundary with a gentle img2img pass.
+        """
+        # Stitch: left half from left_img, right half from right_img
+        composite = Image.new("RGB", (512, 512))
+        composite.paste(left_img.crop((0, 0, 256, 512)), (0, 0))
+        composite.paste(right_img.crop((256, 0, 512, 512)), (256, 0))
+
+        if out_dir and debug_name:
+            composite.save(out_dir / f"debug_composite_{debug_name}.png")
+
+        # Smooth: low-strength img2img blends the seam naturally
+        self.attn_ctrl.set_mode_bypass()
+        smoothed = self.pipe_i2i(
+            prompt=prompt,
+            negative_prompt="blurry, low quality, distorted, deformed, visible seam",
+            image=composite,
+            ip_adapter_image_embeds=ip_embeds,
+            strength=0.25,
+            num_inference_steps=4,
+            guidance_scale=0.0,
+            generator=gen,
+        ).images[0]
+        return smoothed
 
     @staticmethod
     def build_prompt(node, entity_prompts, bg_prompts):
@@ -405,24 +472,71 @@ class KeyframeGenerator:
             removed = parent.entities - node.entities
 
             if added:
-                # Soft Layout Reset: very low blend gives UNet freedom to
-                # expand from 1-person to 2-person layout without chimera,
-                # while still inheriting the parent's ambient vibe.
-                blend = self.max_blend * 0.1
-                change_type = f"+entity({added})"
+                # ── Compositional Stitching (Divide & Conquer) ──
+                # Instead of forcing UNet to resolve D=1 in one pass,
+                # generate the missing component separately, stitch
+                # spatially to form D=0 composite, then smooth the seam.
+                print(f"  Mode: COMPOSITIONAL STITCH (+entity({added}), forcing D→0)")
+
+                # 1. Parent image = right half (existing entities in bg)
+                parent_img = keyframes[parent.shot_id]
+                print(f"    Right half: parent {parent.shot_id} "
+                      f"(E={sorted(parent.entities)}, BG={parent.bg})")
+
+                # 2. Generate missing component = left half (added entities in bg)
+                print(f"    Left half: generating {sorted(added)} in BG={node.bg}...")
+                missing_img = self._generate_missing_component(
+                    added, node.bg,
+                    self._entity_prompts, self._bg_prompts,
+                )
+
+                # 3. Stitch + Smooth → D=0 composite
+                print(f"    Stitching + smoothing (strength=0.25)...")
+                img = self._stitch_and_smooth(
+                    left_img=missing_img,
+                    right_img=parent_img,
+                    prompt=prompt,
+                    ip_embeds=ip_embeds,
+                    gen=gen,
+                )
+
+                # 4. Cache K/V from the smoothed result for children
+                self.attn_ctrl.set_mode_store()
+                gen2 = torch.Generator(device=self.device).manual_seed(
+                    self.seed + _stable_hash(node.shot_id) + 1
+                )
+                def store_cb(pipe, step, timestep, cbk):
+                    self.attn_ctrl.update_step(step)
+                    return cbk
+                _ = self.pipe(
+                    prompt=prompt,
+                    negative_prompt="blurry, low quality, distorted, deformed",
+                    ip_adapter_image_embeds=ip_embeds,
+                    num_inference_steps=self.num_steps,
+                    guidance_scale=0.0,
+                    generator=gen2,
+                    width=512, height=512,
+                    callback_on_step_end=store_cb,
+                )
+                self.attn_ctrl.save_kv_to_cache(node.shot_id)
+                self.attn_ctrl.set_mode_bypass()
+
             elif removed:
                 blend = self.max_blend * 0.5
-                change_type = f"-entity({removed})"
+                print(f"  Mode: DERIVE (D=1, -entity({removed}), blend={blend:.0%}→0)")
+                self._generate_with_parent_kv(
+                    node, prompt, ip_embeds, keyframes, gen,
+                    blend_override=blend,
+                )
+                img = self._last_generated
             else:
                 blend = self.max_blend * 0.7
-                change_type = f"bg({parent.bg}→{node.bg})"
-
-            print(f"  Mode: DERIVE (D=1, {change_type}, blend={blend:.0%}→0)")
-            self._generate_with_parent_kv(
-                node, prompt, ip_embeds, keyframes, gen,
-                blend_override=blend,
-            )
-            img = self._last_generated
+                print(f"  Mode: DERIVE (D=1, bg({parent.bg}→{node.bg}), blend={blend:.0%}→0)")
+                self._generate_with_parent_kv(
+                    node, prompt, ip_embeds, keyframes, gen,
+                    blend_override=blend,
+                )
+                img = self._last_generated
 
         else:
             raise RuntimeError(f"D={d} — bridge injection failed!")
@@ -495,6 +609,8 @@ class KeyframeGenerator:
         print(f"\nGeneration order: {' -> '.join(n.shot_id for n in gen_order)}")
 
         self.load_pipeline()
+        self._entity_prompts = entity_prompts
+        self._bg_prompts = bg_prompts
         anchor_images = self.build_anchor_cache(entity_prompts, bg_prompts, out_dir)
 
         print("\n" + "=" * 70)
