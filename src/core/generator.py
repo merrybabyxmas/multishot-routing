@@ -375,6 +375,29 @@ class KeyframeGenerator:
         concat = torch.cat(tokens, dim=1)  # (1, N, 1280)
         return [concat]
 
+    def _build_composite_anchor(self, entity_symbols: list[str]) -> Image.Image:
+        """Build a left-right composite from anchor images for img2img init.
+
+        Places entity anchors side-by-side on a 512x512 canvas.
+        For 2 entities: left half = first entity, right half = second entity.
+        For 1 entity: centered.
+        """
+        w, h = 512, 512
+        canvas = Image.new("RGB", (w, h), (128, 128, 128))
+
+        if len(entity_symbols) == 1:
+            anchor = self.anchor_images[entity_symbols[0]]
+            resized = anchor.resize((w, h), Image.LANCZOS)
+            canvas.paste(resized, (0, 0))
+        elif len(entity_symbols) >= 2:
+            half_w = w // 2
+            left = self.anchor_images[entity_symbols[0]].resize((half_w, h), Image.LANCZOS)
+            right = self.anchor_images[entity_symbols[1]].resize((half_w, h), Image.LANCZOS)
+            canvas.paste(left, (0, 0))
+            canvas.paste(right, (half_w, 0))
+
+        return canvas
+
     @staticmethod
     def build_prompt(node, entity_prompts, bg_prompts):
         entities_sorted = sorted(node.entities)
@@ -412,7 +435,61 @@ class KeyframeGenerator:
             self.seed + _stable_hash(node.shot_id)
         )
 
-        if node.parent_node is None:
+        # ── Check if bridge needs composite img2img ──
+        # Any bridge with 2+ entities uses composite anchor img2img to prevent
+        # entity collapse. This covers both +entity bridges AND downstream
+        # bridges (e.g., bg-change) that must maintain multi-entity layout.
+        needs_composite = (
+            node.is_bridge
+            and len(node.entities) >= 2
+        )
+
+        if needs_composite:
+            # BRIDGE +entity: generate via img2img from composite anchor.
+            #
+            # Why: Parent K/V encodes a single-entity spatial layout that
+            # suppresses new entities. Pure T2I also fails because SDXL-Turbo
+            # at guidance_scale=0 can't reliably compose 2 characters from
+            # text alone. Instead, we physically place both entities into an
+            # init image (left-right composite of anchors) and use img2img
+            # to adapt the scene. This guarantees both entities appear.
+            added = node.entities - node.parent_node.entities if node.parent_node else set()
+            if added:
+                print(f"  Mode: COMPOSITE IMG2IMG (bridge +entity({added}))")
+            else:
+                print(f"  Mode: COMPOSITE IMG2IMG (bridge multi-entity, preserve layout)")
+
+            # Build left-right composite from anchor images
+            entities_sorted = sorted(node.entities)
+            composite = self._build_composite_anchor(entities_sorted)
+
+            self.attn_ctrl.set_mode_store()
+
+            step_log = []
+            def bridge_callback(pipe, step, timestep, cbk):
+                self.attn_ctrl.update_step(step)
+                step_log.append(step)
+                return cbk
+
+            img = self.pipe_i2i(
+                prompt=prompt,
+                negative_prompt="blurry, low quality, distorted, deformed",
+                image=composite,
+                ip_adapter_image_embeds=ip_embeds,
+                num_inference_steps=self.num_steps,
+                strength=0.7,
+                guidance_scale=0.0,
+                generator=gen,
+                width=512, height=512,
+                callback_on_step_end=bridge_callback,
+            ).images[0]
+            self.attn_ctrl.save_kv_to_cache(node.shot_id)
+            for p in self.attn_ctrl.kv_processors.values():
+                p.kv_bank.clear()
+            self.attn_ctrl.set_mode_bypass()
+            print(f"  Cached K/V for {len(step_log)} steps")
+
+        elif node.parent_node is None:
             print(f"  Mode: T2I (root node, store K/V)")
             self.attn_ctrl.set_mode_store()
 
