@@ -387,39 +387,38 @@ class KeyframeGenerator:
         return [concat]
 
     @staticmethod
-    def _shorten_desc(desc: str, max_words: int = 12) -> str:
-        """Shorten entity/bg description to fit CLIP's 77-token limit.
-        Finds the last natural boundary before max_words."""
+    def _shorten_desc(desc: str, max_words: int = 9) -> str:
+        """Extract a concise core description (noun phrase only).
+        Cuts at first modifier clause to avoid SDXL concept merging."""
         words = desc.split()
         if len(words) <= max_words:
             return desc
-        # Find last good cut point (before a preposition/conjunction)
-        cut_words = {"wearing", "with", "in", "holding", "carrying", "standing",
-                     "sitting", "running", "on", "at", "from", "and", "a", "an", "the"}
+        # Trim trailing articles/prepositions/conjunctions
+        trail = {"wearing", "with", "in", "holding", "carrying", "standing",
+                 "sitting", "running", "on", "at", "from", "and", "a", "an", "the"}
         result = words[:max_words]
-        # Trim trailing articles/prepositions that leave dangling phrases
-        while result and result[-1].lower().rstrip(",") in cut_words:
+        while result and result[-1].lower().rstrip(",") in trail:
             result.pop()
         return " ".join(result).rstrip(",") if result else " ".join(words[:max_words])
 
     @staticmethod
     def build_prompt(node, entity_prompts, bg_prompts):
-        # Use pre-built keyframe_prompt if available, but shorten for 2-entity
         entities_sorted = sorted(node.entities)
 
         if len(entities_sorted) == 2:
-            # For 2-entity shots: build concise prompt that fits CLIP 77 tokens
-            # ~12 words per entity + spatial anchor + bg + suffix ≈ 50 tokens
+            # Concise 2-entity prompt: "two characters" prefix helps SDXL
+            # separate entities. Short descriptions avoid concept merging.
             desc0 = KeyframeGenerator._shorten_desc(
-                entity_prompts[entities_sorted[0]].split(",")[0], 10)
+                entity_prompts[entities_sorted[0]].split(",")[0], 9)
             desc1 = KeyframeGenerator._shorten_desc(
-                entity_prompts[entities_sorted[1]].split(",")[0], 10)
+                entity_prompts[entities_sorted[1]].split(",")[0], 9)
             bg_desc = KeyframeGenerator._shorten_desc(
                 bg_prompts[node.bg].split(",")[0], 8)
-            return (f"{desc0} on the left, {desc1} on the right, "
-                    f"in {bg_desc}, cinematic, high quality, detailed")
+            return (f"two characters: {desc0} on the left, "
+                    f"{desc1} on the right, "
+                    f"in {bg_desc}, cinematic, detailed")
 
-        # Single entity: can use pre-built keyframe_prompt if available
+        # Single entity: use pre-built keyframe_prompt if available
         if hasattr(node, 'keyframe_prompt') and node.keyframe_prompt:
             return node.keyframe_prompt
 
@@ -493,7 +492,7 @@ class KeyframeGenerator:
                 # Reduce IP-Adapter scale for multi-entity to let text dominate.
                 multi = len(node.entities) >= 2
                 if multi:
-                    self.pipe.set_ip_adapter_scale(0.3)
+                    self.pipe.set_ip_adapter_scale(0.15)
                 print(f"  Mode: T2I (+entity({added}), no parent K/V, "
                       f"IP-scale={'0.3' if multi else '0.6'}, store)")
                 self.attn_ctrl.set_mode_store()
