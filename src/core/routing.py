@@ -62,12 +62,11 @@ def _build_bridge_chain(
     """
     Build exactly D-1 bridge nodes from *source* toward *target*.
 
-    Strategy: additions first, then bg change, then subtractions last.
+    Strategy (from iea.txt): subtractions first, then additions, then bg.
 
-    By adding entities before removing them, bridge nodes pass through the
-    maximal entity set (source ∪ target). This creates intermediate states
-    that future shots can reuse — e.g., if the next shot after target needs
-    both old and new entities, a bridge already carries their combined K/V.
+    We enumerate ALL D intermediate states (each one unit-change from the
+    previous). The first D-1 become bridge nodes; the D-th state equals
+    the target itself, so we skip it. This guarantees every edge has D ≤ 1.
 
     Returns the last bridge node (direct parent of target).
     """
@@ -76,19 +75,19 @@ def _build_bridge_chain(
     cur_bg = source.bg
     steps: list[tuple[set[str], str]] = []
 
-    # 1. Entity additions FIRST (builds up to maximal entity set)
+    # 1. Entity subtractions
+    for ent in sorted(cur_ent - target.entities):
+        cur_ent = cur_ent - {ent}
+        steps.append((set(cur_ent), cur_bg))
+
+    # 2. Entity additions
     for ent in sorted(target.entities - cur_ent):
         cur_ent = cur_ent | {ent}
         steps.append((set(cur_ent), cur_bg))
 
-    # 2. Background change
+    # 3. Background change
     if cur_bg != target.bg:
         cur_bg = target.bg
-        steps.append((set(cur_ent), cur_bg))
-
-    # 3. Entity subtractions LAST (prunes down to target)
-    for ent in sorted(cur_ent - target.entities):
-        cur_ent = cur_ent - {ent}
         steps.append((set(cur_ent), cur_bg))
 
     # The last step should match the target state — skip it (the real shot

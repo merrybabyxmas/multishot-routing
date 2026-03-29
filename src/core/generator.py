@@ -380,19 +380,17 @@ class KeyframeGenerator:
         entities_sorted = sorted(node.entities)
         parts = []
         if len(entities_sorted) == 2:
-            # Spatial anchoring: explicit two-character composition
+            # Spatial anchoring: first entity left, second entity right
             desc0 = entity_prompts[entities_sorted[0]].split(",")[0]
             desc1 = entity_prompts[entities_sorted[1]].split(",")[0]
-            parts.append(f"{desc0} on the left side")
-            parts.append(f"{desc1} on the right side")
+            parts.append(f"{desc0} standing on the left")
+            parts.append(f"{desc1} standing on the right")
         else:
             for ent in entities_sorted:
                 desc = entity_prompts[ent].split(",")[0]
                 parts.append(desc)
         bg_desc = bg_prompts[node.bg].split(",")[0]
-        action = f", {node.action}" if node.action else ""
-        two_char = ", two characters side by side" if len(entities_sorted) == 2 else ""
-        return (f"{', '.join(parts)}{two_char}, in {bg_desc}{action}, "
+        return (f"{', '.join(parts)}, in {bg_desc}, {node.action}, "
                 f"cinematic still frame, high quality, detailed")
 
     # ── Core Generation ────────────────────────────────────────────
