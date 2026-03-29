@@ -269,13 +269,15 @@ class AttentionControl:
 
 class KeyframeGenerator:
 
-    def __init__(self, device: str = "cuda:3", num_steps: int = 8,
-                 max_blend: float = 0.7, inject_pct: float = 0.6):
+    def __init__(self, device: str = "cuda:3", num_steps: int = 25,
+                 max_blend: float = 0.7, inject_pct: float = 0.6,
+                 guidance_scale: float = 5.0):
         self.device = device
         self.dtype = torch.float16
         self.num_steps = num_steps
         self.max_blend = max_blend
         self.inject_pct = inject_pct
+        self.guidance_scale = guidance_scale
         self.seed = 42
 
         self.pipe = None
@@ -287,13 +289,13 @@ class KeyframeGenerator:
 
     def load_pipeline(self):
         if hasattr(self, "pipe") and self.pipe is not None:
-            print("[Pipeline] SDXL-Turbo already loaded, reusing.")
+            print("[Pipeline] SDXL-Base already loaded, reusing.")
             return
         from diffusers import AutoPipelineForText2Image, AutoPipelineForImage2Image
 
-        print("[Pipeline] Loading SDXL-Turbo...")
+        print("[Pipeline] Loading SDXL-Base-1.0...")
         self.pipe = AutoPipelineForText2Image.from_pretrained(
-            "stabilityai/sdxl-turbo",
+            "stabilityai/stable-diffusion-xl-base-1.0",
             torch_dtype=self.dtype,
             variant="fp16",
         ).to(self.device)
@@ -336,8 +338,8 @@ class KeyframeGenerator:
                 prompt=prompt,
                 negative_prompt="blurry, low quality, distorted",
                 ip_adapter_image_embeds=self._zero_ip_embeds(),
-                num_inference_steps=4,
-                guidance_scale=0.0,
+                num_inference_steps=self.num_steps,
+                guidance_scale=self.guidance_scale,
                 generator=gen,
                 width=512, height=512,
             ).images[0]
@@ -425,7 +427,7 @@ class KeyframeGenerator:
                 negative_prompt="blurry, low quality, distorted, deformed",
                 ip_adapter_image_embeds=ip_embeds,
                 num_inference_steps=self.num_steps,
-                guidance_scale=0.0,
+                guidance_scale=self.guidance_scale,
                 generator=gen,
                 width=512, height=512,
                 callback_on_step_end=root_callback,
@@ -522,7 +524,7 @@ class KeyframeGenerator:
             negative_prompt="blurry, low quality, distorted, deformed",
             ip_adapter_image_embeds=ip_embeds,
             num_inference_steps=self.num_steps,
-            guidance_scale=0.0,
+            guidance_scale=self.guidance_scale,
             generator=gen,
             width=512, height=512,
             callback_on_step_end=callback,
@@ -651,9 +653,10 @@ SCENARIO = [
 def main():
     gen = KeyframeGenerator(
         device="cuda:3",
-        num_steps=8,
+        num_steps=25,
         max_blend=0.7,
         inject_pct=0.6,
+        guidance_scale=5.0,
     )
     gen.run(
         scenario=SCENARIO,

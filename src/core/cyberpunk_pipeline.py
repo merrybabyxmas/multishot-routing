@@ -87,7 +87,7 @@ class NaiveT2IGenerator(KeyframeGenerator):
                 negative_prompt="blurry, low quality, distorted, deformed",
                 ip_adapter_image_embeds=ip_embeds,
                 num_inference_steps=self.num_steps,
-                guidance_scale=0.0,
+                guidance_scale=self.guidance_scale,
                 generator=gen,
                 width=512, height=512,
             ).images[0]
@@ -205,7 +205,7 @@ def run_condition(
     print(f"  GENERATING: {label}")
     print(f"{'█' * 70}\n")
 
-    gen = gen_class(device="cuda:3", num_steps=8, max_blend=0.7, inject_pct=0.6)
+    gen = gen_class(device="cuda:3", num_steps=25, max_blend=0.7, inject_pct=0.6, guidance_scale=5.0)
     gen.run(
         scenario=build_scenario(),
         entity_prompts=ENTITY_PROMPTS,
