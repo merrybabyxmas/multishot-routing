@@ -227,10 +227,10 @@ def _create_generator(pipe_label: str, device: str):
     """Create a generator instance for the given pipeline label."""
     if pipe_label == "Ours":
         from src.core.generator import KeyframeGenerator
-        return KeyframeGenerator(device=device, num_steps=25, max_blend=0.7, inject_pct=0.6, guidance_scale=5.0)
+        return KeyframeGenerator(device=device, num_steps=25, max_blend=0.7, inject_pct=0.6, guidance_scale=7.5)
     elif pipe_label == "StoryDiffusion":
         from src.core.storydiff_baseline import StoryDiffusionGenerator
-        return StoryDiffusionGenerator(device=device, num_steps=25, guidance_scale=5.0)
+        return StoryDiffusionGenerator(device=device, num_steps=25, guidance_scale=7.5)
     elif pipe_label in ("Markovian", "NoBridge", "GlobalInject"):
         from src.core.ablation import (
             MarkovianGenerator, NoBridgeGenerator, GlobalInjectGenerator,
@@ -240,7 +240,7 @@ def _create_generator(pipe_label: str, device: str):
             "NoBridge": NoBridgeGenerator,
             "GlobalInject": GlobalInjectGenerator,
         }
-        return cls_map[pipe_label](device=device, num_steps=25, max_blend=0.7, inject_pct=0.6, guidance_scale=5.0)
+        return cls_map[pipe_label](device=device, num_steps=25, max_blend=0.7, inject_pct=0.6, guidance_scale=7.5)
     else:
         raise ValueError(f"Unknown pipeline: {pipe_label}")
 

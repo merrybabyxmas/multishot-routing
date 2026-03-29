@@ -271,13 +271,15 @@ class KeyframeGenerator:
 
     def __init__(self, device: str = "cuda:3", num_steps: int = 25,
                  max_blend: float = 0.7, inject_pct: float = 0.6,
-                 guidance_scale: float = 5.0):
+                 guidance_scale: float = 7.5, width: int = 768, height: int = 768):
         self.device = device
         self.dtype = torch.float16
         self.num_steps = num_steps
         self.max_blend = max_blend
         self.inject_pct = inject_pct
         self.guidance_scale = guidance_scale
+        self.width = width
+        self.height = height
         self.seed = 42
 
         self.pipe = None
@@ -341,7 +343,7 @@ class KeyframeGenerator:
                 num_inference_steps=self.num_steps,
                 guidance_scale=self.guidance_scale,
                 generator=gen,
-                width=512, height=512,
+                width=self.width, height=self.height,
             ).images[0]
             anchor_images[symbol] = img
             self.anchor_images[symbol] = img.copy()
@@ -440,7 +442,7 @@ class KeyframeGenerator:
                 num_inference_steps=self.num_steps,
                 guidance_scale=self.guidance_scale,
                 generator=gen,
-                width=512, height=512,
+                width=self.width, height=self.height,
                 callback_on_step_end=root_callback,
             ).images[0]
             self.attn_ctrl.save_kv_to_cache(node.shot_id)
@@ -667,7 +669,7 @@ def main():
         num_steps=25,
         max_blend=0.7,
         inject_pct=0.6,
-        guidance_scale=5.0,
+        guidance_scale=7.5,
     )
     gen.run(
         scenario=SCENARIO,

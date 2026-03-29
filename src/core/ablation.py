@@ -107,7 +107,7 @@ class MarkovianGenerator(KeyframeGenerator):
                     num_inference_steps=self.num_steps,
                     guidance_scale=self.guidance_scale,
                     generator=gen,
-                    width=512, height=512,
+                    width=self.width, height=self.height,
                     callback_on_step_end=root_cb,
                 ).images[0]
                 self.attn_ctrl.save_kv_to_cache(node.shot_id)
@@ -213,7 +213,7 @@ class NoBridgeGenerator(KeyframeGenerator):
                     num_inference_steps=self.num_steps,
                     guidance_scale=self.guidance_scale,
                     generator=gen,
-                    width=512, height=512,
+                    width=self.width, height=self.height,
                     callback_on_step_end=root_cb,
                 ).images[0]
                 self.attn_ctrl.save_kv_to_cache(node.shot_id)
@@ -429,7 +429,7 @@ def main():
     print("  RUNNING: Ours (Full Pipeline)")
     print("█" * 70 + "\n")
     ours_dir = base_dir / "ours"
-    gen_ours = KeyframeGenerator(device="cuda:3", num_steps=25, max_blend=0.7, inject_pct=0.6, guidance_scale=5.0)
+    gen_ours = KeyframeGenerator(device="cuda:3", num_steps=25, max_blend=0.7, inject_pct=0.6, guidance_scale=7.5)
     gen_ours.run(
         scenario=_fresh_scenario(),
         entity_prompts=ENTITY_PROMPTS,
@@ -452,7 +452,7 @@ def main():
     print("  RUNNING: Exp 1 — Markovian Baseline")
     print("█" * 70 + "\n")
     exp1_dir = base_dir / "exp1_markovian"
-    gen1 = MarkovianGenerator(device="cuda:3", num_steps=25, max_blend=0.7, inject_pct=0.6, guidance_scale=5.0)
+    gen1 = MarkovianGenerator(device="cuda:3", num_steps=25, max_blend=0.7, inject_pct=0.6, guidance_scale=7.5)
     gen1.run(
         scenario=_fresh_scenario(),
         entity_prompts=ENTITY_PROMPTS,
@@ -474,7 +474,7 @@ def main():
     print("  RUNNING: Exp 2 — No Bridge Baseline")
     print("█" * 70 + "\n")
     exp2_dir = base_dir / "exp2_no_bridge"
-    gen2 = NoBridgeGenerator(device="cuda:3", num_steps=25, max_blend=0.7, inject_pct=0.6, guidance_scale=5.0)
+    gen2 = NoBridgeGenerator(device="cuda:3", num_steps=25, max_blend=0.7, inject_pct=0.6, guidance_scale=7.5)
     gen2.run(
         scenario=_fresh_scenario(),
         entity_prompts=ENTITY_PROMPTS,
@@ -496,7 +496,7 @@ def main():
     print("  RUNNING: Exp 3 — Global Injection (no gradient, no spatial)")
     print("█" * 70 + "\n")
     exp3_dir = base_dir / "exp3_global_inject"
-    gen3 = GlobalInjectGenerator(device="cuda:3", num_steps=25, max_blend=0.7, inject_pct=0.6, guidance_scale=5.0)
+    gen3 = GlobalInjectGenerator(device="cuda:3", num_steps=25, max_blend=0.7, inject_pct=0.6, guidance_scale=7.5)
     gen3.run(
         scenario=_fresh_scenario(),
         entity_prompts=ENTITY_PROMPTS,
