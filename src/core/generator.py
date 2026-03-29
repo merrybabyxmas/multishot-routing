@@ -387,23 +387,46 @@ class KeyframeGenerator:
         return [concat]
 
     @staticmethod
+    def _shorten_desc(desc: str, max_words: int = 12) -> str:
+        """Shorten entity/bg description to fit CLIP's 77-token limit.
+        Finds the last natural boundary before max_words."""
+        words = desc.split()
+        if len(words) <= max_words:
+            return desc
+        # Find last good cut point (before a preposition/conjunction)
+        cut_words = {"wearing", "with", "in", "holding", "carrying", "standing",
+                     "sitting", "running", "on", "at", "from", "and", "a", "an", "the"}
+        result = words[:max_words]
+        # Trim trailing articles/prepositions that leave dangling phrases
+        while result and result[-1].lower().rstrip(",") in cut_words:
+            result.pop()
+        return " ".join(result).rstrip(",") if result else " ".join(words[:max_words])
+
+    @staticmethod
     def build_prompt(node, entity_prompts, bg_prompts):
-        # Use pre-built keyframe_prompt if available (MSR-50 scenarios)
+        # Use pre-built keyframe_prompt if available, but shorten for 2-entity
+        entities_sorted = sorted(node.entities)
+
+        if len(entities_sorted) == 2:
+            # For 2-entity shots: build concise prompt that fits CLIP 77 tokens
+            # ~12 words per entity + spatial anchor + bg + suffix ≈ 50 tokens
+            desc0 = KeyframeGenerator._shorten_desc(
+                entity_prompts[entities_sorted[0]].split(",")[0], 10)
+            desc1 = KeyframeGenerator._shorten_desc(
+                entity_prompts[entities_sorted[1]].split(",")[0], 10)
+            bg_desc = KeyframeGenerator._shorten_desc(
+                bg_prompts[node.bg].split(",")[0], 8)
+            return (f"{desc0} on the left, {desc1} on the right, "
+                    f"in {bg_desc}, cinematic, high quality, detailed")
+
+        # Single entity: can use pre-built keyframe_prompt if available
         if hasattr(node, 'keyframe_prompt') and node.keyframe_prompt:
             return node.keyframe_prompt
 
-        entities_sorted = sorted(node.entities)
         parts = []
-        if len(entities_sorted) == 2:
-            # Spatial anchoring: first entity left, second entity right
-            desc0 = entity_prompts[entities_sorted[0]].split(",")[0]
-            desc1 = entity_prompts[entities_sorted[1]].split(",")[0]
-            parts.append(f"{desc0} standing on the left")
-            parts.append(f"{desc1} standing on the right")
-        else:
-            for ent in entities_sorted:
-                desc = entity_prompts[ent].split(",")[0]
-                parts.append(desc)
+        for ent in entities_sorted:
+            desc = entity_prompts[ent].split(",")[0]
+            parts.append(desc)
         bg_desc = bg_prompts[node.bg].split(",")[0]
         return (f"{', '.join(parts)}, in {bg_desc}, {node.action}, "
                 f"cinematic still frame, high quality, detailed")
@@ -465,10 +488,11 @@ class KeyframeGenerator:
             removed = parent.entities - node.entities
 
             if added:
-                # ── Gradient K/V Injection (+entity) ──
-                # Left side: free for new entity (low parent K/V blend)
-                # Right side: high parent K/V blend (preserve existing entity)
-                blend = self.max_blend * 0.4
+                # ── +entity transition ──
+                # When adding entity to reach multi-entity, use very low blend
+                # to let text prompt + IP-Adapter control both entities.
+                # Gradient mask: left=free for new entity, right=mild parent K/V
+                blend = self.max_blend * 0.15
                 print(f"  Mode: GRADIENT K/V (+entity({added}), blend={blend:.0%} with gradient)")
                 self.attn_ctrl.set_spatial_mask("gradient")
                 self._generate_with_parent_kv(
