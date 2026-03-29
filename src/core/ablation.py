@@ -50,8 +50,6 @@ class MarkovianGenerator(KeyframeGenerator):
 
     def run(self, scenario, entity_prompts, bg_prompts, out_dir):
         out_dir.mkdir(parents=True, exist_ok=True)
-        self._entity_prompts = entity_prompts
-        self._bg_prompts = bg_prompts
 
         print("=" * 70)
         print("ABLATION EXP 1: Markovian Baseline (linear parent chain)")
@@ -146,8 +144,6 @@ class NoBridgeGenerator(KeyframeGenerator):
 
     def run(self, scenario, entity_prompts, bg_prompts, out_dir):
         out_dir.mkdir(parents=True, exist_ok=True)
-        self._entity_prompts = entity_prompts
-        self._bg_prompts = bg_prompts
 
         print("=" * 70)
         print("ABLATION EXP 2: No Bridge (direct jump for D≥2)")
