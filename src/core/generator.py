@@ -51,7 +51,7 @@ class KVStoreAttnProcessor:
         self.kv_bank: dict[int, tuple[torch.Tensor, torch.Tensor]] = {}
         self.current_step: int = 0
         self.blend_ratio: float = 0.0
-        self.spatial_mask_type: str = "none"  # "none" | "gradient"
+        self.spatial_mask_type: str = "none"  # "none" | "sigmoid" | "gradient"(legacy)
 
     def reset(self):
         self.kv_bank.clear()
@@ -114,13 +114,18 @@ class KVStoreAttnProcessor:
                     if stored_k.shape == key.shape:
                         r = self.blend_ratio
 
-                        if self.spatial_mask_type == "gradient":
-                            # Gradient mask: left=0 (free for new entity), right=1 (parent K/V)
+                        if self.spatial_mask_type in ("sigmoid", "gradient"):
+                            # Steep sigmoid mask: sharp left/right separation
+                            # Left ≈ 0 (free for new entity), Right ≈ 1 (parent K/V preserved)
+                            # Unlike linear gradient, the narrow transition zone (~10% of width)
+                            # prevents identity collapse when entities have similar appearance.
                             seq_len = key.shape[1]
                             size = int(seq_len ** 0.5)
-                            grad_1d = torch.linspace(0.0, 1.0, size, device=key.device, dtype=key.dtype)
-                            grad_2d = grad_1d.unsqueeze(0).expand(size, -1)  # (H, W)
-                            spatial_r = (grad_2d.reshape(1, seq_len, 1)) * r
+                            steepness = 12.0
+                            x = torch.linspace(-1.0, 1.0, size, device=key.device, dtype=key.dtype)
+                            sigmoid_1d = torch.sigmoid(x * steepness)  # sharp step at center
+                            sigmoid_2d = sigmoid_1d.unsqueeze(0).expand(size, -1)  # (H, W)
+                            spatial_r = (sigmoid_2d.reshape(1, seq_len, 1)) * r
                             key = (1 - spatial_r) * key + spatial_r * stored_k
                             value = (1 - spatial_r) * value + spatial_r * stored_v
                         else:
@@ -284,6 +289,8 @@ class KeyframeGenerator:
         self.clip_processor = None
         self.embedding_cache: dict[str, torch.Tensor] = {}
         self.anchor_images: dict[str, Image.Image] = {}
+        self._entity_prompts: dict[str, str] = {}
+        self._bg_prompts: dict[str, str] = {}
 
     def load_pipeline(self):
         if hasattr(self, "pipe") and self.pipe is not None:
@@ -365,35 +372,108 @@ class KeyframeGenerator:
         """Return single zero embedding for IP-Adapter."""
         return [torch.zeros(1, 1, 1280, device=self.device, dtype=self.dtype)]
 
+    # Keywords that signal an abstract/non-humanoid entity — IP-Adapter struggles
+    # with these because CLIP encodes them as scenery, not actors.
+    ABSTRACT_ENTITY_KEYWORDS = {
+        "cloud", "storm", "fire", "flame", "spirit", "ghost", "shadow",
+        "light", "orb", "crystal", "portal", "vortex", "energy", "aura",
+        "fog", "mist", "wind", "lightning", "wave", "beam", "smoke",
+    }
+
+    @classmethod
+    def _is_abstract_entity(cls, entity_prompt: str) -> bool:
+        """Check if entity description matches abstract/non-humanoid patterns."""
+        prompt_lower = entity_prompt.lower()
+        return any(kw in prompt_lower for kw in cls.ABSTRACT_ENTITY_KEYWORDS)
+
+    @staticmethod
+    def _promote_entity_prompt(entity_prompt: str) -> str:
+        """Semantic promotion: make abstract entities sound like living actors
+        so SDXL treats them as foreground subjects, not background effects."""
+        return entity_prompt.replace(
+            "floating menacingly", "floating menacingly as a sentient creature"
+        ).replace(
+            "full body, white background",
+            "sentient creature entity, full body, white background",
+        ) if any(kw in entity_prompt.lower() for kw in (
+            "cloud", "storm", "fire", "flame", "spirit", "ghost",
+            "shadow", "orb", "crystal", "portal", "vortex",
+        )) else entity_prompt
+
     def _compose_ip_embeds(self, node):
-        """Concatenate all entity + bg embeddings into one token sequence.
-        Returns list with single (1, N, 1280) tensor where N = num_entities + 1."""
+        """Concatenate entity + bg embeddings into one token sequence.
+        Abstract entities get zero embeddings (text-only rendering) to prevent
+        IP-Adapter from confusing the model about non-humanoid subjects."""
         tokens = []
         for ent in sorted(node.entities):
-            tokens.append(self.embedding_cache[ent].unsqueeze(0).unsqueeze(0))  # (1,1,1280)
-        tokens.append(self.embedding_cache[node.bg].unsqueeze(0).unsqueeze(0))  # (1,1,1280)
+            ent_prompt = self._entity_prompts.get(ent, "")
+            if self._is_abstract_entity(ent_prompt):
+                # Abstract entity: zero embedding — let text prompt handle it
+                tokens.append(torch.zeros(1, 1, 1280, device=self.device, dtype=self.dtype))
+            else:
+                tokens.append(self.embedding_cache[ent].unsqueeze(0).unsqueeze(0))
+        tokens.append(self.embedding_cache[node.bg].unsqueeze(0).unsqueeze(0))
         concat = torch.cat(tokens, dim=1)  # (1, N, 1280)
         return [concat]
 
     @staticmethod
-    def build_prompt(node, entity_prompts, bg_prompts):
+    def build_prompt(node, entity_prompts, bg_prompts, is_kv_injected: bool = False):
+        """Build text prompt for a shot/bridge node.
+
+        When is_kv_injected=True (D>=0, parent K/V + IP-Adapter provide visual detail),
+        we strip adjectives and lengthy descriptions to stay well within CLIP's 77-token
+        limit. The text only needs to specify WHO, WHERE, and WHAT ACTION — visual
+        identity is carried by K/V cache and IP-Adapter embeddings.
+        """
         entities_sorted = sorted(node.entities)
-        parts = []
-        if len(entities_sorted) == 2:
-            # Spatial anchoring: explicit two-character composition
-            desc0 = entity_prompts[entities_sorted[0]].split(",")[0]
-            desc1 = entity_prompts[entities_sorted[1]].split(",")[0]
-            parts.append(f"{desc0} on the left side")
-            parts.append(f"{desc1} on the right side")
-        else:
+
+        if is_kv_injected:
+            # ── Stripped prompt: WHO + WHERE + ACTION only ──
+            # K/V cache + IP-Adapter carry visual identity; text just names subjects.
+            parts = []
             for ent in entities_sorted:
-                desc = entity_prompts[ent].split(",")[0]
-                parts.append(desc)
-        bg_desc = bg_prompts[node.bg].split(",")[0]
-        action = f", {node.action}" if node.action else ""
-        two_char = ", two characters side by side" if len(entities_sorted) == 2 else ""
-        return (f"{', '.join(parts)}{two_char}, in {bg_desc}{action}, "
-                f"cinematic still frame, high quality, detailed")
+                full_desc = entity_prompts[ent].split(",")[0]
+                # Cut at first preposition/participle to keep the head noun phrase:
+                # "a cyberpunk hacker wearing a neon-blue..." → "a cyberpunk hacker"
+                # "a massive armored security mech with a single..." → "a massive armored security mech"
+                cut_words = {"wearing", "with", "in", "holding", "carrying", "sitting",
+                             "standing", "floating", "crouching", "riding"}
+                words = full_desc.strip().split()
+                core_words = []
+                for w in words:
+                    if w.lower() in cut_words:
+                        break
+                    core_words.append(w)
+                core = " ".join(core_words) if core_words else full_desc
+                parts.append(core)
+            if len(entities_sorted) == 2:
+                prompt_ent = f"{parts[0]} on the left, {parts[1]} on the right"
+            else:
+                prompt_ent = parts[0]
+            bg_short = bg_prompts[node.bg].split(",")[0]
+            action = f", {node.action}" if node.action else ""
+            return f"{prompt_ent}, in {bg_short}{action}, cinematic, detailed"
+        else:
+            # ── Full prompt: root node or anchor generation ──
+            parts = []
+            if len(entities_sorted) == 2:
+                desc0 = entity_prompts[entities_sorted[0]].split(",")[0]
+                desc1 = entity_prompts[entities_sorted[1]].split(",")[0]
+                # Semantic promotion for abstract entities
+                desc0 = KeyframeGenerator._promote_entity_prompt(desc0)
+                desc1 = KeyframeGenerator._promote_entity_prompt(desc1)
+                parts.append(f"{desc0} on the left side")
+                parts.append(f"{desc1} on the right side")
+            else:
+                for ent in entities_sorted:
+                    desc = entity_prompts[ent].split(",")[0]
+                    desc = KeyframeGenerator._promote_entity_prompt(desc)
+                    parts.append(desc)
+            bg_desc = bg_prompts[node.bg].split(",")[0]
+            action = f", {node.action}" if node.action else ""
+            two_char = ", two characters side by side" if len(entities_sorted) == 2 else ""
+            return (f"{', '.join(parts)}{two_char}, in {bg_desc}{action}, "
+                    f"cinematic still frame, high quality, detailed")
 
     # ── Core Generation ────────────────────────────────────────────
 
@@ -452,12 +532,12 @@ class KeyframeGenerator:
             removed = parent.entities - node.entities
 
             if added:
-                # ── Gradient K/V Injection (+entity) ──
-                # Left side: free for new entity (low parent K/V blend)
-                # Right side: high parent K/V blend (preserve existing entity)
+                # ── Sigmoid Spatial K/V Injection (+entity) ──
+                # Left ≈ free for new entity, Right ≈ parent K/V preserved
+                # Steep sigmoid prevents identity collapse in blending zone
                 blend = self.max_blend * 0.4
-                print(f"  Mode: GRADIENT K/V (+entity({added}), blend={blend:.0%} with gradient)")
-                self.attn_ctrl.set_spatial_mask("gradient")
+                print(f"  Mode: SIGMOID K/V (+entity({added}), blend={blend:.0%})")
+                self.attn_ctrl.set_spatial_mask("sigmoid")
                 self._generate_with_parent_kv(
                     node, prompt, ip_embeds, keyframes, gen,
                     blend_override=blend,
@@ -575,7 +655,9 @@ class KeyframeGenerator:
         self._last_prompts: dict[str, str] = {}
 
         for node in gen_order:
-            prompt = self.build_prompt(node, entity_prompts, bg_prompts)
+            # Root nodes (no parent) get full prompts; derived nodes get stripped prompts
+            has_parent = node.parent_node is not None
+            prompt = self.build_prompt(node, entity_prompts, bg_prompts, is_kv_injected=has_parent)
             self._last_prompts[node.shot_id] = prompt
 
             img = self.generate_node(node, prompt, keyframes)
