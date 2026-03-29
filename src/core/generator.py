@@ -489,18 +489,38 @@ class KeyframeGenerator:
 
             if added:
                 # ── +entity transition ──
-                # When adding entity to reach multi-entity, use very low blend
-                # to let text prompt + IP-Adapter control both entities.
-                # Gradient mask: left=free for new entity, right=mild parent K/V
-                blend = self.max_blend * 0.15
-                print(f"  Mode: GRADIENT K/V (+entity({added}), blend={blend:.0%} with gradient)")
-                self.attn_ctrl.set_spatial_mask("gradient")
-                self._generate_with_parent_kv(
-                    node, prompt, ip_embeds, keyframes, gen,
-                    blend_override=blend,
-                )
-                self.attn_ctrl.set_spatial_mask("none")
-                img = self._last_generated
+                # Pure T2I with store — no parent K/V injection.
+                # Reduce IP-Adapter scale for multi-entity to let text dominate.
+                multi = len(node.entities) >= 2
+                if multi:
+                    self.pipe.set_ip_adapter_scale(0.3)
+                print(f"  Mode: T2I (+entity({added}), no parent K/V, "
+                      f"IP-scale={'0.3' if multi else '0.6'}, store)")
+                self.attn_ctrl.set_mode_store()
+
+                step_log = []
+                def add_callback(pipe, step, timestep, cbk):
+                    self.attn_ctrl.update_step(step)
+                    step_log.append(step)
+                    return cbk
+
+                img = self.pipe(
+                    prompt=prompt,
+                    negative_prompt="blurry, low quality, distorted, deformed",
+                    ip_adapter_image_embeds=ip_embeds,
+                    num_inference_steps=self.num_steps,
+                    guidance_scale=self.guidance_scale,
+                    generator=gen,
+                    width=self.width, height=self.height,
+                    callback_on_step_end=add_callback,
+                ).images[0]
+                self.attn_ctrl.save_kv_to_cache(node.shot_id)
+                for p in self.attn_ctrl.kv_processors.values():
+                    p.kv_bank.clear()
+                self.attn_ctrl.set_mode_bypass()
+                if multi:
+                    self.pipe.set_ip_adapter_scale(0.6)
+                print(f"  Stored K/V for {len(step_log)} steps (fresh generation)")
 
             elif removed:
                 blend = self.max_blend * 0.5
