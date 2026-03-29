@@ -25,6 +25,7 @@ class ShotNode:
     entities: set[str]
     bg: str
     action: str = ""
+    keyframe_prompt: str = ""
     parent_node: Optional["ShotNode"] = field(default=None, repr=False)
     is_bridge: bool = False
 

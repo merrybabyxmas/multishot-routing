@@ -140,6 +140,7 @@ def scenario_to_shot_nodes(scenario: dict) -> list[ShotNode]:
             entities=set(shot["target_entities"]),
             bg=shot["target_bg"],
             action=shot.get("motion_prompt", ""),
+            keyframe_prompt=shot.get("keyframe_prompt", ""),
         ))
     return nodes
 

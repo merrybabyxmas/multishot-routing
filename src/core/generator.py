@@ -364,21 +364,32 @@ class KeyframeGenerator:
         return emb.squeeze(0)
 
     def _zero_ip_embeds(self):
-        """Return single zero embedding for IP-Adapter."""
-        return [torch.zeros(1, 1, 1280, device=self.device, dtype=self.dtype)]
+        """Return zero embedding for IP-Adapter (negative + positive for CFG)."""
+        zero = torch.zeros(1, 1, 1280, device=self.device, dtype=self.dtype)
+        if self.guidance_scale > 1.0:
+            return [torch.cat([zero, zero], dim=0)]  # neg + pos for CFG
+        return [zero]
 
     def _compose_ip_embeds(self, node):
         """Concatenate all entity + bg embeddings into one token sequence.
-        Returns list with single (1, N, 1280) tensor where N = num_entities + 1."""
+        Returns list with single tensor. For CFG (guidance_scale > 1),
+        returns (2, N, 1280) with zeros for negative and real embeds for positive."""
         tokens = []
         for ent in sorted(node.entities):
             tokens.append(self.embedding_cache[ent].unsqueeze(0).unsqueeze(0))  # (1,1,1280)
         tokens.append(self.embedding_cache[node.bg].unsqueeze(0).unsqueeze(0))  # (1,1,1280)
         concat = torch.cat(tokens, dim=1)  # (1, N, 1280)
+        if self.guidance_scale > 1.0:
+            neg = torch.zeros_like(concat)
+            return [torch.cat([neg, concat], dim=0)]  # (2, N, 1280) for CFG
         return [concat]
 
     @staticmethod
     def build_prompt(node, entity_prompts, bg_prompts):
+        # Use pre-built keyframe_prompt if available (MSR-50 scenarios)
+        if hasattr(node, 'keyframe_prompt') and node.keyframe_prompt:
+            return node.keyframe_prompt
+
         entities_sorted = sorted(node.entities)
         parts = []
         if len(entities_sorted) == 2:
