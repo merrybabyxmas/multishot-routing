@@ -435,36 +435,38 @@ class KeyframeGenerator:
             self.seed + _stable_hash(node.shot_id)
         )
 
-        # ── Composite img2img for any node with 2+ entities ──
-        # SDXL-Turbo cannot reliably compose two characters from text/K/V alone.
-        # Composite anchor init physically places both entities into the image,
-        # guaranteeing their presence. For nodes with a parent, we additionally
-        # inject parent K/V (STORE_AND_INJECT) for scene coherence.
-        needs_composite = len(node.entities) >= 2
+        # ── Check if bridge needs composite img2img ──
+        # Any bridge with 2+ entities uses composite anchor img2img to prevent
+        # entity collapse. This covers both +entity bridges AND downstream
+        # bridges (e.g., bg-change) that must maintain multi-entity layout.
+        needs_composite = (
+            node.is_bridge
+            and len(node.entities) >= 2
+        )
 
         if needs_composite:
+            # BRIDGE +entity: generate via img2img from composite anchor.
+            #
+            # Why: Parent K/V encodes a single-entity spatial layout that
+            # suppresses new entities. Pure T2I also fails because SDXL-Turbo
+            # at guidance_scale=0 can't reliably compose 2 characters from
+            # text alone. Instead, we physically place both entities into an
+            # init image (left-right composite of anchors) and use img2img
+            # to adapt the scene. This guarantees both entities appear.
+            added = node.entities - node.parent_node.entities if node.parent_node else set()
+            if added:
+                print(f"  Mode: COMPOSITE IMG2IMG (bridge +entity({added}))")
+            else:
+                print(f"  Mode: COMPOSITE IMG2IMG (bridge multi-entity, preserve layout)")
+
+            # Build left-right composite from anchor images
             entities_sorted = sorted(node.entities)
             composite = self._build_composite_anchor(entities_sorted)
 
-            has_parent_kv = node.parent_node is not None
-            if has_parent_kv:
-                loaded = self.attn_ctrl.load_kv_from_cache(node.parent_node.shot_id)
-                if loaded:
-                    # Low blend so composite anchor layout dominates over parent K/V
-                    blend = self.max_blend * 0.3
-                    orig_blend = self.attn_ctrl.max_blend
-                    self.attn_ctrl.max_blend = blend
-                    self.attn_ctrl.set_mode_store_and_inject()
-                    print(f"  Mode: COMPOSITE IMG2IMG + K/V INJECT (blend={blend:.0%})")
-                else:
-                    self.attn_ctrl.set_mode_store()
-                    print(f"  Mode: COMPOSITE IMG2IMG (no parent K/V available)")
-            else:
-                self.attn_ctrl.set_mode_store()
-                print(f"  Mode: COMPOSITE IMG2IMG (root multi-entity)")
+            self.attn_ctrl.set_mode_store()
 
             step_log = []
-            def composite_callback(pipe, step, timestep, cbk):
+            def bridge_callback(pipe, step, timestep, cbk):
                 self.attn_ctrl.update_step(step)
                 step_log.append(step)
                 return cbk
@@ -475,18 +477,16 @@ class KeyframeGenerator:
                 image=composite,
                 ip_adapter_image_embeds=ip_embeds,
                 num_inference_steps=self.num_steps,
-                strength=0.6,
+                strength=0.7,
                 guidance_scale=0.0,
                 generator=gen,
                 width=512, height=512,
-                callback_on_step_end=composite_callback,
+                callback_on_step_end=bridge_callback,
             ).images[0]
             self.attn_ctrl.save_kv_to_cache(node.shot_id)
             for p in self.attn_ctrl.kv_processors.values():
                 p.kv_bank.clear()
             self.attn_ctrl.set_mode_bypass()
-            if has_parent_kv and loaded:
-                self.attn_ctrl.max_blend = orig_blend
             print(f"  Cached K/V for {len(step_log)} steps")
 
         elif node.parent_node is None:
