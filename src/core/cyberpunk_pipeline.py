@@ -54,8 +54,6 @@ class NaiveT2IGenerator(KeyframeGenerator):
 
     def run(self, scenario, entity_prompts, bg_prompts, out_dir):
         out_dir.mkdir(parents=True, exist_ok=True)
-        self._entity_prompts = entity_prompts
-        self._bg_prompts = bg_prompts
 
         print("=" * 70)
         print("BASELINE: Naive T2I (IP-Adapter only, no K/V injection)")
