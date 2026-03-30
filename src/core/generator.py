@@ -143,24 +143,15 @@ class KVStoreAttnProcessor:
                 )
 
         elif self.mode in ("spatial_inject", "spatial_store_and_inject"):
-            # Multi-source spatial K/V injection: each entity's K/V is
-            # injected into its spatial region using sigmoid masks
+            # Multi-source K/V injection: each entity source contributes
+            # globally (not spatially masked) with equal weight.
+            # The prompt + IP-Adapter handle spatial positioning;
+            # K/V injection handles identity preservation.
             if self.blend_ratio > 0.0 and self.spatial_sources:
                 r = self.blend_ratio
-                seq_len = key.shape[1]
-                size = int(seq_len ** 0.5)
-                n_slots = self.num_spatial_slots
-
-                # Build spatial weight masks: sigmoid-based soft regions
-                # Use float32 for precision, cast back at the end
-                compute_dtype = torch.float32
-                x_coords = torch.linspace(0, 1, size, device=key.device, dtype=compute_dtype)
-                x_grid = x_coords.unsqueeze(0).expand(size, -1).reshape(seq_len)
-
-                # Accumulate weighted K/V from all spatial sources
-                key_acc = torch.zeros_like(key, dtype=compute_dtype)
-                value_acc = torch.zeros_like(value, dtype=compute_dtype)
-                weight_acc = torch.zeros(1, seq_len, 1, device=key.device, dtype=compute_dtype)
+                n_sources = len(self.spatial_sources)
+                per_source_r = r / n_sources  # split blend across sources
+                orig_dtype = key.dtype
 
                 for src_bank, slot_idx in self.spatial_sources:
                     stored = src_bank.get(self.current_step)
@@ -173,32 +164,8 @@ class KVStoreAttnProcessor:
                     if src_k.shape != key.shape:
                         continue
 
-                    # Sigmoid spatial mask for this slot
-                    # Center of slot region
-                    center = (slot_idx + 0.5) / n_slots
-                    # Sharpness: higher = harder boundary
-                    sharpness = 8.0
-                    # Weight peaks at slot center, falls off at boundaries
-                    w = torch.sigmoid(sharpness * (0.5 / n_slots - (x_grid - center).abs()))
-                    w = w.reshape(1, seq_len, 1)
-
-                    key_acc = key_acc + w * src_k.to(compute_dtype)
-                    value_acc = value_acc + w * src_v.to(compute_dtype)
-                    weight_acc = weight_acc + w
-
-                # Normalize and blend (preserve original dtype)
-                orig_dtype = key.dtype
-                mask = (weight_acc > 1e-6).to(orig_dtype)
-                safe_weight = weight_acc.clamp(min=1e-6)
-                key_acc = (key_acc / safe_weight).to(orig_dtype)
-                value_acc = (value_acc / safe_weight).to(orig_dtype)
-
-                # Blend: spatial regions with sources get injection,
-                # regions without sources stay as self-attention
-                has_source = mask  # (1, seq_len, 1)
-                spatial_r = (r * has_source).to(orig_dtype)
-                key = (1 - spatial_r) * key + spatial_r * key_acc
-                value = (1 - spatial_r) * value + spatial_r * value_acc
+                    key = ((1 - per_source_r) * key.float() + per_source_r * src_k.float()).to(orig_dtype)
+                    value = ((1 - per_source_r) * value.float() + per_source_r * src_v.float()).to(orig_dtype)
 
             if self.mode == "spatial_store_and_inject":
                 self.kv_bank[self.current_step] = (
@@ -665,11 +632,19 @@ class KeyframeGenerator:
                 else:
                     print(f"  ref({ent}) = NONE (first appearance, pure T2I)")
 
+            # Use moderate blend for multi-entity (split across sources)
+            # Also boost IP-Adapter for stronger identity signal
+            spatial_blend = 0.5
+            orig_blend = self.attn_ctrl.max_blend
+            self.pipe.set_ip_adapter_scale(0.8)
+
             if entity_sources:
                 loaded = self.attn_ctrl.load_spatial_kv(entity_sources)
                 if loaded:
-                    print(f"  Mode: SPATIAL K/V INJECT ({n_ents} entities, "
-                          f"blend={self.max_blend:.0%})")
+                    self.attn_ctrl.max_blend = spatial_blend
+                    per_src = spatial_blend / len(entity_sources)
+                    print(f"  Mode: MULTI-SOURCE K/V INJECT ({n_ents} entities, "
+                          f"total_blend={spatial_blend:.0%}, per_source={per_src:.0%})")
                     self.attn_ctrl.set_mode_spatial_store_and_inject()
                 else:
                     print(f"  Mode: T2I (no spatial K/V sources found)")
@@ -684,12 +659,16 @@ class KeyframeGenerator:
                 step_log.append(step)
                 return cbk
 
+            # Use more steps + guidance for multi-entity to improve prompt following
+            # CFG requires negative+positive IP-Adapter embeds concatenated
+            neg_embeds = [torch.zeros_like(e) for e in ip_embeds]
+            cfg_ip_embeds = [torch.cat([n, p], dim=0) for n, p in zip(neg_embeds, ip_embeds)]
             img = self.pipe(
                 prompt=prompt,
-                negative_prompt="blurry, low quality, distorted, deformed, chimera, merged faces",
-                ip_adapter_image_embeds=ip_embeds,
-                num_inference_steps=self.num_steps,
-                guidance_scale=0.0,
+                negative_prompt="blurry, low quality, distorted, deformed, chimera, merged faces, single person",
+                ip_adapter_image_embeds=cfg_ip_embeds,
+                num_inference_steps=12,
+                guidance_scale=3.0,
                 generator=gen,
                 width=512, height=512,
                 callback_on_step_end=spatial_callback,
@@ -700,6 +679,8 @@ class KeyframeGenerator:
                 p.kv_bank.clear()
                 p.spatial_sources = []
             self.attn_ctrl.set_mode_bypass()
+            self.attn_ctrl.max_blend = orig_blend
+            self.pipe.set_ip_adapter_scale(0.6)  # restore default
             print(f"  Cached K/V for {len(step_log)} steps")
 
         elif len(node.entities) >= 2:
