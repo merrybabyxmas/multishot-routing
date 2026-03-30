@@ -1,10 +1,13 @@
 """
 Non-Markovian Graph Routing for Multi-Shot Video Generation.
 
-Implements two routing strategies:
+Implements three routing strategies:
   1. RoutingGraph (Forward): S1→S2→... with bridge injection when D ≥ 2
   2. ReverseRoutingGraph (Reverse): Universal Anchor with ALL entities first,
      then derive shots by entity subtraction. Eliminates +entity transitions.
+  3. EntityDecomposedRoutingGraph: Forward routing + per-entity reference
+     resolution. Multi-entity nodes get one K/V source per entity (spatial
+     injection), preventing identity chimera.
 
 Core primitives:
   - ShotNode data structure
@@ -485,4 +488,104 @@ class ReverseRoutingGraph:
                 f"  --[D={d}, {trans}]-->  "
                 f"{n_kind} {node.shot_id} (E={node.entities}, BG={node.bg})"
             )
+        print("=" * 70)
+
+
+# ---------------------------------------------------------------------------
+# Entity-Decomposed Routing Graph (Forward + Per-Entity Reference Resolution)
+# ---------------------------------------------------------------------------
+
+class EntityDecomposedRoutingGraph(RoutingGraph):
+    """Forward routing with per-entity K/V reference resolution.
+
+    Extends RoutingGraph (forward DAG with bridge injection) by adding
+    entity_refs: for each multi-entity node, resolves the best identity
+    source per entity. This enables spatial K/V injection where each
+    entity region gets K/V from a separate, identity-pure ancestor.
+
+    Key property: multi-entity nodes like S8={A,C} get:
+      - ref(A) = S1({A},D)  — solo A, best identity source
+      - ref(C) = S5({C},F)  — solo C, best identity source
+    Each entity's K/V is injected into its spatial region, preventing
+    identity chimera from mixed K/V.
+
+    Scoring for reference selection:
+      score = 10*is_solo - 2*crowd_size + 1*same_bg + 0.01*recency
+    Prefers: solo > fewer-entity > same-bg > more-recent
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        # shot_id -> {entity_name -> ShotNode}
+        self.entity_refs: dict[str, dict[str, ShotNode]] = {}
+
+    def build_from_shots(self, shots: list[ShotNode]) -> None:
+        super().build_from_shots(shots)
+        self._resolve_entity_refs()
+
+    def _resolve_entity_refs(self) -> None:
+        """For each multi-entity node, find the best identity source per entity."""
+        for node in self.all_nodes:
+            if len(node.entities) < 2:
+                continue
+
+            refs: dict[str, ShotNode] = {}
+            for entity in sorted(node.entities):
+                best_ref = self._find_best_ref(node, entity)
+                if best_ref is not None:
+                    refs[entity] = best_ref
+            self.entity_refs[node.shot_id] = refs
+
+    def _find_best_ref(self, target: ShotNode, entity: str) -> ShotNode | None:
+        """Find the best identity source for a single entity.
+
+        Searches all ancestors (nodes earlier in topological order) that
+        contain the entity. Scores by:
+          10 * is_solo — solo entity node is ideal (no identity mixing)
+          -2 * len(entities) — fewer entities = less mixing
+          +1 * same_bg — same background is a bonus
+          +0.01 * index — more recent = better temporal coherence
+        """
+        best_score = -float("inf")
+        best_node: ShotNode | None = None
+
+        for idx, candidate in enumerate(self.all_nodes):
+            # Must contain the target entity
+            if entity not in candidate.entities:
+                continue
+            # Must not be the target itself
+            if candidate is target:
+                continue
+            # Must appear before target in all_nodes (already generated)
+            target_idx = self.all_nodes.index(target)
+            if idx >= target_idx:
+                continue
+
+            is_solo = 1 if len(candidate.entities) == 1 else 0
+            crowd = len(candidate.entities)
+            same_bg = 1 if candidate.bg == target.bg else 0
+
+            score = 10 * is_solo - 2 * crowd + 1 * same_bg + 0.01 * idx
+            if score > best_score:
+                best_score = score
+                best_node = candidate
+
+        return best_node
+
+    def print_entity_refs(self) -> None:
+        """Print per-entity reference resolution for multi-entity nodes."""
+        print("\n" + "=" * 70)
+        print("ENTITY-DECOMPOSED REFERENCES")
+        print("=" * 70)
+        for node in self.all_nodes:
+            if node.shot_id not in self.entity_refs:
+                continue
+            refs = self.entity_refs[node.shot_id]
+            kind = "Bridge" if node.is_bridge else "Shot"
+            print(f"  [{kind}] {node.shot_id} (E={sorted(node.entities)}, BG={node.bg}):")
+            for ent in sorted(refs):
+                ref = refs[ent]
+                ref_kind = "Bridge" if ref.is_bridge else "Shot"
+                print(f"    ref({ent}) = {ref_kind} {ref.shot_id} "
+                      f"(E={sorted(ref.entities)}, BG={ref.bg})")
         print("=" * 70)

@@ -11,7 +11,10 @@ Tests for both Forward and Reverse routing strategies.
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from src.core.routing import ShotNode, RoutingGraph, ReverseRoutingGraph, distance
+from src.core.routing import (
+    ShotNode, RoutingGraph, ReverseRoutingGraph,
+    EntityDecomposedRoutingGraph, distance,
+)
 
 
 def make_scenario():
@@ -159,6 +162,90 @@ def test_reverse():
     print(f"\n  ★ ALL REVERSE ROUTING TESTS PASSED ★\n")
 
 
+# ══════════════════════════════════════════════════════════════════════
+# Entity-Decomposed Routing Tests
+# ══════════════════════════════════════════════════════════════════════
+
+def test_entity_decomposed():
+    print("\n" + "=" * 70)
+    print("ENTITY-DECOMPOSED ROUTING TEST")
+    print("=" * 70)
+
+    graph = EntityDecomposedRoutingGraph()
+    graph.build_from_shots(make_scenario())
+    graph.print_routing_table()
+    graph.print_detailed_edges()
+    graph.print_entity_refs()
+
+    def find(sid):
+        for n in graph.all_nodes:
+            if n.shot_id == sid:
+                return n
+        raise ValueError(f"Node {sid} not found")
+
+    # ── 1. Forward routing structure preserved ──
+    s3, s4, s7 = find("S3"), find("S4"), find("S7")
+    bridge = s4.parent_node
+    assert bridge.is_bridge, f"S4 parent must be bridge, got {bridge}"
+    assert bridge.entities == {"B"}, f"Bridge entities must be {{B}}, got {bridge.entities}"
+    print("  ✓ Forward routing structure preserved (S4 via bridge)")
+
+    # S7 routes to S3 (D=0)
+    assert s7.parent_node is s3
+    assert distance(s7, s3) == 0
+    print("  ✓ S7 routes to S3 (D=0)")
+
+    # ── 2. Entity refs exist for all multi-entity nodes ──
+    multi_entity_shots = [n for n in graph.all_nodes if len(n.entities) >= 2]
+    for node in multi_entity_shots:
+        assert node.shot_id in graph.entity_refs, (
+            f"Missing entity_refs for {node.shot_id}"
+        )
+    print(f"  ✓ Entity refs resolved for {len(multi_entity_shots)} multi-entity nodes")
+
+    # ── 3. S8={A,C} gets solo refs: ref(A)=S1, ref(C)=S5 ──
+    s8_refs = graph.entity_refs.get("S8", {})
+    assert "A" in s8_refs, "S8 must have ref(A)"
+    assert "C" in s8_refs, "S8 must have ref(C)"
+    # ref(A) should be S1 (solo A, earliest)
+    assert s8_refs["A"].shot_id == "S1", (
+        f"S8 ref(A) should be S1, got {s8_refs['A'].shot_id}"
+    )
+    # ref(C) should be S5 (solo C, only solo C)
+    assert s8_refs["C"].shot_id == "S5", (
+        f"S8 ref(C) should be S5, got {s8_refs['C'].shot_id}"
+    )
+    print("  ✓ S8 ref(A)=S1 (solo), ref(C)=S5 (solo) — no chimera possible")
+
+    # ── 4. S2={A,B} entity refs: A→S1 (solo), B→bridge B1 ({B},D/E) ──
+    s2_refs = graph.entity_refs.get("S2", {})
+    assert "A" in s2_refs, "S2 must have ref(A)"
+    assert s2_refs["A"].shot_id == "S1", (
+        f"S2 ref(A) should be S1, got {s2_refs['A'].shot_id}"
+    )
+    print(f"  ✓ S2 ref(A)=S1 (solo), ref(B)={s2_refs.get('B', 'NONE')}")
+
+    # ── 5. All refs point to nodes with fewer or equal entities ──
+    for shot_id, refs in graph.entity_refs.items():
+        target = find(shot_id)
+        for ent, ref_node in refs.items():
+            assert len(ref_node.entities) <= len(target.entities), (
+                f"ref({ent}) for {shot_id} has MORE entities than target: "
+                f"{ref_node.entities} > {target.entities}"
+            )
+    print("  ✓ All refs point to nodes with ≤ entities (no upward refs)")
+
+    # ── 6. All real shots reachable ──
+    gen_order = graph.topological_order()
+    real_shot_ids = {n.shot_id for n in gen_order if not n.is_bridge}
+    expected = {"S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"}
+    assert real_shot_ids == expected, f"Missing shots: {expected - real_shot_ids}"
+    print("  ✓ All 8 shots reachable in topological order")
+
+    print(f"\n  ★ ALL ENTITY-DECOMPOSED ROUTING TESTS PASSED ★\n")
+
+
 if __name__ == "__main__":
     test_forward()
     test_reverse()
+    test_entity_decomposed()

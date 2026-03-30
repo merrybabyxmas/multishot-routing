@@ -29,7 +29,10 @@ def _stable_hash(s: str) -> int:
     return int(hashlib.sha256(s.encode()).hexdigest(), 16) % 10000
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-from src.core.routing import ShotNode, RoutingGraph, ReverseRoutingGraph, distance
+from src.core.routing import (
+    ShotNode, RoutingGraph, ReverseRoutingGraph,
+    EntityDecomposedRoutingGraph, distance,
+)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -52,6 +55,10 @@ class KVStoreAttnProcessor:
         self.current_step: int = 0
         self.blend_ratio: float = 0.0
         self.spatial_mask_type: str = "none"  # "none" | "gradient"
+        # Spatial multi-source injection: list of (kv_bank, slot_index)
+        # slot_index determines spatial region (0=left, 1=right, etc.)
+        self.spatial_sources: list[tuple[dict, int]] = []
+        self.num_spatial_slots: int = 2
 
     def reset(self):
         self.kv_bank.clear()
@@ -59,6 +66,8 @@ class KVStoreAttnProcessor:
         self.current_step = 0
         self.blend_ratio = 0.0
         self.spatial_mask_type = "none"
+        self.spatial_sources = []
+        self.num_spatial_slots = 2
 
     def __call__(
         self,
@@ -128,6 +137,70 @@ class KVStoreAttnProcessor:
                             value = (1 - r) * value + r * stored_v
 
             if self.mode == "store_and_inject":
+                self.kv_bank[self.current_step] = (
+                    key.detach().clone(),
+                    value.detach().clone(),
+                )
+
+        elif self.mode in ("spatial_inject", "spatial_store_and_inject"):
+            # Multi-source spatial K/V injection: each entity's K/V is
+            # injected into its spatial region using sigmoid masks
+            if self.blend_ratio > 0.0 and self.spatial_sources:
+                r = self.blend_ratio
+                seq_len = key.shape[1]
+                size = int(seq_len ** 0.5)
+                n_slots = self.num_spatial_slots
+
+                # Build spatial weight masks: sigmoid-based soft regions
+                # Use float32 for precision, cast back at the end
+                compute_dtype = torch.float32
+                x_coords = torch.linspace(0, 1, size, device=key.device, dtype=compute_dtype)
+                x_grid = x_coords.unsqueeze(0).expand(size, -1).reshape(seq_len)
+
+                # Accumulate weighted K/V from all spatial sources
+                key_acc = torch.zeros_like(key, dtype=compute_dtype)
+                value_acc = torch.zeros_like(value, dtype=compute_dtype)
+                weight_acc = torch.zeros(1, seq_len, 1, device=key.device, dtype=compute_dtype)
+
+                for src_bank, slot_idx in self.spatial_sources:
+                    stored = src_bank.get(self.current_step)
+                    if stored is None:
+                        continue
+                    src_k, src_v = stored
+                    if src_k.shape[0] != key.shape[0] and key.shape[0] == 2 * src_k.shape[0]:
+                        src_k = src_k.repeat(2, 1, 1)
+                        src_v = src_v.repeat(2, 1, 1)
+                    if src_k.shape != key.shape:
+                        continue
+
+                    # Sigmoid spatial mask for this slot
+                    # Center of slot region
+                    center = (slot_idx + 0.5) / n_slots
+                    # Sharpness: higher = harder boundary
+                    sharpness = 8.0
+                    # Weight peaks at slot center, falls off at boundaries
+                    w = torch.sigmoid(sharpness * (0.5 / n_slots - (x_grid - center).abs()))
+                    w = w.reshape(1, seq_len, 1)
+
+                    key_acc = key_acc + w * src_k.to(compute_dtype)
+                    value_acc = value_acc + w * src_v.to(compute_dtype)
+                    weight_acc = weight_acc + w
+
+                # Normalize and blend (preserve original dtype)
+                orig_dtype = key.dtype
+                mask = (weight_acc > 1e-6).to(orig_dtype)
+                safe_weight = weight_acc.clamp(min=1e-6)
+                key_acc = (key_acc / safe_weight).to(orig_dtype)
+                value_acc = (value_acc / safe_weight).to(orig_dtype)
+
+                # Blend: spatial regions with sources get injection,
+                # regions without sources stay as self-attention
+                has_source = mask  # (1, seq_len, 1)
+                spatial_r = (r * has_source).to(orig_dtype)
+                key = (1 - spatial_r) * key + spatial_r * key_acc
+                value = (1 - spatial_r) * value + spatial_r * value_acc
+
+            if self.mode == "spatial_store_and_inject":
                 self.kv_bank[self.current_step] = (
                     key.detach().clone(),
                     value.detach().clone(),
@@ -250,6 +323,48 @@ class AttentionControl:
         """Set spatial mask type on all KV processors. 'gradient' or 'none'."""
         for p in self.kv_processors.values():
             p.spatial_mask_type = mask_type
+
+    def load_spatial_kv(self, entity_sources: list[tuple[str, int]]) -> bool:
+        """Load K/V from multiple entity sources with spatial slot assignments.
+
+        Args:
+            entity_sources: list of (shot_id, slot_index) pairs.
+                slot_index: 0=left, 1=right (for 2 entities), etc.
+
+        Returns True if at least one source was loaded.
+        """
+        device = next(self.unet.parameters()).device
+        n_slots = max(s[1] for s in entity_sources) + 1 if entity_sources else 2
+        any_loaded = False
+
+        for key, proc in self.kv_processors.items():
+            proc.spatial_sources = []
+            proc.num_spatial_slots = n_slots
+
+            for shot_id, slot_idx in entity_sources:
+                if shot_id not in self._kv_cache:
+                    continue
+                if key not in self._kv_cache[shot_id]:
+                    continue
+                # Build a GPU kv_bank for this source
+                src_bank = {
+                    step: (k.clone().to(device), v.clone().to(device))
+                    for step, (k, v) in self._kv_cache[shot_id][key].items()
+                }
+                proc.spatial_sources.append((src_bank, slot_idx))
+                any_loaded = True
+
+        return any_loaded
+
+    def set_mode_spatial_inject(self):
+        """Set all processors to spatial multi-source injection mode."""
+        for p in self.kv_processors.values():
+            p.mode = "spatial_inject"
+
+    def set_mode_spatial_store_and_inject(self):
+        """Set all processors to spatial injection + store mode."""
+        for p in self.kv_processors.values():
+            p.mode = "spatial_store_and_inject"
 
     def update_step(self, step: int):
         inject_steps = int(self.num_steps * self.inject_until_pct)
@@ -531,10 +646,65 @@ class KeyframeGenerator:
             )
             img = self._last_generated
 
+        elif len(node.entities) >= 2 and hasattr(self, '_entity_graph') and self._entity_graph is not None:
+            # ── Multi-entity with D≥1: SPATIAL K/V INJECTION ──
+            # Each entity gets K/V from its best identity source,
+            # injected into its spatial region (left/right/etc.)
+            refs = self._entity_graph.entity_refs.get(node.shot_id, {})
+            entities_sorted = sorted(node.entities)
+            n_ents = len(entities_sorted)
+
+            # Build spatial source list: (shot_id, slot_index)
+            entity_sources = []
+            for slot_idx, ent in enumerate(entities_sorted):
+                if ent in refs:
+                    ref_node = refs[ent]
+                    entity_sources.append((ref_node.shot_id, slot_idx))
+                    print(f"  ref({ent}) = {ref_node.shot_id} "
+                          f"(E={sorted(ref_node.entities)}, BG={ref_node.bg})")
+                else:
+                    print(f"  ref({ent}) = NONE (first appearance, pure T2I)")
+
+            if entity_sources:
+                loaded = self.attn_ctrl.load_spatial_kv(entity_sources)
+                if loaded:
+                    print(f"  Mode: SPATIAL K/V INJECT ({n_ents} entities, "
+                          f"blend={self.max_blend:.0%})")
+                    self.attn_ctrl.set_mode_spatial_store_and_inject()
+                else:
+                    print(f"  Mode: T2I (no spatial K/V sources found)")
+                    self.attn_ctrl.set_mode_store()
+            else:
+                print(f"  Mode: T2I (no entity refs, store K/V)")
+                self.attn_ctrl.set_mode_store()
+
+            step_log = []
+            def spatial_callback(pipe, step, timestep, cbk):
+                self.attn_ctrl.update_step(step)
+                step_log.append(step)
+                return cbk
+
+            img = self.pipe(
+                prompt=prompt,
+                negative_prompt="blurry, low quality, distorted, deformed, chimera, merged faces",
+                ip_adapter_image_embeds=ip_embeds,
+                num_inference_steps=self.num_steps,
+                guidance_scale=0.0,
+                generator=gen,
+                width=512, height=512,
+                callback_on_step_end=spatial_callback,
+            ).images[0]
+
+            self.attn_ctrl.save_kv_to_cache(node.shot_id)
+            for p in self.attn_ctrl.kv_processors.values():
+                p.kv_bank.clear()
+                p.spatial_sources = []
+            self.attn_ctrl.set_mode_bypass()
+            print(f"  Cached K/V for {len(step_log)} steps")
+
         elif len(node.entities) >= 2:
-            # ── Multi-entity with D≥1: COLLAGE + HARMONIZE ──
-            # Identity comes from individual anchor images (no chimera),
-            # light K/V from parent for style/composition consistency.
+            # ── Fallback: Multi-entity with D≥1 (no entity graph) ──
+            # Uses collage + harmonize approach
             collage = self._compose_collage(node)
             self._last_collage = collage
 
@@ -661,15 +831,19 @@ class KeyframeGenerator:
         out_dir.mkdir(parents=True, exist_ok=True)
 
         print("=" * 70)
-        print("PHASE 3: Graph-Routed Keyframe Generation")
+        print("PHASE 3: Entity-Decomposed Graph-Routed Keyframe Generation")
         print("=" * 70)
 
-        graph = ReverseRoutingGraph()
+        graph = EntityDecomposedRoutingGraph()
         graph.build_from_shots(scenario)
         graph.print_routing_table()
         graph.print_detailed_edges()
+        graph.print_entity_refs()
         gen_order = graph.topological_order()
         print(f"\nGeneration order: {' -> '.join(n.shot_id for n in gen_order)}")
+
+        # Store reference to entity graph for spatial injection in generate_node
+        self._entity_graph = graph
 
         self.load_pipeline()
         # Clear K/V caches from any previous scenario
