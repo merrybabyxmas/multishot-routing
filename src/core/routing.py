@@ -1,10 +1,14 @@
 """
 Non-Markovian Graph Routing for Multi-Shot Video Generation.
 
-Implements the DAG construction algorithm from iea.txt:
-  - ShotNode / BridgeNode data structures
+Implements two routing strategies:
+  1. RoutingGraph (Forward): S1→S2→... with bridge injection when D ≥ 2
+  2. ReverseRoutingGraph (Reverse): Universal Anchor with ALL entities first,
+     then derive shots by entity subtraction. Eliminates +entity transitions.
+
+Core primitives:
+  - ShotNode data structure
   - Distance metric D(S_t, S_k) = |E_t Δ E_k| + I(B_t ≠ B_k)
-  - Non-Markovian routing with bridge injection when D ≥ 2
 """
 
 from __future__ import annotations
@@ -256,6 +260,229 @@ class RoutingGraph:
             print(
                 f"  {p_kind} {p.shot_id} (E={p.entities}, BG={p.bg})"
                 f"  --[D={d}]-->  "
+                f"{n_kind} {node.shot_id} (E={node.entities}, BG={node.bg})"
+            )
+        print("=" * 70)
+
+
+# ---------------------------------------------------------------------------
+# Reverse Routing Graph (Top-Down from Universal Anchor)
+# ---------------------------------------------------------------------------
+
+class ReverseRoutingGraph:
+    """Constructs a generation DAG using reverse (top-down) routing.
+
+    Instead of building forward from S1 and injecting bridges when D≥2,
+    this starts with a Universal Anchor containing ALL entities from the
+    scenario, then derives each shot by entity subtraction and bg changes.
+
+    Key property: +entity transitions NEVER occur. Every edge is either
+    -entity or bg-change, both of which are much easier for the diffusion
+    model to handle via K/V injection.
+
+    Algorithm:
+      1. Collect U = union of all entities across all shots
+      2. Pick anchor_bg = most common background
+      3. Create Universal Anchor U0 = (U, anchor_bg)
+      4. For each shot, build a reduction path from U0:
+         - Remove entities alphabetically (D=1 per removal)
+         - Change background last (D=1)
+      5. Share intermediate bridge nodes across paths
+      6. Multiple shots with same state chain temporally (D=0)
+    """
+
+    def __init__(self) -> None:
+        self.nodes: list[ShotNode] = []          # real shots (in order)
+        self.all_nodes: list[ShotNode] = []       # real + bridge + anchor
+        self._bridge_counter: list[int] = [1]
+        # State registry: (frozenset(entities), bg) -> node for sharing
+        self._state_map: dict[tuple[frozenset, str], ShotNode] = {}
+
+    def build_from_shots(self, shots: list[ShotNode]) -> None:
+        from collections import Counter
+
+        # 1. Collect universal entity set
+        all_entities: set[str] = set()
+        for s in shots:
+            all_entities |= s.entities
+
+        # 2. Pick most common bg as anchor bg
+        bg_counts = Counter(s.bg for s in shots)
+        anchor_bg = bg_counts.most_common(1)[0][0]
+
+        # 3. Create Universal Anchor
+        anchor = ShotNode(
+            shot_id="U0",
+            entities=set(all_entities),
+            bg=anchor_bg,
+            is_bridge=True,
+        )
+        self.all_nodes.append(anchor)
+        self._state_map[(frozenset(all_entities), anchor_bg)] = anchor
+
+        # 4. Route each shot via reduction from anchor
+        for shot in shots:
+            self._route_shot(anchor, shot)
+            self.nodes.append(shot)
+
+    def _get_or_create_bridge(
+        self, entities: frozenset, bg: str, parent: ShotNode,
+    ) -> ShotNode:
+        """Return existing node for this state, or create a new bridge."""
+        key = (entities, bg)
+        if key in self._state_map:
+            return self._state_map[key]
+
+        bridge = ShotNode(
+            shot_id=f"B{self._bridge_counter[0]}",
+            entities=set(entities),
+            bg=bg,
+            is_bridge=True,
+            parent_node=parent,
+        )
+        parent.children.append(bridge)
+        self._bridge_counter[0] += 1
+        self.all_nodes.append(bridge)
+        self._state_map[key] = bridge
+        return bridge
+
+    def _route_shot(self, anchor: ShotNode, target: ShotNode) -> None:
+        """Build reduction path from anchor to target, then attach target."""
+        target_key = (frozenset(target.entities), target.bg)
+
+        # Fast path: state already exists (D=0 to existing node)
+        if target_key in self._state_map:
+            existing = self._state_map[target_key]
+            target.parent_node = existing
+            existing.children.append(target)
+            self.all_nodes.append(target)
+            # Update state_map → latest shot (better K/V for temporal coherence)
+            self._state_map[target_key] = target
+            return
+
+        # Compute intermediate states (anchor → target), excluding target itself
+        anchor_ent = frozenset(anchor.entities)
+        anchor_bg = anchor.bg
+        steps: list[tuple[frozenset, str]] = []
+
+        cur_ent = set(anchor_ent)
+        cur_bg = anchor_bg
+
+        # Entity subtractions (alphabetical order for deterministic sharing)
+        for ent in sorted(cur_ent - target.entities):
+            cur_ent = cur_ent - {ent}
+            state = (frozenset(cur_ent), cur_bg)
+            if state != target_key:
+                steps.append(state)
+
+        # Background change (always last)
+        if cur_bg != target.bg:
+            cur_bg = target.bg
+            state = (frozenset(cur_ent), cur_bg)
+            if state != target_key:
+                steps.append(state)
+
+        # Walk intermediate steps, creating/reusing bridges
+        prev_node: ShotNode = self._state_map.get(
+            (anchor_ent, anchor_bg), anchor
+        )
+        for ent_fs, bg in steps:
+            prev_node = self._get_or_create_bridge(ent_fs, bg, prev_node)
+
+        # Attach target to last intermediate (D=1) or anchor (D=1)
+        target.parent_node = prev_node
+        prev_node.children.append(target)
+        self.all_nodes.append(target)
+        self._state_map[target_key] = target
+
+    # ----- traversal / inspection (same interface as RoutingGraph) -----
+
+    def topological_order(self) -> list[ShotNode]:
+        """Return nodes in generation order (BFS from roots)."""
+        from collections import deque
+
+        in_degree: dict[str, int] = {n.shot_id: 0 for n in self.all_nodes}
+        for n in self.all_nodes:
+            for c in n.children:
+                if c.shot_id in in_degree:
+                    in_degree[c.shot_id] += 1
+
+        queue = deque(n for n in self.all_nodes if in_degree[n.shot_id] == 0)
+        order: list[ShotNode] = []
+        while queue:
+            node = queue.popleft()
+            order.append(node)
+            for c in node.children:
+                if c.shot_id in in_degree:
+                    in_degree[c.shot_id] -= 1
+                    if in_degree[c.shot_id] == 0:
+                        queue.append(c)
+        return order
+
+    def print_routing_table(self) -> None:
+        """Pretty-print the routing decisions."""
+        print("\n" + "=" * 70)
+        print("REVERSE ROUTING TABLE (Universal Anchor → Shots)")
+        print("=" * 70)
+        for node in self.all_nodes:
+            parent_id = node.parent_node.shot_id if node.parent_node else "ROOT"
+            d = distance(node, node.parent_node) if node.parent_node else "-"
+            kind = "ANCHOR" if node.shot_id == "U0" else (
+                "BRIDGE" if node.is_bridge else "SHOT"
+            )
+            print(
+                f"  [{kind:6s}] {node.shot_id:5s}  "
+                f"entities={node.entities!s:20s}  bg={node.bg!s:5s}  "
+                f"parent={parent_id:5s}  D={d}"
+            )
+        print("=" * 70)
+
+    def print_topological_path(self) -> None:
+        """Print the generation-order path with arrows."""
+        order = self.topological_order()
+        print("\n" + "=" * 70)
+        print("TOPOLOGICAL GENERATION PATH")
+        print("=" * 70)
+        parts = []
+        for node in order:
+            kind = "Anchor" if node.shot_id == "U0" else (
+                "Bridge" if node.is_bridge else "Shot"
+            )
+            parts.append(f"{kind} {node.shot_id} (E={node.entities}, BG={node.bg})")
+        print(" -> ".join(parts))
+        print("=" * 70)
+
+    def print_detailed_edges(self) -> None:
+        """Print every parent→child edge with distance and transition type."""
+        print("\n" + "=" * 70)
+        print("DETAILED EDGE LIST")
+        print("=" * 70)
+        for node in self.all_nodes:
+            if node.parent_node is None:
+                continue
+            p = node.parent_node
+            d = distance(node, p)
+
+            # Classify transition type
+            removed = p.entities - node.entities
+            added = node.entities - p.entities
+            bg_changed = p.bg != node.bg
+            if removed:
+                trans = f"-entity({removed})"
+            elif bg_changed:
+                trans = f"bg({p.bg}→{node.bg})"
+            elif added:
+                trans = f"+entity({added})"  # should never happen
+            else:
+                trans = "reuse(D=0)"
+
+            p_kind = "Anchor" if p.shot_id == "U0" else (
+                "Bridge" if p.is_bridge else "Shot"
+            )
+            n_kind = "Bridge" if node.is_bridge else "Shot"
+            print(
+                f"  {p_kind} {p.shot_id} (E={p.entities}, BG={p.bg})"
+                f"  --[D={d}, {trans}]-->  "
                 f"{n_kind} {node.shot_id} (E={node.entities}, BG={node.bg})"
             )
         print("=" * 70)

@@ -29,7 +29,7 @@ def _stable_hash(s: str) -> int:
     return int(hashlib.sha256(s.encode()).hexdigest(), 16) % 10000
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-from src.core.routing import ShotNode, RoutingGraph, distance
+from src.core.routing import ShotNode, RoutingGraph, ReverseRoutingGraph, distance
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -270,12 +270,15 @@ class AttentionControl:
 class KeyframeGenerator:
 
     def __init__(self, device: str = "cuda:3", num_steps: int = 8,
-                 max_blend: float = 0.7, inject_pct: float = 0.6):
+                 max_blend: float = 0.7, inject_pct: float = 0.6,
+                 collage_steps: int = 20, collage_strength: float = 0.65):
         self.device = device
         self.dtype = torch.float16
         self.num_steps = num_steps
         self.max_blend = max_blend
         self.inject_pct = inject_pct
+        self.collage_steps = collage_steps
+        self.collage_strength = collage_strength
         self.seed = 42
 
         self.pipe = None
@@ -379,7 +382,14 @@ class KeyframeGenerator:
     def build_prompt(node, entity_prompts, bg_prompts):
         entities_sorted = sorted(node.entities)
         parts = []
-        if len(entities_sorted) == 2:
+        if len(entities_sorted) >= 3:
+            # Universal anchor or multi-entity: spatial positions
+            positions = ["on the left", "in the center", "on the right"]
+            for i, ent in enumerate(entities_sorted):
+                desc = entity_prompts[ent].split(",")[0]
+                pos = positions[i] if i < len(positions) else ""
+                parts.append(f"{desc} {pos}".strip())
+        elif len(entities_sorted) == 2:
             # Spatial anchoring: first entity left, second entity right
             desc0 = entity_prompts[entities_sorted[0]].split(",")[0]
             desc1 = entity_prompts[entities_sorted[1]].split(",")[0]
@@ -390,8 +400,51 @@ class KeyframeGenerator:
                 desc = entity_prompts[ent].split(",")[0]
                 parts.append(desc)
         bg_desc = bg_prompts[node.bg].split(",")[0]
-        return (f"{', '.join(parts)}, in {bg_desc}, {node.action}, "
+        action = node.action if node.action else "group scene"
+        return (f"{', '.join(parts)}, in {bg_desc}, {action}, "
                 f"cinematic still frame, high quality, detailed")
+
+    # ── Collage Composition ───────────────────────────────────────
+
+    def _compose_collage(self, node):
+        """Compose Universal Anchor as collage: entity anchors on background.
+
+        Pastes full-size entity images (with white-bg removed) at horizontal
+        offsets over the background anchor, so characters are spread across
+        the canvas without being cropped.
+        """
+        entities = sorted(node.entities)
+        n = len(entities)
+        w, h = 512, 512
+
+        # Base canvas: background image
+        bg_img = self.anchor_images.get(node.bg)
+        canvas = bg_img.copy().resize((w, h)) if bg_img else Image.new("RGB", (w, h), (30, 30, 30))
+
+        # Target character centers: evenly spaced across canvas
+        # Character is centered at x=w//2 in each anchor image,
+        # so offset = target_x - w//2
+        if n == 1:
+            offsets = [0]
+        else:
+            margin = w // (n + 1)
+            targets = [margin * (i + 1) for i in range(n)]
+            center = w // 2
+            offsets = [t - center for t in targets]
+
+        for i, ent in enumerate(entities):
+            ent_img = self.anchor_images[ent].convert("RGB").resize((w, h))
+            ent_arr = np.array(ent_img)
+
+            # Mask: non-white pixels = entity foreground
+            is_white = np.all(ent_arr > 220, axis=2)
+            mask_arr = (~is_white).astype(np.uint8) * 255
+            mask = Image.fromarray(mask_arr, "L")
+
+            # Paste full entity image at horizontal offset (white bg masked out)
+            canvas.paste(ent_img, (offsets[i], 0), mask)
+
+        return canvas
 
     # ── Core Generation ────────────────────────────────────────────
 
@@ -411,30 +464,64 @@ class KeyframeGenerator:
         )
 
         if node.parent_node is None:
-            print(f"  Mode: T2I (root node, store K/V)")
-            self.attn_ctrl.set_mode_store()
+            # Universal Anchor: compose collage from individual anchors,
+            # then harmonize via img2img to create a coherent multi-entity image
+            is_universal = node.is_bridge and len(node.entities) >= 2
 
-            step_log = []
-            def root_callback(pipe, step, timestep, cbk):
-                self.attn_ctrl.update_step(step)
-                step_log.append(step)
-                return cbk
+            if is_universal:
+                collage = self._compose_collage(node)
+                self._last_collage = collage  # save for debug output
+                print(f"  Mode: COLLAGE + HARMONIZE (Universal Anchor, store K/V)")
+                self.attn_ctrl.set_mode_store()
 
-            img = self.pipe(
-                prompt=prompt,
-                negative_prompt="blurry, low quality, distorted, deformed",
-                ip_adapter_image_embeds=ip_embeds,
-                num_inference_steps=self.num_steps,
-                guidance_scale=0.0,
-                generator=gen,
-                width=512, height=512,
-                callback_on_step_end=root_callback,
-            ).images[0]
-            self.attn_ctrl.save_kv_to_cache(node.shot_id)
-            for p in self.attn_ctrl.kv_processors.values():
-                p.kv_bank.clear()
-            self.attn_ctrl.set_mode_bypass()
-            print(f"  Cached K/V for {len(step_log)} steps")
+                step_log = []
+                def root_callback(pipe, step, timestep, cbk):
+                    self.attn_ctrl.update_step(step)
+                    step_log.append(step)
+                    return cbk
+
+                img = self.pipe_i2i(
+                    prompt=prompt,
+                    negative_prompt="blurry, low quality, distorted, deformed, chimera",
+                    image=collage,
+                    ip_adapter_image_embeds=ip_embeds,
+                    strength=self.collage_strength,
+                    num_inference_steps=self.collage_steps,
+                    guidance_scale=0.0,
+                    generator=gen,
+                    callback_on_step_end=root_callback,
+                ).images[0]
+                self.attn_ctrl.save_kv_to_cache(node.shot_id)
+                for p in self.attn_ctrl.kv_processors.values():
+                    p.kv_bank.clear()
+                self.attn_ctrl.set_mode_bypass()
+                print(f"  Cached K/V for {len(step_log)} steps")
+
+            else:
+                print(f"  Mode: T2I (root node, store K/V)")
+                self.attn_ctrl.set_mode_store()
+
+                step_log = []
+                def root_callback(pipe, step, timestep, cbk):
+                    self.attn_ctrl.update_step(step)
+                    step_log.append(step)
+                    return cbk
+
+                img = self.pipe(
+                    prompt=prompt,
+                    negative_prompt="blurry, low quality, distorted, deformed",
+                    ip_adapter_image_embeds=ip_embeds,
+                    num_inference_steps=self.num_steps,
+                    guidance_scale=0.0,
+                    generator=gen,
+                    width=512, height=512,
+                    callback_on_step_end=root_callback,
+                ).images[0]
+                self.attn_ctrl.save_kv_to_cache(node.shot_id)
+                for p in self.attn_ctrl.kv_processors.values():
+                    p.kv_bank.clear()
+                self.attn_ctrl.set_mode_bypass()
+                print(f"  Cached K/V for {len(step_log)} steps")
 
         elif d == 0:
             print(f"  Mode: REUSE (D=0, blend={self.max_blend:.0%})")
@@ -444,26 +531,57 @@ class KeyframeGenerator:
             )
             img = self._last_generated
 
-        elif d == 1:
+        elif len(node.entities) >= 2:
+            # ── Multi-entity with D≥1: COLLAGE + HARMONIZE ──
+            # Identity comes from individual anchor images (no chimera),
+            # light K/V from parent for style/composition consistency.
+            collage = self._compose_collage(node)
+            self._last_collage = collage
+
             parent = node.parent_node
-            added = node.entities - parent.entities
+            style_blend = 0.15
+            loaded = self.attn_ctrl.load_kv_from_cache(parent.shot_id)
+            if loaded:
+                print(f"  Mode: COLLAGE + HARMONIZE (multi-entity, style K/V from {parent_id}, blend={style_blend:.0%})")
+                orig_blend = self.attn_ctrl.max_blend
+                self.attn_ctrl.max_blend = style_blend
+                self.attn_ctrl.set_mode_store_and_inject()
+            else:
+                print(f"  Mode: COLLAGE + HARMONIZE (multi-entity, no parent K/V)")
+                self.attn_ctrl.set_mode_store()
+
+            step_log = []
+            def multi_callback(pipe, step, timestep, cbk):
+                self.attn_ctrl.update_step(step)
+                step_log.append(step)
+                return cbk
+
+            img = self.pipe_i2i(
+                prompt=prompt,
+                negative_prompt="blurry, low quality, distorted, deformed, chimera, merged faces",
+                image=collage,
+                ip_adapter_image_embeds=ip_embeds,
+                strength=self.collage_strength,
+                num_inference_steps=self.collage_steps,
+                guidance_scale=0.0,
+                generator=gen,
+                callback_on_step_end=multi_callback,
+            ).images[0]
+
+            self.attn_ctrl.save_kv_to_cache(node.shot_id)
+            for p in self.attn_ctrl.kv_processors.values():
+                p.kv_bank.clear()
+            self.attn_ctrl.set_mode_bypass()
+            if loaded:
+                self.attn_ctrl.max_blend = orig_blend
+            print(f"  Cached K/V for {len(step_log)} steps")
+
+        elif d == 1:
+            # ── Single entity D=1 ──
+            parent = node.parent_node
             removed = parent.entities - node.entities
 
-            if added:
-                # ── Gradient K/V Injection (+entity) ──
-                # Left side: free for new entity (low parent K/V blend)
-                # Right side: high parent K/V blend (preserve existing entity)
-                blend = self.max_blend * 0.4
-                print(f"  Mode: GRADIENT K/V (+entity({added}), blend={blend:.0%} with gradient)")
-                self.attn_ctrl.set_spatial_mask("gradient")
-                self._generate_with_parent_kv(
-                    node, prompt, ip_embeds, keyframes, gen,
-                    blend_override=blend,
-                )
-                self.attn_ctrl.set_spatial_mask("none")
-                img = self._last_generated
-
-            elif removed:
+            if removed:
                 blend = self.max_blend * 0.5
                 print(f"  Mode: DERIVE (D=1, -entity({removed}), blend={blend:.0%}→0)")
                 self._generate_with_parent_kv(
@@ -472,12 +590,7 @@ class KeyframeGenerator:
                 )
                 img = self._last_generated
             else:
-                if len(node.entities) >= 2:
-                    # Multi-entity bg change: lower blend to let spatial prompt
-                    # anchoring guide both entities freely
-                    blend = self.max_blend * 0.4
-                else:
-                    blend = self.max_blend * 0.7
+                blend = self.max_blend * 0.7
                 print(f"  Mode: DERIVE (D=1, bg({parent.bg}→{node.bg}), blend={blend:.0%}→0)")
                 self._generate_with_parent_kv(
                     node, prompt, ip_embeds, keyframes, gen,
@@ -551,9 +664,10 @@ class KeyframeGenerator:
         print("PHASE 3: Graph-Routed Keyframe Generation")
         print("=" * 70)
 
-        graph = RoutingGraph()
+        graph = ReverseRoutingGraph()
         graph.build_from_shots(scenario)
         graph.print_routing_table()
+        graph.print_detailed_edges()
         gen_order = graph.topological_order()
         print(f"\nGeneration order: {' -> '.join(n.shot_id for n in gen_order)}")
 
@@ -583,6 +697,13 @@ class KeyframeGenerator:
             path = out_dir / f"{tag}_{node.shot_id}.png"
             img.save(path)
             print(f"  Saved -> {path}")
+
+            # Save raw collage for Universal Anchor (debug)
+            if hasattr(self, "_last_collage") and self._last_collage is not None:
+                collage_path = out_dir / f"collage_raw_{node.shot_id}.png"
+                self._last_collage.save(collage_path)
+                print(f"  Collage -> {collage_path}")
+                self._last_collage = None
 
         real_shots = [n for n in gen_order if not n.is_bridge]
         self._make_contact_sheet(real_shots, keyframes, out_dir)
