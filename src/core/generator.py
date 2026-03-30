@@ -447,7 +447,39 @@ class KeyframeGenerator:
             self.seed + _stable_hash(node.shot_id)
         )
 
-        if node.parent_node is None:
+        # ── Multi-entity: always use fresh T2I (no parent K/V) ──
+        # K/V injection suppresses 2nd entity. Let text prompt control composition.
+        if len(node.entities) >= 2:
+            reason = "root" if node.parent_node is None else f"D={d}"
+            print(f"  Mode: MULTI-ENTITY T2I ({reason}, IP=0.15, store K/V)")
+            self.pipe.set_ip_adapter_scale(0.15)
+            self.attn_ctrl.set_mode_store()
+
+            step_log = []
+            def multi_callback(pipe, step, timestep, cbk):
+                self.attn_ctrl.update_step(step)
+                step_log.append(step)
+                return cbk
+
+            img = self.pipe(
+                prompt=prompt,
+                negative_prompt="blurry, low quality, distorted, deformed",
+                ip_adapter_image_embeds=ip_embeds,
+                num_inference_steps=self.num_steps,
+                guidance_scale=self.guidance_scale,
+                generator=gen,
+                width=self.width, height=self.height,
+                callback_on_step_end=multi_callback,
+            ).images[0]
+            self.attn_ctrl.save_kv_to_cache(node.shot_id)
+            for p in self.attn_ctrl.kv_processors.values():
+                p.kv_bank.clear()
+            self.attn_ctrl.set_mode_bypass()
+            self.pipe.set_ip_adapter_scale(0.6)
+            print(f"  Stored K/V for {len(step_log)} steps (fresh T2I)")
+
+        # ── Single-entity paths: use parent K/V injection ──
+        elif node.parent_node is None:
             print(f"  Mode: T2I (root node, store K/V)")
             self.attn_ctrl.set_mode_store()
 
@@ -483,65 +515,19 @@ class KeyframeGenerator:
 
         elif d == 1:
             parent = node.parent_node
-            added = node.entities - parent.entities
             removed = parent.entities - node.entities
 
-            if added:
-                # ── +entity transition ──
-                # Pure T2I with store — no parent K/V injection.
-                # Reduce IP-Adapter scale for multi-entity to let text dominate.
-                multi = len(node.entities) >= 2
-                if multi:
-                    self.pipe.set_ip_adapter_scale(0.15)
-                print(f"  Mode: T2I (+entity({added}), no parent K/V, "
-                      f"IP-scale={'0.3' if multi else '0.6'}, store)")
-                self.attn_ctrl.set_mode_store()
-
-                step_log = []
-                def add_callback(pipe, step, timestep, cbk):
-                    self.attn_ctrl.update_step(step)
-                    step_log.append(step)
-                    return cbk
-
-                img = self.pipe(
-                    prompt=prompt,
-                    negative_prompt="blurry, low quality, distorted, deformed",
-                    ip_adapter_image_embeds=ip_embeds,
-                    num_inference_steps=self.num_steps,
-                    guidance_scale=self.guidance_scale,
-                    generator=gen,
-                    width=self.width, height=self.height,
-                    callback_on_step_end=add_callback,
-                ).images[0]
-                self.attn_ctrl.save_kv_to_cache(node.shot_id)
-                for p in self.attn_ctrl.kv_processors.values():
-                    p.kv_bank.clear()
-                self.attn_ctrl.set_mode_bypass()
-                if multi:
-                    self.pipe.set_ip_adapter_scale(0.6)
-                print(f"  Stored K/V for {len(step_log)} steps (fresh generation)")
-
-            elif removed:
+            if removed:
                 blend = self.max_blend * 0.5
                 print(f"  Mode: DERIVE (D=1, -entity({removed}), blend={blend:.0%}→0)")
-                self._generate_with_parent_kv(
-                    node, prompt, ip_embeds, keyframes, gen,
-                    blend_override=blend,
-                )
-                img = self._last_generated
             else:
-                if len(node.entities) >= 2:
-                    # Multi-entity bg change: lower blend to let spatial prompt
-                    # anchoring guide both entities freely
-                    blend = self.max_blend * 0.4
-                else:
-                    blend = self.max_blend * 0.7
+                blend = self.max_blend * 0.7
                 print(f"  Mode: DERIVE (D=1, bg({parent.bg}→{node.bg}), blend={blend:.0%}→0)")
-                self._generate_with_parent_kv(
-                    node, prompt, ip_embeds, keyframes, gen,
-                    blend_override=blend,
-                )
-                img = self._last_generated
+            self._generate_with_parent_kv(
+                node, prompt, ip_embeds, keyframes, gen,
+                blend_override=blend,
+            )
+            img = self._last_generated
 
         else:
             raise RuntimeError(f"D={d} — bridge injection failed!")
