@@ -988,10 +988,11 @@ class KeyframeGenerator:
 
             else:
                 is_single = len(node.entities) <= 1
-                cfg_scale = 1.5 if is_single else 0.0
+                cfg_scale = 3.0 if is_single else 0.0
                 neg_prompt = (
                     "two people, two characters, duplicate, duo, pair, "
                     "multiple figures, robot behind, mech behind, "
+                    "split image, side by side, "
                     "blurry, low quality, distorted, deformed"
                 ) if is_single else "blurry, low quality, distorted, deformed"
                 print(f"  Mode: T2I (root node, store K/V, cfg={cfg_scale})")
@@ -1003,20 +1004,55 @@ class KeyframeGenerator:
                     step_log.append(step)
                     return cbk
 
-                # For CFG > 0, IP-Adapter needs doubled embeds
+                # For CFG > 0, IP-Adapter needs doubled embeds [neg, pos]
                 use_cfg = cfg_scale > 0.0
-                ip_for_gen = self._zero_ip_embeds(do_cfg=True) if use_cfg else ip_embeds
+                if use_cfg:
+                    pos_emb = ip_embeds[0]  # (1, N, 1280)
+                    neg_emb = torch.zeros_like(pos_emb)
+                    ip_for_gen = [torch.cat([neg_emb, pos_emb], dim=0)]
+                else:
+                    ip_for_gen = ip_embeds
 
-                img = self.pipe(
-                    prompt=prompt,
-                    negative_prompt=neg_prompt if use_cfg else None,
-                    ip_adapter_image_embeds=ip_for_gen,
-                    num_inference_steps=8 if use_cfg else self.num_steps,
-                    guidance_scale=cfg_scale,
-                    generator=gen,
-                    width=self.width, height=self.height,
-                    callback_on_step_end=root_callback,
-                ).images[0]
+                best_img = None
+                best_score = -999.0
+                max_tries = 3 if (is_single and use_cfg) else 1
+                for attempt in range(max_tries):
+                    attempt_gen = torch.Generator(device=self.device).manual_seed(
+                        self.seed + _stable_hash(node.shot_id) + attempt
+                    )
+                    self.attn_ctrl.set_mode_store()
+                    step_log.clear()
+
+                    img = self.pipe(
+                        prompt=prompt,
+                        negative_prompt=neg_prompt if use_cfg else None,
+                        ip_adapter_image_embeds=ip_for_gen,
+                        num_inference_steps=8,
+                        guidance_scale=cfg_scale,
+                        generator=attempt_gen,
+                        width=self.width, height=self.height,
+                        callback_on_step_end=root_callback,
+                    ).images[0]
+
+                    if not is_single or max_tries == 1:
+                        best_img = img
+                        break
+
+                    # Validate single entity
+                    score = self._validate_single_entity(img)
+                    print(f"    Attempt {attempt+1}: single-entity score={score:.3f}")
+                    if score > best_score:
+                        best_score = score
+                        best_img = img
+                        # Save this attempt's K/V
+                        self.attn_ctrl.save_kv_to_cache(f"_best_{node.shot_id}")
+                    if score > 0.03:
+                        break
+
+                img = best_img
+                # Restore best K/V if we did multiple attempts
+                if max_tries > 1 and f"_best_{node.shot_id}" in self.attn_ctrl._kv_cache:
+                    self.attn_ctrl._kv_cache[node.shot_id] = self.attn_ctrl._kv_cache.pop(f"_best_{node.shot_id}")
                 self.attn_ctrl.save_kv_to_cache(node.shot_id)
                 for p in self.attn_ctrl.kv_processors.values():
                     p.kv_bank.clear()
@@ -1145,10 +1181,11 @@ class KeyframeGenerator:
 
         # Generate with K/V injection + simultaneous store for this node's children
         is_single = len(node.entities) <= 1
-        cfg_scale = 1.5 if is_single else 0.0
+        cfg_scale = 3.0 if is_single else 0.0
         neg_prompt = (
             "two people, two characters, duplicate, duo, pair, "
             "multiple figures, robot behind, mech behind, "
+            "split image, side by side, "
             "blurry, low quality, distorted, deformed"
         ) if is_single else "blurry, low quality, distorted, deformed"
         print(f"  Generating {node.shot_id} with K/V inject + store (cfg={cfg_scale})...")
@@ -1162,18 +1199,51 @@ class KeyframeGenerator:
             return cbk
 
         use_cfg = cfg_scale > 0.0
-        ip_for_gen = self._zero_ip_embeds(do_cfg=True) if use_cfg else ip_embeds
+        if use_cfg:
+            pos_emb = ip_embeds[0]
+            neg_emb = torch.zeros_like(pos_emb)
+            ip_for_gen = [torch.cat([neg_emb, pos_emb], dim=0)]
+        else:
+            ip_for_gen = ip_embeds
 
-        self._last_generated = self.pipe(
-            prompt=prompt,
-            negative_prompt=neg_prompt if use_cfg else None,
-            ip_adapter_image_embeds=ip_for_gen,
-            num_inference_steps=8 if use_cfg else self.num_steps,
-            guidance_scale=cfg_scale,
-            generator=gen,
-            width=self.width, height=self.height,
-            callback_on_step_end=callback,
-        ).images[0]
+        best_img = None
+        best_score = -999.0
+        max_tries = 3 if is_single else 1
+        for attempt in range(max_tries):
+            attempt_gen = torch.Generator(device=self.device).manual_seed(
+                self.seed + _stable_hash(node.shot_id) + attempt
+            )
+            self.attn_ctrl.set_mode_store_and_inject()
+            step_log.clear()
+
+            img = self.pipe(
+                prompt=prompt,
+                negative_prompt=neg_prompt if use_cfg else None,
+                ip_adapter_image_embeds=ip_for_gen,
+                num_inference_steps=8,
+                guidance_scale=cfg_scale,
+                generator=attempt_gen,
+                width=self.width, height=self.height,
+                callback_on_step_end=callback,
+            ).images[0]
+
+            if not is_single or max_tries == 1:
+                best_img = img
+                break
+
+            score = self._validate_single_entity(img)
+            print(f"    Attempt {attempt+1}: single-entity score={score:.3f}")
+            if score > best_score:
+                best_score = score
+                best_img = img
+                self.attn_ctrl.save_kv_to_cache(f"_best_{node.shot_id}")
+            if score > 0.03:
+                break
+
+        self._last_generated = best_img
+        # Restore best K/V
+        if max_tries > 1 and f"_best_{node.shot_id}" in self.attn_ctrl._kv_cache:
+            self.attn_ctrl._kv_cache[node.shot_id] = self.attn_ctrl._kv_cache.pop(f"_best_{node.shot_id}")
 
         # Cache this node's K/V to CPU for its children, then clear GPU banks
         self.attn_ctrl.save_kv_to_cache(node.shot_id)
