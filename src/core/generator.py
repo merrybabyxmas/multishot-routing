@@ -445,10 +445,28 @@ class KeyframeGenerator:
         for symbol, prompt in {**entity_prompts, **bg_prompts}.items():
             is_entity = symbol in entity_prompts
             if is_entity:
-                anchor_prompt = f"solo portrait of a single character, centered, {prompt}"
+                # Strip weapon/equipment/accessory clauses that cause SDXL
+                # to render a second entity (e.g. mech suit, large weapon)
+                import re
+                weapon_keywords = [
+                    r'rifle', r'gun', r'sword', r'weapon', r'blade', r'staff',
+                    r'shield', r'bow', r'spear', r'cannon', r'pistol', r'axe',
+                    r'mech\b', r'robot', r'drone', r'vehicle', r'mount',
+                    r'across.*chest', r'on.*back', r'holster',
+                ]
+                pattern = '|'.join(weapon_keywords)
+                # Remove comma-separated clauses containing weapon keywords
+                clauses = [c.strip() for c in prompt.split(',')]
+                clean_clauses = [c for c in clauses if not re.search(pattern, c, re.IGNORECASE)]
+                clean_prompt = ', '.join(clean_clauses)
+                anchor_prompt = (
+                    f"solo portrait of one single character, centered, "
+                    f"close-up upper body shot, {clean_prompt}"
+                )
                 anchor_neg = (
                     "two people, two characters, duo, pair, couple, group, crowd, "
-                    "multiple people, split image, side by side, duplicate, "
+                    "multiple people, multiple figures, robot behind, mech behind, "
+                    "split image, side by side, duplicate, second character, "
                     "blurry, low quality, distorted"
                 )
                 # Use guidance_scale > 0 so negative prompt actually works
