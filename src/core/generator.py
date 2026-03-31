@@ -539,6 +539,259 @@ class KeyframeGenerator:
 
         return canvas
 
+    # ── Multi-Stream Latent Fusion ────────────────────────────────
+
+    def _generate_multi_stream(self, node, entity_prompts, bg_prompts,
+                                entity_sources, keyframes, gen):
+        """Multi-Stream Latent Fusion for multi-entity generation.
+
+        Instead of collage + img2img, runs separate U-Net forward passes
+        per entity stream (each with its own prompt, IP-Adapter, K/V),
+        then fuses predicted noise in latent space via sigmoid masks.
+
+        Streams:
+          - Stream 0 (background): bg prompt only, no IP-Adapter identity
+          - Stream 1..N (entities): per-entity prompt + IP-Adapter + K/V
+        """
+        pipe = self.pipe
+        unet = pipe.unet
+        scheduler = pipe.scheduler
+        vae = pipe.vae
+        entities_sorted = sorted(node.entities)
+        n_ents = len(entities_sorted)
+        device = self.device
+        dtype = self.dtype
+
+        # ── Build per-stream conditions ──
+        # Background stream
+        bg_desc = bg_prompts[node.bg].split(",")[0]
+        bg_prompt = f"{bg_desc}, cinematic, detailed, no people"
+
+        # Entity streams
+        ent_prompts = []
+        ent_ip_embeds = []
+        for ent in entities_sorted:
+            desc = entity_prompts[ent].split(",")[0]
+            ent_prompts.append(
+                f"{desc}, in {bg_desc}, cinematic still frame, high quality"
+            )
+            ent_ip_embeds.append(
+                self.embedding_cache[ent].unsqueeze(0).unsqueeze(0)  # (1,1,1280)
+            )
+
+        # Encode all prompts (SDXL returns prompt_embeds + pooled_prompt_embeds)
+        all_prompts = [bg_prompt] + ent_prompts
+        prompt_embeds_list = []
+        add_text_embeds_list = []
+        for p in all_prompts:
+            (prompt_embeds, negative_prompt_embeds,
+             pooled_prompt_embeds, negative_pooled) = pipe.encode_prompt(
+                prompt=p,
+                device=device,
+                num_images_per_prompt=1,
+                do_classifier_free_guidance=False,
+            )
+            prompt_embeds_list.append(prompt_embeds)
+            add_text_embeds_list.append(pooled_prompt_embeds)
+
+        # ── Build sigmoid spatial masks (latent space) ──
+        latent_h = self.height // 8  # VAE downscale factor
+        latent_w = self.width // 8
+        masks = self._build_stream_masks(n_ents, latent_h, latent_w, device, dtype)
+
+        # ── Prepare latents ──
+        num_steps = self.num_steps
+        scheduler.set_timesteps(num_steps, device=device)
+        timesteps = scheduler.timesteps
+
+        latent_shape = (1, unet.config.in_channels, latent_h, latent_w)
+        latents = torch.randn(latent_shape, generator=gen, device=device, dtype=dtype)
+        latents = latents * scheduler.init_noise_sigma
+
+        # ── Prepare added time IDs (SDXL requirement) ──
+        # Manually construct: [orig_h, orig_w, crop_y, crop_x, target_h, target_w]
+        add_time_ids = torch.tensor(
+            [[self.height, self.width, 0, 0, self.height, self.width]],
+            dtype=dtype, device=device,
+        )
+
+        # ── Per-entity K/V: load into separate banks ──
+        # entity_sources: [(shot_id, slot_idx), ...]
+        entity_kv_caches = {}  # slot_idx -> {proc_key -> {step -> (K, V)}}
+        for shot_id, slot_idx in entity_sources:
+            if shot_id in self.attn_ctrl._kv_cache:
+                entity_kv_caches[slot_idx] = self.attn_ctrl._kv_cache[shot_id]
+
+        # ── Prepare IP-Adapter image embeds for each stream ──
+        zero_ip = self._zero_ip_embeds()  # for bg stream
+        stream_ip_embeds = [zero_ip]  # stream 0 = bg
+        for emb in ent_ip_embeds:
+            stream_ip_embeds.append([emb])  # stream 1..N = entity
+
+        print(f"  Streams: 1 bg + {n_ents} entity, {num_steps} steps")
+        print(f"  Latent shape: {latent_shape}, masks: {[m.shape for m in masks]}")
+
+        # ── Custom denoising loop ──
+        for step_idx, t in enumerate(timesteps):
+            # Scale input for scheduler
+            latent_input = scheduler.scale_model_input(latents, t)
+
+            # Run U-Net for each stream
+            noise_preds = []
+            for stream_idx in range(n_ents + 1):
+                # Set K/V injection for entity streams
+                if stream_idx > 0:
+                    slot_idx = stream_idx - 1
+                    if slot_idx in entity_kv_caches:
+                        # Load this entity's reference K/V
+                        kv_cache = entity_kv_caches[slot_idx]
+                        for key, proc in self.attn_ctrl.kv_processors.items():
+                            if key in kv_cache:
+                                step_kv = kv_cache[key].get(step_idx)
+                                if step_kv is not None:
+                                    k, v = step_kv
+                                    proc.kv_bank[step_idx] = (
+                                        k.clone().to(device),
+                                        v.clone().to(device),
+                                    )
+                            proc.current_step = step_idx
+                            # Decay blend over steps
+                            inject_steps = int(num_steps * self.inject_pct)
+                            if step_idx < inject_steps:
+                                proc.blend_ratio = self.max_blend * (1.0 - step_idx / inject_steps)
+                            else:
+                                proc.blend_ratio = 0.0
+                            proc.mode = "inject"
+                    else:
+                        self.attn_ctrl.set_mode_bypass()
+                else:
+                    # Background stream: no K/V injection
+                    self.attn_ctrl.set_mode_bypass()
+
+                # Set IP-Adapter embeds for this stream
+                pipe.set_ip_adapter_scale(0.8 if stream_idx > 0 else 0.0)
+
+                # Prepare added conditions
+                added_cond_kwargs = {
+                    "text_embeds": add_text_embeds_list[stream_idx],
+                    "time_ids": add_time_ids,
+                }
+
+                # Handle IP-Adapter embeds
+                ip_emb = stream_ip_embeds[stream_idx]
+                if hasattr(unet, 'encoder_hid_proj') and unet.encoder_hid_proj is not None:
+                    added_cond_kwargs["image_embeds"] = ip_emb
+
+                with torch.no_grad():
+                    noise_pred = unet(
+                        latent_input,
+                        t,
+                        encoder_hidden_states=prompt_embeds_list[stream_idx],
+                        added_cond_kwargs=added_cond_kwargs,
+                        return_dict=False,
+                    )[0]
+                noise_preds.append(noise_pred)
+
+            # ── Fuse noise predictions via spatial masks ──
+            fused_noise = torch.zeros_like(noise_preds[0])
+            for stream_idx, (noise, mask) in enumerate(zip(noise_preds, masks)):
+                fused_noise = fused_noise + noise * mask
+
+            # ── Scheduler step ──
+            latents = scheduler.step(fused_noise, t, latents, return_dict=False)[0]
+
+            # Clear K/V banks after each step
+            for proc in self.attn_ctrl.kv_processors.values():
+                proc.kv_bank.clear()
+
+        # ── Decode latents to image ──
+        self.attn_ctrl.set_mode_bypass()
+        pipe.set_ip_adapter_scale(0.6)
+
+        latents = latents / vae.config.scaling_factor
+        with torch.no_grad():
+            image = vae.decode(latents.to(vae.dtype), return_dict=False)[0]
+        image = pipe.image_processor.postprocess(image, output_type="pil")[0]
+
+        # Store K/V cache for this node (re-run with store mode)
+        # We'll do a lightweight store pass using the fused result
+        self._store_kv_for_node(node, image, entity_prompts, bg_prompts, gen)
+
+        return image
+
+    def _store_kv_for_node(self, node, image, entity_prompts, bg_prompts, gen):
+        """Run a quick img2img pass on the generated image to capture K/V."""
+        prompt = self.build_prompt(node, entity_prompts, bg_prompts)
+        ip_embeds = self._compose_ip_embeds(node)
+
+        self.attn_ctrl.set_mode_store()
+        step_log = []
+        def cb(pipe, step, timestep, cbk):
+            self.attn_ctrl.update_step(step)
+            step_log.append(step)
+            return cbk
+
+        # Light img2img pass just to capture K/V
+        _ = self.pipe_i2i(
+            prompt=prompt,
+            image=image,
+            ip_adapter_image_embeds=ip_embeds,
+            strength=0.2,  # minimal change, just for K/V capture
+            num_inference_steps=self.num_steps,
+            guidance_scale=0.0,
+            generator=gen,
+            callback_on_step_end=cb,
+        ).images[0]
+
+        self.attn_ctrl.save_kv_to_cache(node.shot_id)
+        for p in self.attn_ctrl.kv_processors.values():
+            p.kv_bank.clear()
+        self.attn_ctrl.set_mode_bypass()
+        print(f"  Stored K/V via img2img ({len(step_log)} steps)")
+
+    def _build_stream_masks(self, n_ents, h, w, device, dtype):
+        """Build sigmoid spatial masks for bg + N entity streams.
+
+        Returns list of (1, 1, h, w) masks that sum to 1.0 at every position.
+        Entity masks are sigmoid-based soft regions; bg mask fills the remainder.
+        """
+        x = torch.linspace(0, 1, w, device=device, dtype=torch.float32)
+
+        entity_masks = []
+        sharpness = 12.0  # controls softness of boundaries
+
+        for i in range(n_ents):
+            center = (i + 0.5) / n_ents
+            half_width = 0.5 / n_ents
+            # Sigmoid: rises at left edge, falls at right edge
+            left_edge = torch.sigmoid(sharpness * (x - (center - half_width)))
+            right_edge = torch.sigmoid(sharpness * ((center + half_width) - x))
+            mask_1d = left_edge * right_edge  # bell-shaped
+            mask_2d = mask_1d.unsqueeze(0).expand(h, -1)  # (h, w)
+            entity_masks.append(mask_2d)
+
+        # Stack and normalize so entity masks + bg = 1.0
+        if entity_masks:
+            ent_stack = torch.stack(entity_masks, dim=0)  # (N, h, w)
+            ent_sum = ent_stack.sum(dim=0, keepdim=True)  # (1, h, w)
+            # Cap entity contribution at 0.85 to leave room for bg
+            max_ent = 0.85
+            scale = torch.where(ent_sum > max_ent,
+                                max_ent / ent_sum.clamp(min=1e-6),
+                                torch.ones_like(ent_sum))
+            ent_stack = ent_stack * scale
+            bg_mask = 1.0 - ent_stack.sum(dim=0)  # (h, w)
+        else:
+            bg_mask = torch.ones(h, w, device=device, dtype=torch.float32)
+            ent_stack = torch.zeros(0, h, w, device=device, dtype=torch.float32)
+
+        # Assemble: [bg_mask, ent_mask_0, ent_mask_1, ...]
+        masks = [bg_mask.unsqueeze(0).unsqueeze(0).to(dtype)]  # (1,1,h,w)
+        for i in range(n_ents):
+            masks.append(ent_stack[i].unsqueeze(0).unsqueeze(0).to(dtype))
+
+        return masks
+
     # ── Core Generation ────────────────────────────────────────────
 
     def generate_node(self, node, prompt, keyframes):
@@ -625,14 +878,14 @@ class KeyframeGenerator:
             img = self._last_generated
 
         elif len(node.entities) >= 2 and hasattr(self, '_entity_graph') and self._entity_graph is not None:
-            # ── Multi-entity with D≥1: HYBRID (Collage + Entity-Decomposed K/V) ──
-            # 1. Compose collage from per-entity reference images (layout)
-            # 2. img2img harmonize with multi-source K/V injection (identity)
+            # ── Multi-entity with D≥1: MULTI-STREAM LATENT FUSION ──
+            # Each entity gets its own U-Net forward pass with dedicated
+            # prompt, IP-Adapter, and K/V injection. Noise predictions
+            # are fused in latent space via sigmoid spatial masks.
             refs = self._entity_graph.entity_refs.get(node.shot_id, {})
             entities_sorted = sorted(node.entities)
             n_ents = len(entities_sorted)
 
-            # Gather per-entity K/V sources (identity from reference shots)
             entity_sources = []
             for slot_idx, ent in enumerate(entities_sorted):
                 if ent in refs:
@@ -641,60 +894,13 @@ class KeyframeGenerator:
                     print(f"  ref({ent}) = {ref_node.shot_id} "
                           f"(E={sorted(ref_node.entities)}, BG={ref_node.bg}) [K/V source]")
                 else:
-                    print(f"  ref({ent}) = NONE (first appearance, use anchor)")
+                    print(f"  ref({ent}) = NONE (first appearance, no K/V)")
 
-            # Collage uses anchor images (white-bg, clean masking) for layout;
-            # K/V injection from reference shots handles identity separately
-            collage = self._compose_collage(node)
-            self._last_collage = collage
-
-            # Set up multi-source K/V injection during harmonization
-            kv_blend = 0.4
-            orig_blend = self.attn_ctrl.max_blend
-            self.pipe.set_ip_adapter_scale(0.8)
-
-            if entity_sources:
-                loaded = self.attn_ctrl.load_spatial_kv(entity_sources)
-                if loaded:
-                    self.attn_ctrl.max_blend = kv_blend
-                    per_src = kv_blend / len(entity_sources)
-                    print(f"  Mode: HYBRID COLLAGE + K/V ({n_ents} entities, "
-                          f"kv_blend={kv_blend:.0%}, per_source={per_src:.0%})")
-                    self.attn_ctrl.set_mode_spatial_store_and_inject()
-                else:
-                    print(f"  Mode: COLLAGE + HARMONIZE (no K/V sources)")
-                    self.attn_ctrl.set_mode_store()
-            else:
-                print(f"  Mode: COLLAGE + HARMONIZE (no entity refs)")
-                self.attn_ctrl.set_mode_store()
-
-            step_log = []
-            def spatial_callback(pipe, step, timestep, cbk):
-                self.attn_ctrl.update_step(step)
-                step_log.append(step)
-                return cbk
-
-            # Harmonize collage via img2img with K/V identity injection
-            img = self.pipe_i2i(
-                prompt=prompt,
-                negative_prompt="blurry, low quality, distorted, deformed, chimera, merged faces",
-                image=collage,
-                ip_adapter_image_embeds=ip_embeds,
-                strength=self.collage_strength,
-                num_inference_steps=self.collage_steps,
-                guidance_scale=0.0,
-                generator=gen,
-                callback_on_step_end=spatial_callback,
-            ).images[0]
-
-            self.attn_ctrl.save_kv_to_cache(node.shot_id)
-            for p in self.attn_ctrl.kv_processors.values():
-                p.kv_bank.clear()
-                p.spatial_sources = []
-            self.attn_ctrl.set_mode_bypass()
-            self.attn_ctrl.max_blend = orig_blend
-            self.pipe.set_ip_adapter_scale(0.6)
-            print(f"  Cached K/V for {len(step_log)} steps")
+            print(f"  Mode: MULTI-STREAM LATENT FUSION ({n_ents} entities)")
+            img = self._generate_multi_stream(
+                node, self._entity_prompts, self._bg_prompts,
+                entity_sources, keyframes, gen,
+            )
 
         elif len(node.entities) >= 2:
             # ── Fallback: Multi-entity with D≥1 (no entity graph) ──
