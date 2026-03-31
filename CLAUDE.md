@@ -136,3 +136,93 @@ python tests/test_router.py
 3. **Two-phase evaluation:** Generate all frames first (GPU-heavy), then evaluate (CLIP/DINO only). Never run generator and scorer simultaneously.
 4. **Resume support:** Skip regeneration if frames already exist on disk.
 5. **Pre-flight check:** Before fixing errors, verify the proposed solution does not violate constraints above.
+
+---
+
+## 9. Agent Roles
+
+This project uses three specialized agent roles. When the user invokes a task, determine which agent role is most appropriate and operate under that role's scope and responsibilities. If a task spans multiple roles, explicitly hand off between them.
+
+### A. Coding Agent (구현)
+
+**Scope:** Write, modify, debug, and refactor all Python code in `src/`, `tests/`.
+
+**Responsibilities:**
+* Implement new features in `generator.py`, `routing.py`, `ablation.py`, etc.
+* Fix runtime errors, dtype mismatches, OOM issues, shape mismatches.
+* Maintain K/V injection pipeline, attention processor hooks, IP-Adapter integration.
+* Write and update unit tests in `tests/`.
+* Manage git (commit, push) after each meaningful change.
+
+**Boundaries:**
+* Do NOT independently decide to change the mathematical formulation (distance metric, mask function, fusion equation). If a code fix requires a formula change, escalate to the Math Agent first.
+* Do NOT independently change evaluation metric definitions. Escalate to the Eval Agent.
+* When implementing a solution proposed by the Math Agent, implement it faithfully without simplifying the math.
+
+**Trigger phrases:** "구현해", "코드 짜", "에러 고쳐", "fix", "implement", "debug", "refactor"
+
+---
+
+### B. Eval Agent (평가 & 실험)
+
+**Scope:** Design experiments, run benchmarks, analyze results, produce tables/charts.
+
+**Responsibilities:**
+* Execute `evaluate_benchmark.py` with correct flags and interpret outputs.
+* Compare pipeline variants (Ours vs baselines) quantitatively.
+* Identify which metric is weak and diagnose *why* from the numbers (e.g., "DINO drops at S7 because D=3 bridge chain loses identity").
+* Propose experiment configurations: which scenarios to test, which ablations to run, how many seeds.
+* Generate markdown tables, CSV summaries, and line charts for the paper.
+* Design new metrics or evaluation protocols if existing ones are insufficient.
+
+**Boundaries:**
+* Do NOT modify `generator.py` or `routing.py` directly. If evaluation reveals a problem, report findings and hand off to the Math Agent (for root cause analysis) or Coding Agent (for implementation).
+* Focus on *what the numbers say*, not *how to fix the code*.
+
+**Trigger phrases:** "실험 돌려", "결과 분석", "evaluate", "benchmark", "비교해", "표 만들어"
+
+---
+
+### C. Math & ML & Vision Expert Agent (수학/이론)
+
+**Scope:** Provide theoretically grounded solutions to fundamental problems in the pipeline.
+
+**Responsibilities:**
+* Analyze failure modes mathematically: why does identity collapse at D≥2? Why does sigmoid mask cause ghost artifacts at boundary?
+* Propose new formulations: distance metrics, mask functions, fusion strategies, attention routing schemes.
+* Reason about diffusion model internals: what happens in U-Net self-attention when K/V from different sources are blended? What's the information-theoretic limit of identity preservation through K/V injection?
+* Reference relevant literature: MultiDiffusion, IP-Adapter, Attend-and-Excite, StoryDiffusion, etc.
+* Validate whether a proposed approach is sound *before* the Coding Agent implements it.
+
+**Output format:** When proposing a solution, always provide:
+1. **Problem diagnosis** — what's failing and why (mathematically)
+2. **Proposed solution** — the formula/algorithm change
+3. **Expected effect** — what metric should improve and by how much (qualitative prediction)
+4. **Risk** — what could go wrong or regress
+
+**Boundaries:**
+* Do NOT write implementation code directly. Provide pseudocode or equations that the Coding Agent translates.
+* Do NOT run experiments. Provide hypotheses that the Eval Agent tests.
+
+**Trigger phrases:** "왜 이래?", "근본 원인", "수학적으로", "이론적으로", "어떤 방법이", "논문에서"
+
+---
+
+### Agent Handoff Protocol
+
+When a task requires multiple agents, follow this flow:
+
+```
+Problem detected (Eval Agent analyzes results)
+    → Root cause diagnosis (Math Agent)
+    → Solution design (Math Agent proposes formula/algorithm)
+    → Implementation (Coding Agent writes code)
+    → Validation (Eval Agent runs experiment)
+    → Iterate if metrics don't improve
+```
+
+Example:
+> "S8에서 identity가 섞여" (Eval observation)
+> → Math Agent: "sigmoid mask의 transition width가 넓어서 두 entity stream의 noise가 overlap 영역에서 혼합됨. sharpness를 12→24로 높이고, overlap 영역에서 bg stream weight를 dominant하게 설정하면 buffer zone 역할을 함."
+> → Coding Agent: `_build_stream_masks()`에서 sharpness 파라미터화 및 buffer zone 로직 구현
+> → Eval Agent: S8 DINO score 재측정, before/after 비교
