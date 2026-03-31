@@ -563,15 +563,17 @@ class KeyframeGenerator:
         dtype = self.dtype
 
         # ── Build per-stream conditions ──
-        # Background stream
-        bg_desc = bg_prompts[node.bg].split(",")[0]
-        bg_prompt = f"{bg_desc}, cinematic, detailed, no people"
+        # Background stream: use full bg description for better consistency
+        bg_full = bg_prompts[node.bg]
+        bg_desc = bg_full.split(",")[0]
+        bg_prompt = f"{bg_full}, cinematic, detailed, no people"
 
-        # Entity streams
+        # Entity streams: use richer description (first 2 clauses of entity prompt)
         ent_prompts = []
         ent_ip_embeds = []
         for ent in entities_sorted:
-            desc = entity_prompts[ent].split(",")[0]
+            ent_parts = entity_prompts[ent].split(",")
+            desc = ",".join(ent_parts[:min(3, len(ent_parts))])
             ent_prompts.append(
                 f"{desc}, in {bg_desc}, cinematic still frame, high quality"
             )
@@ -663,8 +665,10 @@ class KeyframeGenerator:
                             proc.current_step = step_idx
                             # Decay blend over steps
                             inject_steps = int(num_steps * self.inject_pct)
+                            # Higher blend for multi-stream (identity preservation)
+                            ms_blend = min(self.max_blend + 0.15, 0.9)
                             if step_idx < inject_steps and has_any_kv:
-                                proc.blend_ratio = self.max_blend * (1.0 - step_idx / inject_steps)
+                                proc.blend_ratio = ms_blend * (1.0 - step_idx / inject_steps)
                             else:
                                 proc.blend_ratio = 0.0
                             proc.mode = "inject"
@@ -674,8 +678,8 @@ class KeyframeGenerator:
                     # Background stream: no K/V injection
                     self.attn_ctrl.set_mode_bypass()
 
-                # Set IP-Adapter embeds for this stream
-                pipe.set_ip_adapter_scale(0.6 if stream_idx > 0 else 0.0)
+                # Set IP-Adapter embeds for this stream (higher scale for identity)
+                pipe.set_ip_adapter_scale(0.8 if stream_idx > 0 else 0.0)
 
                 # Prepare added conditions
                 added_cond_kwargs = {
