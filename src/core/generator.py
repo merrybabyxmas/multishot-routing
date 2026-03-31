@@ -639,12 +639,17 @@ class KeyframeGenerator:
             # Run U-Net for each stream
             noise_preds = []
             for stream_idx in range(n_ents + 1):
+                # FIX: Clear K/V banks BEFORE each stream to prevent cross-contamination
+                for proc in self.attn_ctrl.kv_processors.values():
+                    proc.kv_bank.clear()
+
                 # Set K/V injection for entity streams
                 if stream_idx > 0:
                     slot_idx = stream_idx - 1
                     if slot_idx in entity_kv_caches:
                         # Load this entity's reference K/V
                         kv_cache = entity_kv_caches[slot_idx]
+                        has_any_kv = False
                         for key, proc in self.attn_ctrl.kv_processors.items():
                             if key in kv_cache:
                                 step_kv = kv_cache[key].get(step_idx)
@@ -654,10 +659,11 @@ class KeyframeGenerator:
                                         k.clone().to(device),
                                         v.clone().to(device),
                                     )
+                                    has_any_kv = True
                             proc.current_step = step_idx
                             # Decay blend over steps
                             inject_steps = int(num_steps * self.inject_pct)
-                            if step_idx < inject_steps:
+                            if step_idx < inject_steps and has_any_kv:
                                 proc.blend_ratio = self.max_blend * (1.0 - step_idx / inject_steps)
                             else:
                                 proc.blend_ratio = 0.0
@@ -669,7 +675,7 @@ class KeyframeGenerator:
                     self.attn_ctrl.set_mode_bypass()
 
                 # Set IP-Adapter embeds for this stream
-                pipe.set_ip_adapter_scale(0.8 if stream_idx > 0 else 0.0)
+                pipe.set_ip_adapter_scale(0.6 if stream_idx > 0 else 0.0)
 
                 # Prepare added conditions
                 added_cond_kwargs = {
@@ -690,12 +696,24 @@ class KeyframeGenerator:
                         added_cond_kwargs=added_cond_kwargs,
                         return_dict=False,
                     )[0]
+
+                # FIX: Guard against NaN — replace with zero (bg stream will fill)
+                if torch.isnan(noise_pred).any():
+                    nan_pct = torch.isnan(noise_pred).float().mean().item() * 100
+                    print(f"  WARNING: NaN in stream {stream_idx} ({nan_pct:.1f}%), replacing with zeros")
+                    noise_pred = torch.nan_to_num(noise_pred, nan=0.0)
+
                 noise_preds.append(noise_pred)
 
             # ── Fuse noise predictions via spatial masks ──
             fused_noise = torch.zeros_like(noise_preds[0])
             for stream_idx, (noise, mask) in enumerate(zip(noise_preds, masks)):
                 fused_noise = fused_noise + noise * mask
+
+            # FIX: Final NaN guard on fused noise
+            if torch.isnan(fused_noise).any():
+                print(f"  WARNING: NaN in fused noise at step {step_idx}, clamping")
+                fused_noise = torch.nan_to_num(fused_noise, nan=0.0)
 
             # ── Scheduler step ──
             latents = scheduler.step(fused_noise, t, latents, return_dict=False)[0]
@@ -708,10 +726,23 @@ class KeyframeGenerator:
         self.attn_ctrl.set_mode_bypass()
         pipe.set_ip_adapter_scale(0.6)
 
-        latents = latents / vae.config.scaling_factor
+        latents_scaled = latents / vae.config.scaling_factor
+        # FIX: Upcast VAE to float32 for decode (matches standard SDXL pipeline behavior)
+        # fp16 VAE produces NaN on large latent values (std≈8 after scaling)
+        needs_upcast = vae.dtype == torch.float16 and vae.config.force_upcast
+        if needs_upcast:
+            vae.to(dtype=torch.float32)
+            latents_for_decode = latents_scaled.to(torch.float32)
+        else:
+            latents_for_decode = latents_scaled.to(torch.float32)  # always use fp32 for safety
+
         with torch.no_grad():
-            image = vae.decode(latents.to(vae.dtype), return_dict=False)[0]
-        image = pipe.image_processor.postprocess(image, output_type="pil")[0]
+            decoded = vae.decode(latents_for_decode, return_dict=False)[0]
+
+        if needs_upcast:
+            vae.to(dtype=torch.float16)
+
+        image = pipe.image_processor.postprocess(decoded.float(), output_type="pil")[0]
 
         # Store K/V cache for this node (re-run with store mode)
         # We'll do a lightweight store pass using the fused result
@@ -732,11 +763,13 @@ class KeyframeGenerator:
             return cbk
 
         # Light img2img pass just to capture K/V
+        # strength=0.75 ensures enough steps (ceil(8*0.75)=6) for K/V to cover
+        # the inject_pct=0.6 window (ceil(8*0.6)=5 steps needed)
         _ = self.pipe_i2i(
             prompt=prompt,
             image=image,
             ip_adapter_image_embeds=ip_embeds,
-            strength=0.2,  # minimal change, just for K/V capture
+            strength=0.75,
             num_inference_steps=self.num_steps,
             guidance_scale=0.0,
             generator=gen,
