@@ -353,7 +353,8 @@ class KeyframeGenerator:
 
     def __init__(self, device: str = "cuda:3", num_steps: int = 8,
                  max_blend: float = 0.7, inject_pct: float = 0.6,
-                 collage_steps: int = 20, collage_strength: float = 0.65):
+                 collage_steps: int = 20, collage_strength: float = 0.45,
+                 width: int = 768, height: int = 768):
         self.device = device
         self.dtype = torch.float16
         self.num_steps = num_steps
@@ -361,6 +362,8 @@ class KeyframeGenerator:
         self.inject_pct = inject_pct
         self.collage_steps = collage_steps
         self.collage_strength = collage_strength
+        self.width = width
+        self.height = height
         self.seed = 42
 
         self.pipe = None
@@ -424,7 +427,7 @@ class KeyframeGenerator:
                 num_inference_steps=4,
                 guidance_scale=0.0,
                 generator=gen,
-                width=512, height=512,
+                width=self.width, height=self.height,
             ).images[0]
             anchor_images[symbol] = img
             self.anchor_images[symbol] = img.copy()
@@ -488,8 +491,14 @@ class KeyframeGenerator:
 
     # ── Collage Composition ───────────────────────────────────────
 
-    def _compose_collage(self, node):
-        """Compose Universal Anchor as collage: entity anchors on background.
+    def _compose_collage(self, node, source_images=None):
+        """Compose collage: entity images on background.
+
+        Args:
+            node: target node with entities and bg
+            source_images: optional dict {entity -> PIL.Image} to use instead
+                          of anchor images. Used for entity-decomposed routing
+                          where each entity has a specific reference shot.
 
         Pastes full-size entity images (with white-bg removed) at horizontal
         offsets over the background anchor, so characters are spread across
@@ -497,15 +506,13 @@ class KeyframeGenerator:
         """
         entities = sorted(node.entities)
         n = len(entities)
-        w, h = 512, 512
+        w, h = self.width, self.height
 
         # Base canvas: background image
         bg_img = self.anchor_images.get(node.bg)
         canvas = bg_img.copy().resize((w, h)) if bg_img else Image.new("RGB", (w, h), (30, 30, 30))
 
         # Target character centers: evenly spaced across canvas
-        # Character is centered at x=w//2 in each anchor image,
-        # so offset = target_x - w//2
         if n == 1:
             offsets = [0]
         else:
@@ -515,7 +522,11 @@ class KeyframeGenerator:
             offsets = [t - center for t in targets]
 
         for i, ent in enumerate(entities):
-            ent_img = self.anchor_images[ent].convert("RGB").resize((w, h))
+            # Use source_images if provided, otherwise fall back to anchors
+            if source_images and ent in source_images:
+                ent_img = source_images[ent].convert("RGB").resize((w, h))
+            else:
+                ent_img = self.anchor_images[ent].convert("RGB").resize((w, h))
             ent_arr = np.array(ent_img)
 
             # Mask: non-white pixels = entity foreground
@@ -596,7 +607,7 @@ class KeyframeGenerator:
                     num_inference_steps=self.num_steps,
                     guidance_scale=0.0,
                     generator=gen,
-                    width=512, height=512,
+                    width=self.width, height=self.height,
                     callback_on_step_end=root_callback,
                 ).images[0]
                 self.attn_ctrl.save_kv_to_cache(node.shot_id)
@@ -614,43 +625,47 @@ class KeyframeGenerator:
             img = self._last_generated
 
         elif len(node.entities) >= 2 and hasattr(self, '_entity_graph') and self._entity_graph is not None:
-            # ── Multi-entity with D≥1: SPATIAL K/V INJECTION ──
-            # Each entity gets K/V from its best identity source,
-            # injected into its spatial region (left/right/etc.)
+            # ── Multi-entity with D≥1: HYBRID (Collage + Entity-Decomposed K/V) ──
+            # 1. Compose collage from per-entity reference images (layout)
+            # 2. img2img harmonize with multi-source K/V injection (identity)
             refs = self._entity_graph.entity_refs.get(node.shot_id, {})
             entities_sorted = sorted(node.entities)
             n_ents = len(entities_sorted)
 
-            # Build spatial source list: (shot_id, slot_index)
+            # Gather per-entity K/V sources (identity from reference shots)
             entity_sources = []
             for slot_idx, ent in enumerate(entities_sorted):
                 if ent in refs:
                     ref_node = refs[ent]
                     entity_sources.append((ref_node.shot_id, slot_idx))
                     print(f"  ref({ent}) = {ref_node.shot_id} "
-                          f"(E={sorted(ref_node.entities)}, BG={ref_node.bg})")
+                          f"(E={sorted(ref_node.entities)}, BG={ref_node.bg}) [K/V source]")
                 else:
-                    print(f"  ref({ent}) = NONE (first appearance, pure T2I)")
+                    print(f"  ref({ent}) = NONE (first appearance, use anchor)")
 
-            # Use moderate blend for multi-entity (split across sources)
-            # Also boost IP-Adapter for stronger identity signal
-            spatial_blend = 0.5
+            # Collage uses anchor images (white-bg, clean masking) for layout;
+            # K/V injection from reference shots handles identity separately
+            collage = self._compose_collage(node)
+            self._last_collage = collage
+
+            # Set up multi-source K/V injection during harmonization
+            kv_blend = 0.4
             orig_blend = self.attn_ctrl.max_blend
             self.pipe.set_ip_adapter_scale(0.8)
 
             if entity_sources:
                 loaded = self.attn_ctrl.load_spatial_kv(entity_sources)
                 if loaded:
-                    self.attn_ctrl.max_blend = spatial_blend
-                    per_src = spatial_blend / len(entity_sources)
-                    print(f"  Mode: MULTI-SOURCE K/V INJECT ({n_ents} entities, "
-                          f"total_blend={spatial_blend:.0%}, per_source={per_src:.0%})")
+                    self.attn_ctrl.max_blend = kv_blend
+                    per_src = kv_blend / len(entity_sources)
+                    print(f"  Mode: HYBRID COLLAGE + K/V ({n_ents} entities, "
+                          f"kv_blend={kv_blend:.0%}, per_source={per_src:.0%})")
                     self.attn_ctrl.set_mode_spatial_store_and_inject()
                 else:
-                    print(f"  Mode: T2I (no spatial K/V sources found)")
+                    print(f"  Mode: COLLAGE + HARMONIZE (no K/V sources)")
                     self.attn_ctrl.set_mode_store()
             else:
-                print(f"  Mode: T2I (no entity refs, store K/V)")
+                print(f"  Mode: COLLAGE + HARMONIZE (no entity refs)")
                 self.attn_ctrl.set_mode_store()
 
             step_log = []
@@ -659,18 +674,16 @@ class KeyframeGenerator:
                 step_log.append(step)
                 return cbk
 
-            # Use more steps + guidance for multi-entity to improve prompt following
-            # CFG requires negative+positive IP-Adapter embeds concatenated
-            neg_embeds = [torch.zeros_like(e) for e in ip_embeds]
-            cfg_ip_embeds = [torch.cat([n, p], dim=0) for n, p in zip(neg_embeds, ip_embeds)]
-            img = self.pipe(
+            # Harmonize collage via img2img with K/V identity injection
+            img = self.pipe_i2i(
                 prompt=prompt,
-                negative_prompt="blurry, low quality, distorted, deformed, chimera, merged faces, single person",
-                ip_adapter_image_embeds=cfg_ip_embeds,
-                num_inference_steps=12,
-                guidance_scale=3.0,
+                negative_prompt="blurry, low quality, distorted, deformed, chimera, merged faces",
+                image=collage,
+                ip_adapter_image_embeds=ip_embeds,
+                strength=self.collage_strength,
+                num_inference_steps=self.collage_steps,
+                guidance_scale=0.0,
                 generator=gen,
-                width=512, height=512,
                 callback_on_step_end=spatial_callback,
             ).images[0]
 
@@ -680,7 +693,7 @@ class KeyframeGenerator:
                 p.spatial_sources = []
             self.attn_ctrl.set_mode_bypass()
             self.attn_ctrl.max_blend = orig_blend
-            self.pipe.set_ip_adapter_scale(0.6)  # restore default
+            self.pipe.set_ip_adapter_scale(0.6)
             print(f"  Cached K/V for {len(step_log)} steps")
 
         elif len(node.entities) >= 2:
@@ -788,7 +801,7 @@ class KeyframeGenerator:
             num_inference_steps=self.num_steps,
             guidance_scale=0.0,
             generator=gen,
-            width=512, height=512,
+            width=self.width, height=self.height,
             callback_on_step_end=callback,
         ).images[0]
 
