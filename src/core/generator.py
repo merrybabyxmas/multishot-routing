@@ -445,20 +445,7 @@ class KeyframeGenerator:
         for symbol, prompt in {**entity_prompts, **bg_prompts}.items():
             is_entity = symbol in entity_prompts
             if is_entity:
-                # Strip weapon/equipment/accessory clauses that cause SDXL
-                # to render a second entity (e.g. mech suit, large weapon)
-                import re
-                weapon_keywords = [
-                    r'rifle', r'gun', r'sword', r'weapon', r'blade', r'staff',
-                    r'shield', r'bow', r'spear', r'cannon', r'pistol', r'axe',
-                    r'mech\b', r'robot', r'drone', r'vehicle', r'mount',
-                    r'across.*chest', r'on.*back', r'holster',
-                ]
-                pattern = '|'.join(weapon_keywords)
-                # Remove comma-separated clauses containing weapon keywords
-                clauses = [c.strip() for c in prompt.split(',')]
-                clean_clauses = [c for c in clauses if not re.search(pattern, c, re.IGNORECASE)]
-                clean_prompt = ', '.join(clean_clauses)
+                clean_prompt = self._clean_entity_desc(prompt)
                 anchor_prompt = (
                     f"solo portrait of one single character, centered, "
                     f"close-up upper body shot, {clean_prompt}"
@@ -550,26 +537,58 @@ class KeyframeGenerator:
         return [concat]
 
     @staticmethod
+    def _clean_entity_desc(raw_desc: str) -> str:
+        """Strip weapon/equipment/accessory phrases that cause SDXL to
+        render extra figures (mech suits, large weapons as separate entities).
+        Works at both clause-level (comma-separated) and phrase-level."""
+        import re
+        # Phrases to remove entirely (multi-word patterns)
+        phrase_removals = [
+            r'powered armor', r'power armor', r'power suit', r'battle suit',
+            r'exo.?suit', r'mech suit', r'plasma rifle', r'assault rifle',
+            r'sniper rifle', r'laser rifle', r'energy weapon',
+            r'across (her|his|their) chest', r'on (her|his|their) back',
+            r'in (her|his|their) hand(s)?', r'wielding \w+',
+        ]
+        result = raw_desc
+        for pat in phrase_removals:
+            result = re.sub(pat, '', result, flags=re.IGNORECASE)
+        # Clause-level removal for remaining weapon keywords
+        weapon_kw = (
+            r'\brifle\b|\bgun\b|\bsword\b|\bweapon\b|\bblade\b|\bstaff\b|'
+            r'\bshield\b|\bbow\b|\bspear\b|\bcannon\b|\bpistol\b|\baxe\b|'
+            r'\bmech\b|\brobot\b|\bdrone\b|\bvehicle\b|\bmount\b|\bholster\b'
+        )
+        clauses = [c.strip() for c in result.split(',')]
+        clean = [c for c in clauses if c and not re.search(weapon_kw, c, re.IGNORECASE)]
+        result = ', '.join(clean) if clean else clauses[0]
+        # Clean up double spaces and trailing commas
+        result = re.sub(r'\s{2,}', ' ', result).strip(' ,')
+        return result
+
+    @staticmethod
     def build_prompt(node, entity_prompts, bg_prompts):
         entities_sorted = sorted(node.entities)
         parts = []
         if len(entities_sorted) >= 3:
-            # Universal anchor or multi-entity: spatial positions
             positions = ["on the left", "in the center", "on the right"]
             for i, ent in enumerate(entities_sorted):
-                desc = entity_prompts[ent].split(",")[0]
+                desc = KeyframeGenerator._clean_entity_desc(
+                    entity_prompts[ent].split(",")[0])
                 pos = positions[i] if i < len(positions) else ""
                 parts.append(f"{desc} {pos}".strip())
         elif len(entities_sorted) == 2:
-            # Spatial anchoring: first entity left, second entity right
-            desc0 = entity_prompts[entities_sorted[0]].split(",")[0]
-            desc1 = entity_prompts[entities_sorted[1]].split(",")[0]
+            desc0 = KeyframeGenerator._clean_entity_desc(
+                entity_prompts[entities_sorted[0]].split(",")[0])
+            desc1 = KeyframeGenerator._clean_entity_desc(
+                entity_prompts[entities_sorted[1]].split(",")[0])
             parts.append(f"{desc0} standing on the left")
             parts.append(f"{desc1} standing on the right")
         else:
             for ent in entities_sorted:
-                desc = entity_prompts[ent].split(",")[0]
-                parts.append(desc)
+                desc = KeyframeGenerator._clean_entity_desc(
+                    entity_prompts[ent].split(",")[0])
+                parts.append(f"solo, {desc}")  # enforce single entity
         bg_desc = bg_prompts[node.bg].split(",")[0]
         action = node.action if node.action else "group scene"
         return (f"{', '.join(parts)}, in {bg_desc}, {action}, "
@@ -654,14 +673,15 @@ class KeyframeGenerator:
         bg_desc = bg_full.split(",")[0]
         bg_prompt = f"{bg_full}, cinematic, detailed, no people"
 
-        # Entity streams: use richer description (first 2 clauses of entity prompt)
+        # Entity streams: use cleaned description (no weapons/mech that cause duplicates)
         ent_prompts = []
         ent_ip_embeds = []
         for ent in entities_sorted:
             ent_parts = entity_prompts[ent].split(",")
-            desc = ",".join(ent_parts[:min(3, len(ent_parts))])
+            raw_desc = ",".join(ent_parts[:min(3, len(ent_parts))])
+            desc = self._clean_entity_desc(raw_desc)
             ent_prompts.append(
-                f"{desc}, in {bg_desc}, cinematic still frame, high quality"
+                f"solo, {desc}, in {bg_desc}, cinematic still frame, high quality"
             )
             ent_ip_embeds.append(
                 self.embedding_cache[ent].unsqueeze(0).unsqueeze(0)  # (1,1,1280)
@@ -967,7 +987,14 @@ class KeyframeGenerator:
                 print(f"  Cached K/V for {len(step_log)} steps")
 
             else:
-                print(f"  Mode: T2I (root node, store K/V)")
+                is_single = len(node.entities) <= 1
+                cfg_scale = 1.5 if is_single else 0.0
+                neg_prompt = (
+                    "two people, two characters, duplicate, duo, pair, "
+                    "multiple figures, robot behind, mech behind, "
+                    "blurry, low quality, distorted, deformed"
+                ) if is_single else "blurry, low quality, distorted, deformed"
+                print(f"  Mode: T2I (root node, store K/V, cfg={cfg_scale})")
                 self.attn_ctrl.set_mode_store()
 
                 step_log = []
@@ -976,12 +1003,16 @@ class KeyframeGenerator:
                     step_log.append(step)
                     return cbk
 
+                # For CFG > 0, IP-Adapter needs doubled embeds
+                use_cfg = cfg_scale > 0.0
+                ip_for_gen = self._zero_ip_embeds(do_cfg=True) if use_cfg else ip_embeds
+
                 img = self.pipe(
                     prompt=prompt,
-                    negative_prompt="blurry, low quality, distorted, deformed",
-                    ip_adapter_image_embeds=ip_embeds,
-                    num_inference_steps=self.num_steps,
-                    guidance_scale=0.0,
+                    negative_prompt=neg_prompt if use_cfg else None,
+                    ip_adapter_image_embeds=ip_for_gen,
+                    num_inference_steps=8 if use_cfg else self.num_steps,
+                    guidance_scale=cfg_scale,
                     generator=gen,
                     width=self.width, height=self.height,
                     callback_on_step_end=root_callback,
@@ -1113,7 +1144,14 @@ class KeyframeGenerator:
             self.attn_ctrl.max_blend = blend_override
 
         # Generate with K/V injection + simultaneous store for this node's children
-        print(f"  Generating {node.shot_id} with K/V inject + store...")
+        is_single = len(node.entities) <= 1
+        cfg_scale = 1.5 if is_single else 0.0
+        neg_prompt = (
+            "two people, two characters, duplicate, duo, pair, "
+            "multiple figures, robot behind, mech behind, "
+            "blurry, low quality, distorted, deformed"
+        ) if is_single else "blurry, low quality, distorted, deformed"
+        print(f"  Generating {node.shot_id} with K/V inject + store (cfg={cfg_scale})...")
         self.attn_ctrl.set_mode_store_and_inject()
 
         step_log = []
@@ -1123,12 +1161,15 @@ class KeyframeGenerator:
             step_log.append((step, ratio))
             return cbk
 
+        use_cfg = cfg_scale > 0.0
+        ip_for_gen = self._zero_ip_embeds(do_cfg=True) if use_cfg else ip_embeds
+
         self._last_generated = self.pipe(
             prompt=prompt,
-            negative_prompt="blurry, low quality, distorted, deformed",
-            ip_adapter_image_embeds=ip_embeds,
-            num_inference_steps=self.num_steps,
-            guidance_scale=0.0,
+            negative_prompt=neg_prompt if use_cfg else None,
+            ip_adapter_image_embeds=ip_for_gen,
+            num_inference_steps=8 if use_cfg else self.num_steps,
+            guidance_scale=cfg_scale,
             generator=gen,
             width=self.width, height=self.height,
             callback_on_step_end=callback,
