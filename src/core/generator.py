@@ -1077,42 +1077,31 @@ class KeyframeGenerator:
             )
             img = self._last_generated
 
-        elif len(node.entities) >= 2 and hasattr(self, '_entity_graph') and self._entity_graph is not None:
-            # ── Multi-entity with D≥1: MULTI-STREAM LATENT FUSION ──
-            # Each entity gets its own U-Net forward pass with dedicated
-            # prompt, IP-Adapter, and K/V injection. Noise predictions
-            # are fused in latent space via sigmoid spatial masks.
-            refs = self._entity_graph.entity_refs.get(node.shot_id, {})
-            entities_sorted = sorted(node.entities)
-            n_ents = len(entities_sorted)
-
-            entity_sources = []
-            for slot_idx, ent in enumerate(entities_sorted):
-                if ent in refs:
-                    ref_node = refs[ent]
-                    entity_sources.append((ref_node.shot_id, slot_idx))
-                    print(f"  ref({ent}) = {ref_node.shot_id} "
-                          f"(E={sorted(ref_node.entities)}, BG={ref_node.bg}) [K/V source]")
-                else:
-                    print(f"  ref({ent}) = NONE (first appearance, no K/V)")
-
-            print(f"  Mode: MULTI-STREAM LATENT FUSION ({n_ents} entities)")
-            img = self._generate_multi_stream(
-                node, self._entity_prompts, self._bg_prompts,
-                entity_sources, keyframes, gen,
-            )
-
         elif len(node.entities) >= 2:
-            # ── Fallback: Multi-entity with D≥1 (no entity graph) ──
-            # Uses collage + harmonize approach
-            collage = self._compose_collage(node)
+            # ── Multi-entity: COLLAGE + HARMONIZE ──
+            # Uses per-entity reference images (from keyframes or anchors)
+            # composed into a collage, then harmonized via img2img
+            refs = {}
+            if hasattr(self, '_entity_graph') and self._entity_graph is not None:
+                refs = self._entity_graph.entity_refs.get(node.shot_id, {})
+
+            # Build source_images dict: use reference shot keyframes if available
+            source_images = {}
+            for ent in sorted(node.entities):
+                if ent in refs and refs[ent].shot_id in keyframes:
+                    source_images[ent] = keyframes[refs[ent].shot_id]
+                    print(f"  ref({ent}) = {refs[ent].shot_id} [keyframe for collage]")
+                else:
+                    print(f"  ref({ent}) = anchor [fallback]")
+
+            collage = self._compose_collage(node, source_images=source_images if source_images else None)
             self._last_collage = collage
 
             parent = node.parent_node
             style_blend = 0.15
             loaded = self.attn_ctrl.load_kv_from_cache(parent.shot_id)
             if loaded:
-                print(f"  Mode: COLLAGE + HARMONIZE (multi-entity, style K/V from {parent_id}, blend={style_blend:.0%})")
+                print(f"  Mode: COLLAGE + HARMONIZE (multi-entity, K/V from {parent_id}, blend={style_blend:.0%})")
                 orig_blend = self.attn_ctrl.max_blend
                 self.attn_ctrl.max_blend = style_blend
                 self.attn_ctrl.set_mode_store_and_inject()
