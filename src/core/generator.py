@@ -413,6 +413,29 @@ class KeyframeGenerator:
 
     # ── Embedding Cache ────────────────────────────────────────────
 
+    def _validate_single_entity(self, img: Image.Image) -> float:
+        """Return CLIP similarity to 'one person' minus 'two people'.
+        Positive = likely single entity. Negative = likely multiple."""
+        import open_clip
+        if not hasattr(self, '_val_clip_model'):
+            self._val_clip_model, _, self._val_clip_preprocess = open_clip.create_model_and_transforms(
+                'ViT-B-32', pretrained='laion2b_s34b_b79k', device=self.device,
+            )
+            self._val_clip_tokenizer = open_clip.get_tokenizer('ViT-B-32')
+
+        img_tensor = self._val_clip_preprocess(img).unsqueeze(0).to(self.device)
+        texts = self._val_clip_tokenizer(["one person, solo", "two people, duo, multiple characters"]).to(self.device)
+
+        with torch.no_grad():
+            img_feat = self._val_clip_model.encode_image(img_tensor)
+            txt_feat = self._val_clip_model.encode_text(texts)
+            img_feat = img_feat / img_feat.norm(dim=-1, keepdim=True)
+            txt_feat = txt_feat / txt_feat.norm(dim=-1, keepdim=True)
+            sims = (img_feat @ txt_feat.T).squeeze(0)
+
+        # positive means "one person" is more likely
+        return (sims[0] - sims[1]).item()
+
     def build_anchor_cache(self, entity_prompts, bg_prompts, out_dir):
         print("[Anchors] Generating base images...")
         anchor_images: dict[str, Image.Image] = {}
@@ -420,28 +443,60 @@ class KeyframeGenerator:
         self.attn_ctrl.set_mode_bypass()
 
         for symbol, prompt in {**entity_prompts, **bg_prompts}.items():
-            # Entity anchors: enforce single character to prevent duplicates
             is_entity = symbol in entity_prompts
             if is_entity:
-                anchor_prompt = f"solo, single character, one person, {prompt}"
-                anchor_neg = "two people, multiple people, crowd, duplicate, split image, side by side, blurry, low quality, distorted"
+                anchor_prompt = f"solo portrait of a single character, centered, {prompt}"
+                anchor_neg = (
+                    "two people, two characters, duo, pair, couple, group, crowd, "
+                    "multiple people, split image, side by side, duplicate, "
+                    "blurry, low quality, distorted"
+                )
+                # Use guidance_scale > 0 so negative prompt actually works
+                anchor_steps = 8
+                anchor_guidance = 2.0
+                max_retries = 3
             else:
                 anchor_prompt = prompt
                 anchor_neg = "people, person, blurry, low quality, distorted"
+                anchor_steps = 4
+                anchor_guidance = 0.0
+                max_retries = 1
 
-            img = self.pipe(
-                prompt=anchor_prompt,
-                negative_prompt=anchor_neg,
-                ip_adapter_image_embeds=self._zero_ip_embeds(),
-                num_inference_steps=4,
-                guidance_scale=0.0,
-                generator=gen,
-                width=self.width, height=self.height,
-            ).images[0]
-            anchor_images[symbol] = img
-            self.anchor_images[symbol] = img.copy()
-            img.save(out_dir / f"anchor_{symbol}.png")
-            print(f"  Anchor {symbol}: saved")
+            best_img = None
+            best_score = -999.0
+            for attempt in range(max_retries):
+                attempt_gen = torch.Generator(device=self.device).manual_seed(self.seed + attempt)
+                do_cfg = anchor_guidance > 0.0
+                img = self.pipe(
+                    prompt=anchor_prompt,
+                    negative_prompt=anchor_neg if do_cfg else None,
+                    ip_adapter_image_embeds=self._zero_ip_embeds(do_cfg=do_cfg),
+                    num_inference_steps=anchor_steps,
+                    guidance_scale=anchor_guidance,
+                    generator=attempt_gen,
+                    width=self.width, height=self.height,
+                ).images[0]
+
+                if not is_entity:
+                    best_img = img
+                    break
+
+                # Validate single entity via CLIP
+                score = self._validate_single_entity(img)
+                print(f"  Anchor {symbol} attempt {attempt+1}: single-entity score = {score:.3f}")
+                if score > best_score:
+                    best_score = score
+                    best_img = img
+                if score > 0.02:  # confident single entity
+                    break
+
+            anchor_images[symbol] = best_img
+            self.anchor_images[symbol] = best_img.copy()
+            best_img.save(out_dir / f"anchor_{symbol}.png")
+            if is_entity:
+                print(f"  Anchor {symbol}: saved (single-entity score={best_score:.3f})")
+            else:
+                print(f"  Anchor {symbol}: saved")
 
         print("[Anchors] Computing CLIP embeddings...")
         for symbol, img in anchor_images.items():
@@ -458,9 +513,13 @@ class KeyframeGenerator:
             emb = self.image_encoder(pixel_values).image_embeds
         return emb.squeeze(0)
 
-    def _zero_ip_embeds(self):
-        """Return single zero embedding for IP-Adapter."""
-        return [torch.zeros(1, 1, 1280, device=self.device, dtype=self.dtype)]
+    def _zero_ip_embeds(self, do_cfg=False):
+        """Return zero embedding for IP-Adapter.
+        When do_cfg=True, return [neg, pos] concatenated for classifier-free guidance."""
+        zero = torch.zeros(1, 1, 1280, device=self.device, dtype=self.dtype)
+        if do_cfg:
+            return [torch.cat([zero, zero], dim=0)]  # [2, 1, 1280]
+        return [zero]
 
     def _compose_ip_embeds(self, node):
         """Concatenate all entity + bg embeddings into one token sequence.
