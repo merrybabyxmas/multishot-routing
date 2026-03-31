@@ -445,18 +445,28 @@ class KeyframeGenerator:
         for symbol, prompt in {**entity_prompts, **bg_prompts}.items():
             is_entity = symbol in entity_prompts
             if is_entity:
+                import re
+                # Detect entity type for appropriate framing
+                human_kw = r'person|man|woman|girl|boy|warrior|marine|soldier|knight|wizard|witch|king|queen|prince|princess|assassin|thief|pilot|captain|commander|agent|detective|samurai|ninja|monk|priest'
+                is_human = bool(re.search(human_kw, prompt, re.IGNORECASE))
+
                 clean_prompt = self._clean_entity_desc(prompt)
-                anchor_prompt = (
-                    f"solo portrait of one single character, centered, "
-                    f"close-up upper body shot, {clean_prompt}"
-                )
+                if is_human:
+                    anchor_prompt = (
+                        f"solo, one single character, full body, standing, centered, "
+                        f"white background, {clean_prompt}"
+                    )
+                else:
+                    # Non-human: drone, robot, creature, vehicle — keep full description
+                    anchor_prompt = (
+                        f"solo, single subject, full body, centered, "
+                        f"white background, {prompt}"
+                    )
                 anchor_neg = (
                     "two people, two characters, duo, pair, couple, group, crowd, "
-                    "multiple people, multiple figures, robot behind, mech behind, "
-                    "split image, side by side, duplicate, second character, "
-                    "blurry, low quality, distorted"
+                    "multiple people, multiple figures, split image, side by side, "
+                    "duplicate, second character, blurry, low quality, distorted"
                 )
-                # Use guidance_scale > 0 so negative prompt actually works
                 anchor_steps = 8
                 anchor_guidance = 2.0
                 max_retries = 3
