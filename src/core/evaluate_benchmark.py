@@ -167,6 +167,53 @@ def _crop_entity_region(img: Image.Image, entity_idx: int, n_entities: int) -> I
         return img.crop((left, 0, right, h))
 
 
+def _detect_chimera(
+    img: Image.Image,
+    expected_entities: int,
+    clip_scorer: CLIPScorer,
+) -> dict:
+    """Detect chimera/duplicate entities using CLIP zero-shot classification.
+
+    Compares image against text prompts like "one person", "two people", etc.
+    Returns:
+      - chimera_score: how much the image exceeds expected entity count
+        (positive = more entities than expected, negative = fewer)
+      - is_chimera: True if image likely has more entities than expected
+    """
+    count_prompts = [
+        "an empty scene with no characters",           # 0
+        "one single character, solo person",            # 1
+        "two characters, two people side by side",      # 2
+        "three or more characters, group of people",    # 3+
+    ]
+
+    # Encode all count prompts
+    text_feats = []
+    for p in count_prompts:
+        text_feats.append(clip_scorer.encode_text(p))
+    text_feats = torch.cat(text_feats, dim=0)  # (4, D)
+
+    img_feat = clip_scorer.encode_image(img)  # (1, D)
+    sims = (img_feat @ text_feats.T).squeeze(0)  # (4,)
+
+    # Predicted entity count index (0..3)
+    predicted_idx = sims.argmax().item()
+
+    # Expected index
+    expected_idx = min(expected_entities, 3)
+
+    chimera_score = predicted_idx - expected_idx
+    is_chimera = predicted_idx > expected_idx
+
+    return {
+        "predicted_count_idx": predicted_idx,
+        "expected_count_idx": expected_idx,
+        "chimera_score": chimera_score,
+        "is_chimera": is_chimera,
+        "sims": sims.cpu().tolist(),
+    }
+
+
 def compute_metrics(
     scenario: dict,
     keyframes: dict[str, Image.Image],
@@ -181,6 +228,7 @@ def compute_metrics(
       - dino_crop:   Entity-crop identity (crop entity region, then DINO compare)
       - clip_t:      Prompt alignment (CLIP text-image similarity)
       - clip_i_curve: Per-step BG degradation (consecutive same-bg shot pairs)
+      - chimera_rate: Fraction of shots detected as having too many entities
     """
     shots = scenario["shots"]
 
@@ -269,12 +317,36 @@ def compute_metrics(
 
     clip_t = float(np.mean(clip_t_scores)) if clip_t_scores else 0.0
 
+    # ── 4. Chimera Detection ─────────────────────────────────────────
+    chimera_flags = []
+    chimera_details = []
+    for s in shots:
+        sid = s["shot_id"]
+        if sid not in keyframes:
+            continue
+        expected = len(s["target_entities"])
+        result = _detect_chimera(keyframes[sid], expected, clip_scorer)
+        chimera_flags.append(result["is_chimera"])
+        if result["is_chimera"]:
+            chimera_details.append(
+                f"    ⚠ {sid}: expected {expected} entity, "
+                f"detected ~{result['predicted_count_idx']}+ "
+                f"(chimera_score={result['chimera_score']:+d})"
+            )
+
+    chimera_rate = float(np.mean(chimera_flags)) if chimera_flags else 0.0
+    if chimera_details:
+        print("\n  CHIMERA DETECTIONS:")
+        for d in chimera_details:
+            print(d)
+
     return {
         "clip_i": clip_i,
         "clip_i_curve": clip_i_curve,
         "dino_id": dino_id,
         "dino_crop": dino_crop,
         "clip_t": clip_t,
+        "chimera_rate": chimera_rate,
     }
 
 
@@ -438,11 +510,13 @@ def phase2_evaluate(
             }
             all_results.append(result)
 
+            chimera_pct = metrics.get('chimera_rate', 0) * 100
             print(f"    [{done}/{total}] {pipe_label}: "
                   f"CLIP-I={metrics['clip_i']:.4f}  "
                   f"DINO={metrics['dino_id']:.4f}  "
                   f"DINO-crop={metrics['dino_crop']:.4f}  "
                   f"CLIP-T={metrics['clip_t']:.4f}  "
+                  f"Chimera={chimera_pct:.0f}%  "
                   f"({elapsed:.1f}s)")
 
     # Cleanup scorers
@@ -466,7 +540,7 @@ def aggregate_results(
     )
     for r in all_results:
         pipe = r["pipeline"]
-        for metric in ["clip_i", "clip_i_curve", "dino_id", "dino_crop", "clip_t"]:
+        for metric in ["clip_i", "clip_i_curve", "dino_id", "dino_crop", "clip_t", "chimera_rate"]:
             if metric in r:
                 accum[pipe][metric].append(r[metric])
 
@@ -480,11 +554,15 @@ def aggregate_results(
 
 def print_markdown_table(summary: dict[str, dict[str, float]]):
     """Print NeurIPS-ready markdown table."""
-    metrics = ["clip_i", "clip_i_curve", "dino_id", "dino_crop", "clip_t"]
+    metrics = ["clip_i", "clip_i_curve", "dino_id", "dino_crop", "clip_t", "chimera_rate"]
+    # For chimera_rate, lower is better
     best = {}
     for m in metrics:
         vals = {p: s.get(m, 0) for p, s in summary.items()}
-        best[m] = max(vals, key=lambda p: vals[p])
+        if m == "chimera_rate":
+            best[m] = min(vals, key=lambda p: vals[p])
+        else:
+            best[m] = max(vals, key=lambda p: vals[p])
 
     header_map = {
         "clip_i": "BG (CLIP-I) ↑",
@@ -492,6 +570,7 @@ def print_markdown_table(summary: dict[str, dict[str, float]]):
         "dino_id": "ID Full (DINO) ↑",
         "dino_crop": "ID Crop (DINO) ↑",
         "clip_t": "Prompt (CLIP-T) ↑",
+        "chimera_rate": "Chimera ↓",
     }
 
     print("\n" + "=" * 78)
@@ -523,7 +602,7 @@ def print_markdown_table(summary: dict[str, dict[str, float]]):
 def save_csv(all_results: list[dict], path: Path):
     """Save per-scenario results to CSV."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    fieldnames = ["scenario_id", "domain", "pipeline", "clip_i", "clip_i_curve", "dino_id", "dino_crop", "clip_t"]
+    fieldnames = ["scenario_id", "domain", "pipeline", "clip_i", "clip_i_curve", "dino_id", "dino_crop", "clip_t", "chimera_rate"]
     with open(path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
