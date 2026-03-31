@@ -420,9 +420,18 @@ class KeyframeGenerator:
         self.attn_ctrl.set_mode_bypass()
 
         for symbol, prompt in {**entity_prompts, **bg_prompts}.items():
+            # Entity anchors: enforce single character to prevent duplicates
+            is_entity = symbol in entity_prompts
+            if is_entity:
+                anchor_prompt = f"solo, single character, one person, {prompt}"
+                anchor_neg = "two people, multiple people, crowd, duplicate, split image, side by side, blurry, low quality, distorted"
+            else:
+                anchor_prompt = prompt
+                anchor_neg = "people, person, blurry, low quality, distorted"
+
             img = self.pipe(
-                prompt=prompt,
-                negative_prompt="blurry, low quality, distorted",
+                prompt=anchor_prompt,
+                negative_prompt=anchor_neg,
                 ip_adapter_image_embeds=self._zero_ip_embeds(),
                 num_inference_steps=4,
                 guidance_scale=0.0,

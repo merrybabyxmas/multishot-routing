@@ -148,14 +148,44 @@ def scenario_to_shot_nodes(scenario: dict) -> list[ShotNode]:
 # Per-Scenario Metric Calculation
 # ═══════════════════════════════════════════════════════════════════════
 
+def _crop_entity_region(img: Image.Image, entity_idx: int, n_entities: int) -> Image.Image:
+    """Crop the spatial region where an entity is expected in multi-entity shots.
+
+    For multi-entity shots, entities are arranged left-to-right.
+    For single-entity shots, crop center 60% to remove bg edges.
+    """
+    w, h = img.size
+    if n_entities == 1:
+        # Center crop (60% of width) for solo shots
+        margin = int(w * 0.2)
+        return img.crop((margin, 0, w - margin, h))
+    else:
+        # Split into n_entities horizontal regions
+        region_w = w // n_entities
+        left = entity_idx * region_w
+        right = min((entity_idx + 1) * region_w, w)
+        return img.crop((left, 0, right, h))
+
+
 def compute_metrics(
     scenario: dict,
     keyframes: dict[str, Image.Image],
     clip_scorer: CLIPScorer,
     dino_scorer: DINOScorer,
 ) -> dict[str, float]:
-    """Compute all 3 metrics for one scenario's generated keyframes."""
+    """Compute all metrics for one scenario's generated keyframes.
+
+    Metrics:
+      - clip_i:      Background consistency (full-frame CLIP-I between same-bg shots)
+      - dino_id:     Identity preservation (full-frame DINO, legacy)
+      - dino_crop:   Entity-crop identity (crop entity region, then DINO compare)
+      - clip_t:      Prompt alignment (CLIP text-image similarity)
+      - clip_i_curve: Per-step BG degradation (consecutive same-bg shot pairs)
+    """
     shots = scenario["shots"]
+
+    # Build lookup: shot_id -> shot metadata
+    shot_meta = {s["shot_id"]: s for s in shots}
 
     # ── 1. Background Consistency (CLIP-I) ──────────────────────────
     bg_groups: dict[str, list[str]] = {}
@@ -173,7 +203,19 @@ def compute_metrics(
 
     clip_i = float(np.mean(clip_i_scores)) if clip_i_scores else 0.0
 
-    # ── 2. Identity Preservation (DINO) ─────────────────────────────
+    # ── 1b. Per-Shot CLIP-I Curve (consecutive same-bg pairs) ───────
+    # Measures how BG consistency degrades over time
+    clip_i_curve_scores = []
+    for bg_sym, sids in bg_groups.items():
+        for i in range(len(sids) - 1):
+            a, b = sids[i], sids[i + 1]
+            if a in keyframes and b in keyframes:
+                sim = clip_scorer.image_similarity(keyframes[a], keyframes[b])
+                clip_i_curve_scores.append(sim)
+
+    clip_i_curve = float(np.mean(clip_i_curve_scores)) if clip_i_curve_scores else 0.0
+
+    # ── 2. Identity Preservation — Full-frame DINO (legacy) ─────────
     entity_groups: dict[str, list[str]] = {}
     for s in shots:
         for ent in s["target_entities"]:
@@ -190,6 +232,30 @@ def compute_metrics(
 
     dino_id = float(np.mean(dino_scores)) if dino_scores else 0.0
 
+    # ── 2b. Entity-Crop DINO (fair multi-entity comparison) ─────────
+    # Crop the spatial region of each entity before DINO comparison.
+    # This removes position bias: solo=center, multi=left/right.
+    dino_crop_scores = []
+    for ent, sids in entity_groups.items():
+        for i in range(len(sids)):
+            for j in range(i + 1, len(sids)):
+                a, b = sids[i], sids[j]
+                if a not in keyframes or b not in keyframes:
+                    continue
+                meta_a, meta_b = shot_meta[a], shot_meta[b]
+                ents_a = sorted(meta_a["target_entities"])
+                ents_b = sorted(meta_b["target_entities"])
+                idx_a = ents_a.index(ent) if ent in ents_a else 0
+                idx_b = ents_b.index(ent) if ent in ents_b else 0
+
+                crop_a = _crop_entity_region(keyframes[a], idx_a, len(ents_a))
+                crop_b = _crop_entity_region(keyframes[b], idx_b, len(ents_b))
+
+                sim = dino_scorer.similarity(crop_a, crop_b)
+                dino_crop_scores.append(sim)
+
+    dino_crop = float(np.mean(dino_crop_scores)) if dino_crop_scores else 0.0
+
     # ── 3. Prompt Alignment (CLIP-T) ────────────────────────────────
     clip_t_scores = []
     for s in shots:
@@ -203,7 +269,13 @@ def compute_metrics(
 
     clip_t = float(np.mean(clip_t_scores)) if clip_t_scores else 0.0
 
-    return {"clip_i": clip_i, "dino_id": dino_id, "clip_t": clip_t}
+    return {
+        "clip_i": clip_i,
+        "clip_i_curve": clip_i_curve,
+        "dino_id": dino_id,
+        "dino_crop": dino_crop,
+        "clip_t": clip_t,
+    }
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -369,6 +441,7 @@ def phase2_evaluate(
             print(f"    [{done}/{total}] {pipe_label}: "
                   f"CLIP-I={metrics['clip_i']:.4f}  "
                   f"DINO={metrics['dino_id']:.4f}  "
+                  f"DINO-crop={metrics['dino_crop']:.4f}  "
                   f"CLIP-T={metrics['clip_t']:.4f}  "
                   f"({elapsed:.1f}s)")
 
@@ -393,8 +466,9 @@ def aggregate_results(
     )
     for r in all_results:
         pipe = r["pipeline"]
-        for metric in ["clip_i", "dino_id", "clip_t"]:
-            accum[pipe][metric].append(r[metric])
+        for metric in ["clip_i", "clip_i_curve", "dino_id", "dino_crop", "clip_t"]:
+            if metric in r:
+                accum[pipe][metric].append(r[metric])
 
     summary = {}
     for pipe, metrics in accum.items():
@@ -406,16 +480,18 @@ def aggregate_results(
 
 def print_markdown_table(summary: dict[str, dict[str, float]]):
     """Print NeurIPS-ready markdown table."""
-    metrics = ["clip_i", "dino_id", "clip_t"]
+    metrics = ["clip_i", "clip_i_curve", "dino_id", "dino_crop", "clip_t"]
     best = {}
     for m in metrics:
-        vals = {p: s[m] for p, s in summary.items()}
+        vals = {p: s.get(m, 0) for p, s in summary.items()}
         best[m] = max(vals, key=lambda p: vals[p])
 
     header_map = {
-        "clip_i": "BG Consist. (CLIP-I) ↑",
-        "dino_id": "Identity (DINO) ↑",
-        "clip_t": "Prompt Align (CLIP-T) ↑",
+        "clip_i": "BG (CLIP-I) ↑",
+        "clip_i_curve": "BG Curve ↑",
+        "dino_id": "ID Full (DINO) ↑",
+        "dino_crop": "ID Crop (DINO) ↑",
+        "clip_t": "Prompt (CLIP-T) ↑",
     }
 
     print("\n" + "=" * 78)
@@ -434,7 +510,7 @@ def print_markdown_table(summary: dict[str, dict[str, float]]):
         s = summary[pipe]
         cells = []
         for m in metrics:
-            val = f"{s[m]:.4f}"
+            val = f"{s.get(m, 0):.4f}"
             if pipe == best[m]:
                 val = f"**{val}**"
             cells.append(val)
@@ -447,7 +523,7 @@ def print_markdown_table(summary: dict[str, dict[str, float]]):
 def save_csv(all_results: list[dict], path: Path):
     """Save per-scenario results to CSV."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    fieldnames = ["scenario_id", "domain", "pipeline", "clip_i", "dino_id", "clip_t"]
+    fieldnames = ["scenario_id", "domain", "pipeline", "clip_i", "clip_i_curve", "dino_id", "dino_crop", "clip_t"]
     with open(path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
